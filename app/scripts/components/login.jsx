@@ -3,6 +3,8 @@ var React = require('react');
 // layouts
 var AppWrapper = require('./layouts/general.jsx').AppWrapper;
 var ContainerRow = require('./layouts/general.jsx').ContainerRow;
+// models
+var User = ('../models/user').User;
 
 var SignUpForm = React.createClass({
   render: function(){
@@ -54,16 +56,41 @@ var LoginForm = React.createClass({
   }
 });
 
+var LoginFormWrapper = function(props){
+  return(
+    <div className="col-sm-6 col-sm-offset-3">
+      {props.children}
+    </div>
+  );
+}
+
 var LoginContainer = React.createClass({
+  handleChange: function(){
+
+  },
+  
+  handleLogIn: function (e) {
+    e.preventDefault();
+    console.log('handleLogIn');
+    User.logIn();
+  },
+
+  handleSignUp: function (e) {
+    e.preventDefault();
+    console.log('handleSignUp');
+  },
+
   render: function(){
     return(
       <AppWrapper>
         <ContainerRow>
+          <LoginFormWrapper>
 
-          <LoginForm />
+            <LoginForm onSubmit={this.handleLogIn} onChange={this.handleChange}/>
 
-          <SignUpForm />
+            <SignUpForm onSubmit={this.handleSignUp} />
 
+          </LoginFormWrapper>
         </ContainerRow>
       </AppWrapper>
     );

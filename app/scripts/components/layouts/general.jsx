@@ -1,5 +1,6 @@
 var React = require('react');
 
+// container+row block
 var ContainerRow = function(props){
   return(
     <div className="container">
@@ -10,14 +11,7 @@ var ContainerRow = function(props){
   );
 };
 
-var AppHeader = function(props){
-  return(
-    <div className="wrapper">
-      {props.children}
-    </div>
-  );
-};
-
+// generic section tag 
 var Section = function(props){
   return(
     <section id={this.props.id}>
@@ -26,6 +20,16 @@ var Section = function(props){
   );
 };
 
+// main header
+var AppHeader = function(props){
+  return(
+    <div className="wrapper">
+      {props.children}
+    </div>
+  );
+};
+
+// general wrapper
 var AppWrapper = function(props){
   return(
     <div className="wrapper">
