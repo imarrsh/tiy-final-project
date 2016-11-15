@@ -2,6 +2,8 @@ var Backbone = require('backbone');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+var LoginContainer = require('./components/login.jsx').LoginContainer;
+
 var AppRouter = Backbone.Router.extend({
   routes: {
     '': 'index', // home screen/dashboard view
@@ -18,8 +20,18 @@ var AppRouter = Backbone.Router.extend({
     'stories/:id/contribute': 'storyContribute', // contributing to stories
   },
   initialize: function(){},
+
   index: function(){
     console.log('index route');
+  },
+
+  login: function(){
+    console.log('login route');
+
+    ReactDOM.render(
+      React.createElement(LoginContainer),
+      document.getElementById('app')
+    );
   }
 
 });
