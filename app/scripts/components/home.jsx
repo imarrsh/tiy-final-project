@@ -12,12 +12,13 @@ var HomeContainer = React.createClass({
   render: function(){
     var currentUser = User.current();
     var email = currentUser.get('username');
+    var userId = currentUser.get('objectId');
     return(
       <AppWrapper>
-        <AppHeaderMain />
+        <AppHeaderMain userId={userId}/>
         <ContainerRow>
           <div>
-            <h2>Hi {email}!</h2>
+            <h2>Hi {currentUser.get('firstName')}!</h2>
           </div>
         </ContainerRow>
       </AppWrapper>

@@ -16,8 +16,8 @@ var AppRouter = Backbone.Router.extend({
     'login/': 'login', // login/signup view - user sees this screen if not logged in
     'logout/': 'logout', // logout - redirect to login
     // user routes
-    'user/:id/': 'userDetail', // user profile view
     'user/:id/edit/': 'userNewEdit', // user profile new/edit view
+    'user/:id/': 'userDetail', // user profile view
     // story routes
     'stories/': 'storiesView', // viewing all recent stories
     'stories/new/': 'storyNewEdit', // adding a new story
@@ -33,7 +33,7 @@ var AppRouter = Backbone.Router.extend({
   index: function(){
     console.log('index route');
     ReactDOM.render(
-      React.createElement(HomeContainer, {router: this}),
+      React.createElement(HomeContainer, { router: this }),
       document.getElementById('app')
     );
   },

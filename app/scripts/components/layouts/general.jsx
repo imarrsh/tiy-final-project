@@ -39,7 +39,8 @@ var AppHeaderWrap = function(props){
 var AppHeaderMain = function(props){
   return(
     <AppHeaderWrap>
-      <li><a href={'#user/' + userId}>Profile</a></li>
+      <li><a href="#">Home</a></li>
+      <li><a href={'#user/' + props.userId + '/'}>Profile</a></li>
       <li><a href="#logout/">Logout</a></li>
     </AppHeaderWrap>
   );
