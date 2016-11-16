@@ -2,6 +2,8 @@ var Backbone = require('backbone');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+var parseHeaders = require('./parseUtils').parseHeaders;
+
 var User = require('./models/user').User;
 
 var HomeContainer = require('./components/home.jsx').HomeContainer;
@@ -28,6 +30,15 @@ var AppRouter = Backbone.Router.extend({
   },
 
   initialize: function(){
+    // set the headers
+    parseHeaders();
+    // check for user data
+    var user = JSON.parse(localStorage.getItem('user')) || {};
+    // check for a session token
+    if (!user.sessionToken){
+      this.navigate('login/', {trigger: true, replace: true});
+    }
+
   },
 
   index: function(){
@@ -48,10 +59,13 @@ var AppRouter = Backbone.Router.extend({
   },
 
   logout: function(){
-    console.log('logout route');
+
+    // this.navigate('login/', {trigger: true});
+
+    var self = this;
     User.logOut(function(){
-      this.navigate('login/', {trigger: true});
-    }.bind(this));
+      self.navigate('login/', {trigger: true});
+    });
   },
 
   userDetail: function (userId) {
@@ -64,7 +78,7 @@ var AppRouter = Backbone.Router.extend({
   userNewEdit: function(userId){
 
     ReactDOM.render(
-      React.createElement(UserEditProfileContainer),
+      React.createElement(UserEditProfileContainer, { router: this }),
       document.getElementById('app')
     );
   },
@@ -72,7 +86,7 @@ var AppRouter = Backbone.Router.extend({
   storyNewEdit: function () {
 
     ReactDOM.render(
-      React.createElement(StoryCreateContainer),
+      React.createElement(StoryCreateContainer, { router: this }),
       document.getElementById('app')
     );
   }

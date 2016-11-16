@@ -1,5 +1,7 @@
 var React = require('react');
 
+var User = require('../../models/user').User;
+
 // container+row block
 var ContainerRow = function(props){
   return(
@@ -26,7 +28,7 @@ var AppHeaderWrap = function(props){
     <header className="app-header">
       <ContainerRow>
         <nav>
-          <ul>
+          <ul className="nav nav-pills">
             {props.children}
           </ul>
         </nav>
@@ -37,10 +39,12 @@ var AppHeaderWrap = function(props){
 
 // main header nav
 var AppHeaderMain = function(props){
+  var user = User.current();
   return(
     <AppHeaderWrap>
       <li><a href="#">Home</a></li>
-      <li><a href={'#user/' + props.userId + '/'}>Profile</a></li>
+      <li><a href="#stories/new/">New Story</a></li>
+      <li><a href={'#user/' + user.get('objectId') + '/'}>Profile</a></li>
       <li><a href="#logout/">Logout</a></li>
     </AppHeaderWrap>
   );
@@ -59,7 +63,7 @@ var AppHeaderLogin = function(props){
 // general wrapper
 var AppWrapper = function(props){
   return(
-    <div className="wrapper">
+    <div className={'wrapper ' + props.pageClass}>
       {props.children}
     </div>
   );

@@ -38,15 +38,34 @@ var UserDetailContainer = React.createClass({
   },
 
   render: function () {
-    var user = User.current();
+    var user = User.current().toJSON();
     return(
       <AppWrapper>
         <ContainerRow>
-          <AppHeaderMain userId={user.get('objectId')}/>
+          <AppHeaderMain />
+          <p>User Detail for {user.firstName}</p>
 
-          <div>
-            <h2>User Detail for {user.get('firstName')}</h2>
-            <a href={'#user/' + user.get('objectId') + '/edit/'} 
+          <figure className="user-profile-avatar">
+            <div className="user-avatar">
+              <img src={user.profilePhoto || "http://placehold.it/250x250"} 
+                alt={user.alias || 'Profile Picture'} />
+            </div>
+            <figcaption>
+              <h2 className="user-alias">{user.alias || 'Alias not set'}</h2>
+            </figcaption>
+          </figure>
+
+          <div className="user-profile-details">
+            <div className="full-name">
+              {user.firstName + ' ' + user.lastName}
+            </div>
+            <div className="email">
+              {user.email}
+            </div>
+          </div>
+
+          <div className="user-profile-controls">
+            <a href={'#user/' + user.objectId + '/edit/'} 
               className="btn btn-primary">
                 Edit Profile
             </a>

@@ -15,7 +15,7 @@ var HomeContainer = React.createClass({
     var userId = currentUser.get('objectId');
     return(
       <AppWrapper>
-        <AppHeaderMain userId={userId}/>
+        <AppHeaderMain userId={userId} active={this.props.active} />
         <ContainerRow>
           <div>
             <h2>Hi {currentUser.get('firstName')}!</h2>

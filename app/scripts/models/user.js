@@ -1,12 +1,14 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 var router = require('../router');
-
+// parse layer
+var ParseModel = require('./parseSetup').ParseModel;
+var ParseCollection = require('./parseSetup').ParseCollection;
+// headers
 var parseHeaders = require('../parseUtils').parseHeaders;
 
 // set user model to interface with parse
-var ParseUser = Backbone.Model.extend({
-  idAttribute: 'objectId',
+var ParseUser = ParseModel.extend({
 
   save: function(attributes, options){
 
@@ -15,6 +17,7 @@ var ParseUser = Backbone.Model.extend({
 
     return Backbone.Model.prototype.save.apply(this, arguments);
   }
+
 }, {
   // class methods go here, if any
 });
@@ -24,11 +27,20 @@ var User = ParseUser.extend({
   urlRoot: 'https://mt-parse-server.herokuapp.com/users',
 
   auth: function(){
-    // set up headers
+    // set headers
     parseHeaders('mtparseserver', 'thompson1', this.get('sessionToken'));
-
     return this;
-  }
+
+  },
+
+  updateProfile: function(callback){
+    // do some work on the user profile
+    this.auth().save().then(response => {
+      localStorage.setItem('user', JSON.stringify(this.toJSON()));
+      callback();
+    });
+
+  },
 
 }, {
   // class methods
@@ -60,7 +72,7 @@ var User = ParseUser.extend({
 
   },
 
-  signUp: function(userCredentials){
+  signUp: function(userCredentials, callback){
     // instantiate user
     var user = new User();
     // set up url
@@ -85,23 +97,24 @@ var User = ParseUser.extend({
     user.urlRoot = function(){
       return 'https://mt-parse-server.herokuapp.com/logout';
     };
+    user.auth();
 
     user.fetch({
       url: user.urlRoot(),
-      beforeSend: user.auth(),
+      // beforeSend: user.auth(),
       type: 'POST'
     }).then(response => {
-      // console.log(response); // {}
-      localStorage.removeItem('user');
+      localStorage.setItem('user', JSON.stringify(response));
+      callback(); // callback for a route
     });
 
-    callback(); // callback for a route
   },
 
   current: function(){
     var user = new User(JSON.parse(localStorage.getItem('user')));
     // console.log(user);
     return user;
+
   }
 
 });
