@@ -1,10 +1,13 @@
 var React = require('react');
 
+// models
+var User = require('../models/user').User;
+
 // layouts
 var AppWrapper = require('./layouts/general.jsx').AppWrapper;
 var ContainerRow = require('./layouts/general.jsx').ContainerRow;
-// models
-var User = ('../models/user').User;
+var AppHeaderLogin = require('./layouts/general.jsx').AppHeaderLogin;
+
 
 var SignUpForm = React.createClass({
   render: function(){
@@ -65,14 +68,26 @@ var LoginFormWrapper = function(props){
 }
 
 var LoginContainer = React.createClass({
-  handleChange: function(){
-
+  
+  getInitialState: function(){
+    return {
+      username: '',
+      password: ''
+    }
   },
   
+  handleChange: function(e){
+    this.setState({ [e.target.name]: e.target.value });
+  },
+
   handleLogIn: function (e) {
     e.preventDefault();
-    console.log('handleLogIn');
-    User.logIn();
+    var creds = this.state;
+
+    User.logIn(creds, function(){
+      this.props.router.navigate('', {trigger: true});
+    }.bind(this));
+
   },
 
   handleSignUp: function (e) {
@@ -82,7 +97,8 @@ var LoginContainer = React.createClass({
 
   render: function(){
     return(
-      <AppWrapper>
+      <AppWrapper> 
+        <AppHeaderLogin />
         <ContainerRow>
           <LoginFormWrapper>
 

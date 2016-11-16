@@ -1,7 +1,7 @@
 var Backbone = require('backbone');
 
 var ParseModel = Backbone.Model.extend({
-  // model layer for parse
+  // model layer for parse server
   idAttribute: 'objectId'
 });
 

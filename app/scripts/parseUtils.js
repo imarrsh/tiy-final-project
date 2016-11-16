@@ -1,3 +1,4 @@
+var $ = require('jquery');
 // simple util function for header setting
 
 function parseHeaders(appId, apiKey, sessionId){

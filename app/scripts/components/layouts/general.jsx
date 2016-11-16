@@ -20,12 +20,38 @@ var Section = function(props){
   );
 };
 
-// main header
-var AppHeader = function(props){
+// header container wrapper
+var AppHeaderWrap = function(props){
   return(
-    <div className="wrapper">
-      {props.children}
-    </div>
+    <header className="app-header">
+      <ContainerRow>
+        <nav>
+          <ul>
+            {props.children}
+          </ul>
+        </nav>
+      </ContainerRow>
+    </header>
+  );
+}
+
+// main header nav
+var AppHeaderMain = function(props){
+  return(
+    <AppHeaderWrap>
+      <li><a href={'#user/' + userId}>Profile</a></li>
+      <li><a href="#logout/">Logout</a></li>
+    </AppHeaderWrap>
+  );
+};
+
+// login header nav
+var AppHeaderLogin = function(props){
+  return(
+    <AppHeaderWrap>
+      <li><a href="">Login</a></li>
+      <li><a href="">Sign Up</a></li>
+    </AppHeaderWrap>
   );
 };
 
@@ -43,5 +69,6 @@ module.exports = {
   AppWrapper: AppWrapper,
   ContainerRow: ContainerRow,
   Section: Section,
-  AppHeader: AppHeader
+  AppHeaderMain: AppHeaderMain,
+  AppHeaderLogin: AppHeaderLogin
 };

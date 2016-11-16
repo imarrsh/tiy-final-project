@@ -42,7 +42,7 @@ var User = ParseUser.extend({
 
         localStorage.setItem('user', JSON.stringify(user.toJSON()));
 
-        callback();
+        callback(user);
 
       });
 
@@ -79,11 +79,17 @@ var User = ParseUser.extend({
       beforeSend: user.auth(),
       type: 'POST'
     }).then(response => {
-      console.log(response);
+      // console.log(response); // {}
       localStorage.removeItem('user');
     });
 
-    callback();
+    callback(); // callback for a route
+  },
+
+  current: function(){
+    var user = new User(JSON.parse(localStorage.getItem('user')));
+    console.log(user);
+    return user;
   }
 
 });
