@@ -33,7 +33,7 @@ var AppHeaderWrap = function(props){
       </ContainerRow>
     </header>
   );
-}
+};
 
 // main header nav
 var AppHeaderMain = function(props){

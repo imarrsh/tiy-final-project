@@ -6,16 +6,28 @@ var parseHeaders = require('../parseUtils').parseHeaders;
 
 // set user model to interface with parse
 var ParseUser = Backbone.Model.extend({
-  idAttribute: 'objectId'
+  idAttribute: 'objectId',
+
+  save: function(attributes, options){
+
+    delete this.attributes.createdAt;
+    delete this.attributes.updatedAt;
+
+    return Backbone.Model.prototype.save.apply(this, arguments);
+  }
 }, {
   // class methods go here, if any
 });
 
 var User = ParseUser.extend({
 
+  urlRoot: 'https://mt-parse-server.herokuapp.com/users',
+
   auth: function(){
     // set up headers
     parseHeaders('mtparseserver', 'thompson1', this.get('sessionToken'));
+
+    return this;
   }
 
 }, {
@@ -88,7 +100,7 @@ var User = ParseUser.extend({
 
   current: function(){
     var user = new User(JSON.parse(localStorage.getItem('user')));
-    console.log(user);
+    // console.log(user);
     return user;
   }
 

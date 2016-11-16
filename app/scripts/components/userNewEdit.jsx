@@ -9,21 +9,37 @@ var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
 
 var UserEditProfileContainer = React.createClass({
   
+  getInitialState: function () {
+    return{
+      user: User.current()
+    }
+  },
+
+  handleChange: function (e) {
+    var user = this.state.user;
+    user.set(e.target.name, e.target.value);
+
+    this.setState(user);
+  },
+
   handleSubmit: function (e) {
     e.preventDefault();
-    console.log('submit');
+    var user = this.state.user;
+    user.auth().save();
   },
 
   render: function () {
-    var user = User.current();
+    var user = this.state.user;
     return(
       <AppWrapper>
         <ContainerRow>
           <AppHeaderMain />
           <div>
             <form onSubmit={this.handleSubmit}>
-              <input type="text" name="firstName" className="form-control" value={user.get('firstName')} />
-              <input type="text" name="lastName" className="form-control" value={user.get('lastName')} />
+              <input onChange={this.handleChange} type="text" name="firstName" 
+                className="form-control" value={user.get('firstName')} />
+              <input onChange={this.handleChange} type="text" name="lastName" 
+                className="form-control" value={user.get('lastName')} />
               <input type="file" name="profileImg" />
               <input type="submit" value="Save" />
             </form>
