@@ -7,17 +7,41 @@ var AppWrapper = require('./layouts/general.jsx').AppWrapper;
 var ContainerRow = require('./layouts/general.jsx').ContainerRow;
 var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
 
-var UserProfileImage = React.createClass({
-  
+var UserProfileImageForm = React.createClass({
+  getInitialState: function(){
+    return {
+      profileImg: ''
+    }
+  },
+
+  handleImageUpload: function(e){
+    // console.log(e.target);
+    this.refs.profileImg.click();
+  },
+
+  handleChange: function(e){
+    // fire off an async upload event!
+    this.handleAutoSubmit(e);
+  },
+
+  handleAutoSubmit: function(e){
+    // e.preventDefault();
+    console.log('autoSubmitTriggered');
+  },
+
   render: function(){
     var user = this.props.user;
     return(
       <figure className="user-profile-avatar">
-        <div className="user-avatar">
+        <div className="user-avatar" onClick={this.handleImageUpload}>
           <img src={user.avatar || "http://placehold.it/150x150"} 
             alt={user.alias || 'Profile Picture'} />
-              <input type="file" name="profileImg" />
         </div>
+
+        <form encType="multipart/form-data">
+          <input onChange={this.handleChange} ref="profileImg" type="file" name="profileImg" />
+        </form>
+
       </figure>
     );
   }
@@ -81,9 +105,10 @@ var UserEditProfileContainer = React.createClass({
         <ContainerRow>
           <AppHeaderMain />
           <div>
-            <form onSubmit={this.handleSubmit} >
 
-              <UserProfileImage user={user} />
+            <UserProfileImageForm user={user} />
+
+            <form onSubmit={this.handleSubmit} >
 
               <UserData user={user} onChange={this.handleChange}/>
 
@@ -91,6 +116,7 @@ var UserEditProfileContainer = React.createClass({
               <button onClick={this.handleCancel} className="btn btn-default">Cancel</button>
 
             </form>
+
           </div>
         </ContainerRow>
       </AppWrapper>

@@ -30,7 +30,6 @@ var User = ParseUser.extend({
     // set headers
     parseHeaders('mtparseserver', 'thompson1', this.get('sessionToken'));
     return this;
-
   },
 
   updateProfile: function(callback){
@@ -39,8 +38,7 @@ var User = ParseUser.extend({
       localStorage.setItem('user', JSON.stringify(this.toJSON()));
       callback();
     });
-
-  },
+  }
 
 }, {
   // class methods

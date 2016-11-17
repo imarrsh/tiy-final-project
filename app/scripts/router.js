@@ -9,6 +9,7 @@ var User = require('./models/user').User;
 var HomeContainer = require('./components/home.jsx').HomeContainer;
 var LoginContainer = require('./components/login.jsx').LoginContainer;
 var StoryCreateContainer = require('./components/storyNewEdit.jsx').StoryCreateContainer;
+var StoryReadContainer = require('./components/story.jsx').StoryReadContainer;
 var UserDetailContainer = require('./components/userDetail.jsx').UserDetailContainer;
 var UserEditProfileContainer = require('./components/userNewEdit.jsx').UserEditProfileContainer;
 
@@ -29,16 +30,28 @@ var AppRouter = Backbone.Router.extend({
     'stories/:id/contribute/:id/': 'storyContribute' // contributing to stories
   },
 
-  initialize: function(){
-    // set the headers
-    parseHeaders();
-    // check for user data
-    var user = JSON.parse(localStorage.getItem('user')) || {};
-    // check for a session token
-    if (!user.sessionToken){
-      this.navigate('login/', {trigger: true, replace: true});
+  checkUser: function(){
+    var user = User.current();
+
+    if (!user.get('sessionToken')){
+      console.log('hey, token is ', user.get('sessionToken'));
+      // this.navigate();
+      window.location.assign('#login/');
     }
 
+    return user;
+  },
+
+  initialize: function(){
+    var user = this.checkUser();
+
+    // console.log('token',user);
+    // var self = this;
+    // if (!user.get('sessionToken')){
+    //   console.log('hey, token is ', user.get('sessionToken'));
+    //  this.navigate('login/', {trigger: true});
+    // }
+    parseHeaders('mtparseserver', 'thompson1', user.get('sessionToken'));
   },
 
   index: function(){
@@ -87,6 +100,14 @@ var AppRouter = Backbone.Router.extend({
 
     ReactDOM.render(
       React.createElement(StoryCreateContainer, { router: this }),
+      document.getElementById('app')
+    );
+  },
+
+  storyView: function(storyId){
+
+    ReactDOM.render(
+      React.createElement(StoryReadContainer, { router: this, storyId: storyId }),
       document.getElementById('app')
     );
   }

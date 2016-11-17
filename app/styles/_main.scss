@@ -7,3 +7,11 @@
 img {
   max-width: 100%;
 }
+
+.user-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
