@@ -53,20 +53,23 @@ var User = ParseUser.extend({
         '&password=' + encodeURI(userCredentials.password);
     };
 
-    user.fetch()
-      .then(function(response){
+    user.fetch({
+      error: function(response, xhr){
+        var errorMsg = JSON.parse(xhr.responseText);
+        console.log('msg', errorMsg.error);
+      }
+    }).then(function(response){
+      user.set('sessionToken', response.sessionToken);
+      user.set('username', response.username);
+      user.set('objectId', response.objectId);
 
-        user.set('sessionToken', response.sessionToken);
-        user.set('username', response.username);
-        user.set('objectId', response.objectId);
+      user.auth();
 
-        user.auth();
+      localStorage.setItem('user', JSON.stringify(user.toJSON()));
 
-        localStorage.setItem('user', JSON.stringify(user.toJSON()));
+      callback(user);
 
-        callback(user);
-
-      });
+    });
 
   },
 

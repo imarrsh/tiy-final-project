@@ -16,8 +16,7 @@ var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
 var StoryReadContainer = React.createClass({
   getInitialState: function(){
     return {
-      story: new Story(),
-      // contributions: new ContributionCollection()
+      story: new Story()
     }
   },
   componentWillMount: function(){
@@ -45,7 +44,7 @@ var StoryReadContainer = React.createClass({
   getContributions: function(){
     var story = this.state.story
     , contributions = story.get('contributions');
-    // console.log(contributions);
+    // console.log('contributions: ',contributions);
 
 
     contributions
@@ -87,4 +86,4 @@ var StoryReadContainer = React.createClass({
 
 module.exports = {
   StoryReadContainer: StoryReadContainer
-}
+};
