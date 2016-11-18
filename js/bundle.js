@@ -37,11 +37,15 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
   },
 
   componentWillMount: function(){
-    var storyCollection = this.state.storyCollection;
+    var storyCollection = this.state.storyCollection
+    , user = User.current();
     
-    storyCollection.fetch().then(response => {
-      this.setState({storyCollection: storyCollection});
-    });
+    storyCollection
+      .parseWhere('owner', user.get('objectId'), '_User')
+      .fetch()
+      .then(response => {
+        this.setState({storyCollection: storyCollection});
+      });
 
   },
 
@@ -297,11 +301,11 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     }
   },
   componentWillMount: function(){
-    this.getStory();
+    this.getStory().getContributions();
   },
 
   componentWillReciveProps: function(){
-    this.getStory();
+    this.getStory().getContributions();
   },
 
   getStory: function(){
@@ -314,16 +318,45 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
 
     story.set('objectId', storyId);
     story.fetch().then(() => this.setState({story: story}))
+
+    return this;
+  },
+
+  getContributions: function(){
+    var story = this.state.story
+    , contributions = story.get('contributions');
+    console.log(contributions);
+
+
+    contributions
+      .parseWhere('story', story.get('objectId'), 'Story')
+      .fetch()
+      .then(() => {
+        story.set('contributions', contributions);
+        this.setState({story: story})
+      });
+
+    return this;
   },
 
   render: function(){
     var story = this.state.story;
+    var contributions = story.get('contributions');
     return(
       React.createElement(AppWrapper, null, 
         React.createElement(AppHeaderMain, null), 
         React.createElement(ContainerRow, null, 
           React.createElement("div", null, 
-            React.createElement("h1", null, story.get('title'))
+            React.createElement("h1", null, story.get('title')), 
+            React.createElement("div", null, 
+              contributions.map(function(contribution){
+                return(
+                  React.createElement("p", {key: contribution.get('objectId')}, 
+                    contribution.get('content')
+                  )
+                );
+              })
+            )
           )
         )
       )
@@ -856,7 +889,12 @@ var Contribution = ParseModel.extend({
 
 var ContributionCollection = ParseCollection.extend({
   model: Contribution,
-  url: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution'
+  
+  baseURL: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution',
+
+  parse: function(data){
+    return data.results;
+  }
 });
 
 module.exports = {
@@ -877,12 +915,21 @@ var ParseModel = Backbone.Model.extend({
 
 var ParseCollection = Backbone.Collection.extend({
   // collection layer to handle the parse server
-
   parseWhere: function(field, objectId, className){
-    var clause = encodeURI('?where={"' + field + '":{"objectId":"' + objectId +
+    this.clause = encodeURI('?where={"' + field + '":{"objectId":"' + objectId +
         '","__type":"Pointer","className":"' + className + '"}}');
 
-    return clause;
+    return this;
+  },
+
+  url: function(){
+    var url = this.baseURL;
+
+    if (this.clause) {
+      url += this.clause;
+    }
+
+    return url;
   }
 
 });
@@ -904,7 +951,7 @@ var ContributionCollection = require('./contribution').ContributionCollection;
 
 var Story = ParseModel.extend({
   initialize: function(){
-    var contributions = new ContributionCollection();
+    // var contributions = new ContributionCollection();
   },
 
   defaults: {
@@ -918,10 +965,10 @@ var Story = ParseModel.extend({
 });
 
 var StoryCollection = ParseCollection.extend({
-  
+
   model: Story,
 
-  url: 'https://mt-parse-server.herokuapp.com/Classes/Story',
+  baseURL: 'https://mt-parse-server.herokuapp.com/Classes/Story',
 
   parse: function(data){
     return data.results;
@@ -1124,6 +1171,7 @@ var AppRouter = Backbone.Router.extend({
     if (!user.get('sessionToken')){
       console.log('hey, token is ', user.get('sessionToken'));
       // this.navigate();
+      // router.navigate wouldnt work
       window.location.assign('#login/');
     }
 
