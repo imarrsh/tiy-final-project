@@ -325,7 +325,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
   getContributions: function(){
     var story = this.state.story
     , contributions = story.get('contributions');
-    console.log(contributions);
+    // console.log(contributions);
 
 
     contributions
@@ -462,9 +462,62 @@ var StoryCreateContainer = React.createClass({displayName: "StoryCreateContainer
     // });
   },
 
+  // submit models to their respective endpoints 
+  // glue 'em together with the user
   handleSubmit: function(e){
     e.preventDefault();
+    
+    var user = User.current()
+    , story = this.state.story
+    , contribution = this.state.contribution;
+
+    // // log some stately stuff
+    // console.log(
+    //   'submit event,',
+    //   user.get('objectId'), user.get('alias'),
+    //   ',',
+    //   story.get('title'),
+    //   ',', 
+    //   contribution.get('content')
+    // );
+
+    // set the story owner pointer
+    story.setPointer('owner', '_User', user.get('objectId'));
+    story.save().then(response => {
+      var storyId = response.objectId
+      contribution
+        .setPointer('contributor', '_User', user.get('objectId'))
+        .setPointer('story', 'Story', response.objectId);
+      
+      contribution
+        .save().then(response => {
+          this.props.router.navigate('stories/' + storyId + '/', {trigger: true});
+        });
+
+    });
+    
+    // set the contribution pointer to user and story
+    this.state.contribution
+      .setPointer('contributor', '_User', user.get('objectId'))
+      .setPointer('story', 'Story', story.get('objectId'));
+
+    // pseudo code
+    // model.save().then(response => {
+    //   response.fetch().then(response => {
+    //     model2.save().then(respsonse => {
+
+    //     });
+    //   });
+    // });
+
+
+    // console.log('story model: ', this.state.story);
+    // this.state.story.save();
+
+    // this.contribution.save();
+
   },
+
 
   handleTitleChange: function(e){
     var story = this.state.story;
@@ -523,6 +576,8 @@ module.exports = {
   StoryCreateContainer: StoryCreateContainer
 };
 
+// TinyMCE Component
+
 // <TinyMCE
 //  content="<p>This is the initial content of the editor</p>"
 //  config={{
@@ -531,6 +586,7 @@ module.exports = {
 //  }}
 //  onChange={this.handleEditorChange} 
 // />
+
 
 // API Setups
 
@@ -861,7 +917,7 @@ var Contribution = ParseModel.extend({
     order: 0
   },
 
-  rootUrl: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution',
+  urlRoot: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution',
 
   checkGrammar: function(text){
     //######################
@@ -889,7 +945,7 @@ var Contribution = ParseModel.extend({
 
 var ContributionCollection = ParseCollection.extend({
   model: Contribution,
-  
+
   baseURL: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution',
 
   parse: function(data){
@@ -910,7 +966,25 @@ var Backbone = require('backbone');
 
 var ParseModel = Backbone.Model.extend({
   // model layer for parse server
-  idAttribute: 'objectId'
+  idAttribute: 'objectId',
+  // set up a pointer property on this model
+  setPointer: function(field, className, objectId){
+    this.set(field, {
+      __type: 'Pointer',
+      className: className,
+      objectId: objectId
+    });
+
+    return this;
+  }
+
+  // ex: setting pointer object
+  // user: {
+  //       __type: 'Pointer',
+  //       className: '_User',
+  //       objectId: currentUser.objectId
+  //     }
+
 });
 
 var ParseCollection = Backbone.Collection.extend({
