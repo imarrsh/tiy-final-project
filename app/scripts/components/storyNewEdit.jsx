@@ -89,9 +89,62 @@ var StoryCreateContainer = React.createClass({
     // });
   },
 
+  // submit models to their respective endpoints 
+  // glue 'em together with the user
   handleSubmit: function(e){
     e.preventDefault();
+    
+    var user = User.current()
+    , story = this.state.story
+    , contribution = this.state.contribution;
+
+    // // log some stately stuff
+    // console.log(
+    //   'submit event,',
+    //   user.get('objectId'), user.get('alias'),
+    //   ',',
+    //   story.get('title'),
+    //   ',', 
+    //   contribution.get('content')
+    // );
+
+    // set the story owner pointer
+    story.setPointer('owner', '_User', user.get('objectId'));
+    story.save().then(response => {
+      var storyId = response.objectId
+      contribution
+        .setPointer('contributor', '_User', user.get('objectId'))
+        .setPointer('story', 'Story', response.objectId);
+      
+      contribution
+        .save().then(response => {
+          this.props.router.navigate('stories/' + storyId + '/', {trigger: true});
+        });
+
+    });
+    
+    // set the contribution pointer to user and story
+    this.state.contribution
+      .setPointer('contributor', '_User', user.get('objectId'))
+      .setPointer('story', 'Story', story.get('objectId'));
+
+    // pseudo code
+    // model.save().then(response => {
+    //   response.fetch().then(response => {
+    //     model2.save().then(respsonse => {
+
+    //     });
+    //   });
+    // });
+
+
+    // console.log('story model: ', this.state.story);
+    // this.state.story.save();
+
+    // this.contribution.save();
+
   },
+
 
   handleTitleChange: function(e){
     var story = this.state.story;
@@ -150,6 +203,8 @@ module.exports = {
   StoryCreateContainer: StoryCreateContainer
 };
 
+// TinyMCE Component
+
 // <TinyMCE
 //  content="<p>This is the initial content of the editor</p>"
 //  config={{
@@ -158,6 +213,7 @@ module.exports = {
 //  }}
 //  onChange={this.handleEditorChange} 
 // />
+
 
 // API Setups
 

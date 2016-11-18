@@ -10,7 +10,7 @@ var Contribution = ParseModel.extend({
     order: 0
   },
 
-  rootUrl: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution',
+  urlRoot: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution',
 
   checkGrammar: function(text){
     //######################
@@ -38,7 +38,7 @@ var Contribution = ParseModel.extend({
 
 var ContributionCollection = ParseCollection.extend({
   model: Contribution,
-  
+
   baseURL: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution',
 
   parse: function(data){

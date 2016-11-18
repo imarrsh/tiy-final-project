@@ -4,7 +4,25 @@ var Backbone = require('backbone');
 
 var ParseModel = Backbone.Model.extend({
   // model layer for parse server
-  idAttribute: 'objectId'
+  idAttribute: 'objectId',
+  // set up a pointer property on this model
+  setPointer: function(field, className, objectId){
+    this.set(field, {
+      __type: 'Pointer',
+      className: className,
+      objectId: objectId
+    });
+
+    return this;
+  }
+
+  // ex: setting pointer object
+  // user: {
+  //       __type: 'Pointer',
+  //       className: '_User',
+  //       objectId: currentUser.objectId
+  //     }
+
 });
 
 var ParseCollection = Backbone.Collection.extend({

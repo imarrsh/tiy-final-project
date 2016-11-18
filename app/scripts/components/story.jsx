@@ -45,7 +45,7 @@ var StoryReadContainer = React.createClass({
   getContributions: function(){
     var story = this.state.story
     , contributions = story.get('contributions');
-    console.log(contributions);
+    // console.log(contributions);
 
 
     contributions
