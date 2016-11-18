@@ -35,11 +35,15 @@ var HomeContainer = React.createClass({
   },
 
   componentWillMount: function(){
-    var storyCollection = this.state.storyCollection;
+    var storyCollection = this.state.storyCollection
+    , user = User.current();
     
-    storyCollection.fetch().then(response => {
-      this.setState({storyCollection: storyCollection});
-    });
+    storyCollection
+      .parseWhere('owner', user.get('objectId'), '_User')
+      .fetch()
+      .then(response => {
+        this.setState({storyCollection: storyCollection});
+      });
 
   },
 

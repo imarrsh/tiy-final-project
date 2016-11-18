@@ -9,12 +9,21 @@ var ParseModel = Backbone.Model.extend({
 
 var ParseCollection = Backbone.Collection.extend({
   // collection layer to handle the parse server
-
   parseWhere: function(field, objectId, className){
-    var clause = encodeURI('?where={"' + field + '":{"objectId":"' + objectId +
+    this.clause = encodeURI('?where={"' + field + '":{"objectId":"' + objectId +
         '","__type":"Pointer","className":"' + className + '"}}');
 
-    return clause;
+    return this;
+  },
+
+  url: function(){
+    var url = this.baseURL;
+
+    if (this.clause) {
+      url += this.clause;
+    }
+
+    return url;
   }
 
 });

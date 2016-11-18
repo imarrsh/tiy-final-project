@@ -38,7 +38,12 @@ var Contribution = ParseModel.extend({
 
 var ContributionCollection = ParseCollection.extend({
   model: Contribution,
-  url: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution'
+  
+  baseURL: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution',
+
+  parse: function(data){
+    return data.results;
+  }
 });
 
 module.exports = {

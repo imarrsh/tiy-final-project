@@ -8,7 +8,7 @@ var ContributionCollection = require('./contribution').ContributionCollection;
 
 var Story = ParseModel.extend({
   initialize: function(){
-    var contributions = new ContributionCollection();
+    // var contributions = new ContributionCollection();
   },
 
   defaults: {
@@ -22,10 +22,10 @@ var Story = ParseModel.extend({
 });
 
 var StoryCollection = ParseCollection.extend({
-  
+
   model: Story,
 
-  url: 'https://mt-parse-server.herokuapp.com/Classes/Story',
+  baseURL: 'https://mt-parse-server.herokuapp.com/Classes/Story',
 
   parse: function(data){
     return data.results;

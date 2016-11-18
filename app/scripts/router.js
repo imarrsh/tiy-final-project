@@ -36,6 +36,7 @@ var AppRouter = Backbone.Router.extend({
     if (!user.get('sessionToken')){
       console.log('hey, token is ', user.get('sessionToken'));
       // this.navigate();
+      // router.navigate wouldnt work
       window.location.assign('#login/');
     }
 
