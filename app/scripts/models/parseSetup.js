@@ -14,14 +14,17 @@ var ParseModel = Backbone.Model.extend({
     });
 
     return this;
-  }
+  },
 
-  // ex: setting pointer object
-  // user: {
-  //       __type: 'Pointer',
-  //       className: '_User',
-  //       objectId: currentUser.objectId
-  //     }
+  setFile: function(field, fileName, fileUrl){
+    this.set(field, {
+      __type: 'File',
+      name: fileName,
+      url: fileUrl
+    });
+
+    return this;
+  }
 
 });
 

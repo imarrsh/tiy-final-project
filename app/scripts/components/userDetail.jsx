@@ -38,34 +38,35 @@ var UserDetailContainer = React.createClass({
   },
 
   render: function () {
-    var user = User.current().toJSON();
+    var user = User.current();
+    console.log(user.toJSON());
     return(
       <AppWrapper>
         <ContainerRow>
           <AppHeaderMain />
-          <p>User Detail for {user.firstName}</p>
+          <p>User Detail for {user.get('firstName')}</p>
 
           <figure className="user-profile-avatar">
             <div className="user-avatar">
-              <img src={user.profilePhoto || "http://placehold.it/250x250"} 
-                alt={user.alias || 'Profile Picture'} />
+              <img src={user.get('profileImage').url || "http://placehold.it/250x250"} 
+                alt={user.get('alias') || 'Profile Picture'} />
             </div>
             <figcaption>
-              <h2 className="user-alias">{user.alias || 'Alias not set'}</h2>
+              <h2 className="user-alias">{user.get('alias') || 'Alias not set'}</h2>
             </figcaption>
           </figure>
 
           <div className="user-profile-details">
             <div className="full-name">
-              {user.firstName + ' ' + user.lastName}
+              {user.get('firstName') + ' ' + user.get('lastName')}
             </div>
             <div className="email">
-              {user.email}
+              {user.get('email')}
             </div>
           </div>
 
           <div className="user-profile-controls">
-            <a href={'#user/' + user.objectId + '/edit/'} 
+            <a href={'#user/' + user.get('objectId') + '/edit/'} 
               className="btn btn-primary">
                 Edit Profile
             </a>

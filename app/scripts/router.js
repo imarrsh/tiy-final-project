@@ -16,8 +16,6 @@ var UserEditProfileContainer = require('./components/userNewEdit.jsx').UserEditP
 var AppRouter = Backbone.Router.extend({
   routes: {
     '': 'index', // home screen/dashboard view
-    'login/': 'login', // login/signup view - user sees this screen if not logged in
-    'logout/': 'logout', // logout - redirect to login
     // user routes
     'user/:id/edit/': 'userNewEdit', // user profile new/edit view
     'user/:id/': 'userDetail', // user profile view
@@ -27,24 +25,50 @@ var AppRouter = Backbone.Router.extend({
     'stories/:id/': 'storyView', // viewing/reading one storyView
     'stories/:id/edit/': 'storyNewEdit', // editing a story - if not concrete yet.
     'stories/:id/contribute/': 'storyContribute', // contributing to stories
-    'stories/:id/contribute/:id/': 'storyContribute' // contributing to stories
+    'stories/:id/contribute/:id/': 'storyContribute', // contributing to stories
+    'logout/': 'logout', // logout - redirect to login
+    'login/': 'login', // login/signup view - user sees this screen if not logged in
   },
 
-  checkUser: function(){
+  // checkUser: function(){
+
+  //   var user = User.current();
+
+  //   if (!user.get('sessionToken')){
+  //     console.log('token is', user.get('sessionToken'));
+  //     Backbone.history.navigate('login/', {trigger: true});
+  //     // window.location.assign('#login/'); // vanilla js
+  //   }
+
+  // },
+
+  execute: function(callback, args, name){
+    console.log('execute');
+
+    // this.checkUser();
     var user = User.current();
 
     if (!user.get('sessionToken')){
-      console.log('hey, token is ', user.get('sessionToken'));
-      // this.navigate();
-      // router.navigate wouldnt work
-      window.location.assign('#login/');
+      console.log('token is', user.get('sessionToken'));
+      this.navigate('login/', {trigger: true});
+      // window.location.assign('#login/'); // vanilla js
     }
 
-    return user;
+    return Backbone.Router.prototype
+      .execute.call(this, callback, args, name);
   },
 
   initialize: function(){
-    var user = this.checkUser();
+    // var that = this;
+    var user = User.current() || {}; // fill user up with user model
+
+    // this.checkUser(user.get('sessionToken'));
+
+    // , function() {
+    //   that.navigate('login/', {trigger: true});
+    // });
+
+    // this.navigate('login/', {trigger: true})
 
     // console.log('token',user);
     // var self = this;
@@ -52,11 +76,15 @@ var AppRouter = Backbone.Router.extend({
     //   console.log('hey, token is ', user.get('sessionToken'));
     //  this.navigate('login/', {trigger: true});
     // }
+    // console.log('about to set headers!');
+
     parseHeaders('mtparseserver', 'thompson1', user.get('sessionToken'));
+
   },
 
   index: function(){
-    console.log('index route');
+
+    // console.log('index route');
     ReactDOM.render(
       React.createElement(HomeContainer, { router: this }),
       document.getElementById('app')

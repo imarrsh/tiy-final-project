@@ -92,7 +92,11 @@ var LoginContainer = React.createClass({
 
   handleSignUp: function (e) {
     e.preventDefault();
-    console.log('handleSignUp');
+    User.signUp(this.state, user => {
+      
+      this.props.router
+        .navigate('user/' + user.get('objectId') + '/edit/' , {trigger: true});
+    })
   },
 
   render: function(){
@@ -102,9 +106,9 @@ var LoginContainer = React.createClass({
         <ContainerRow>
           <LoginFormWrapper>
 
-            <LoginForm onSubmit={this.handleLogIn} onChange={this.handleChange}/>
+            <LoginForm onSubmit={this.handleLogIn} onChange={this.handleChange} />
 
-            <SignUpForm onSubmit={this.handleSignUp} />
+            <SignUpForm onSubmit={this.handleSignUp} onChange={this.handleChange} />
 
           </LoginFormWrapper>
         </ContainerRow>

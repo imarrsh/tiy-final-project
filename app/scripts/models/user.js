@@ -4,6 +4,10 @@ var router = require('../router');
 // parse layer
 var ParseModel = require('./parseSetup').ParseModel;
 var ParseCollection = require('./parseSetup').ParseCollection;
+
+// file uploads
+var FileModel = require('./file').FileModel;
+
 // headers
 var parseHeaders = require('../parseUtils').parseHeaders;
 
@@ -22,6 +26,7 @@ var ParseUser = ParseModel.extend({
   // class methods go here, if any
 });
 
+
 var User = ParseUser.extend({
 
   urlRoot: 'https://mt-parse-server.herokuapp.com/users',
@@ -38,7 +43,25 @@ var User = ParseUser.extend({
       localStorage.setItem('user', JSON.stringify(this.toJSON()));
       callback();
     });
+  },
+
+  updateAvatar: function(file){
+    var img = new FileModel();
+
+    // img.prepare(file).save();
+    img.prepare(file)
+      .save().then(resp => {
+        // now that the image has been saved,
+        // set the file pointer on the user profile
+        this.setFile('profileImage', resp.name, resp.url)
+          .save().then(function(response){
+            console.log('updateAvatar', response);
+          });
+      });
   }
+
+  // url: "http://mt-parse-server.herokuapp.com/files/mtparse…33c22822338559820784359a_ocozzio-picture-day3.jpg", 
+  // name: "069c7d2e33c22822338559820784359a_ocozzio-picture-day3.jpg"
 
 }, {
   // class methods
@@ -85,8 +108,11 @@ var User = ParseUser.extend({
 
     user.save(userCredentials)
       .then(function(response){
+        user.auth();   
         // console.log(response);
-        localStorage.setItem('user', JSON.stringify());
+        localStorage.setItem('user', JSON.stringify(user.toJSON()));
+
+        callback(user);
       });
 
   },

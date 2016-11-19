@@ -14,32 +14,30 @@ var UserProfileImageForm = React.createClass({
     }
   },
 
-  handleImageUpload: function(e){
+  handleImageClick: function(e){
     // console.log(e.target);
     this.refs.profileImg.click();
   },
 
   handleChange: function(e){
-    // fire off an async upload event!
-    this.handleAutoSubmit(e);
-  },
-
-  handleAutoSubmit: function(e){
-    // e.preventDefault();
-    console.log('autoSubmitTriggered');
+    // get the file that was just added
+    var file = e.target.files[0];
+    // send up to parent component 
+    this.props.imageUpdate(file);
   },
 
   render: function(){
     var user = this.props.user;
     return(
       <figure className="user-profile-avatar">
-        <div className="user-avatar" onClick={this.handleImageUpload}>
-          <img src={user.avatar || "http://placehold.it/150x150"} 
+        <div className="user-avatar" onClick={this.handleImageClick}>
+          <img src={user.profileImage.url || "http://placehold.it/150x150"} 
             alt={user.alias || 'Profile Picture'} />
         </div>
 
         <form encType="multipart/form-data">
-          <input onChange={this.handleChange} ref="profileImg" type="file" name="profileImg" />
+          <input onChange={this.handleChange} ref="profileImg" 
+            type="file" name="profileImg" />
         </form>
 
       </figure>
@@ -98,6 +96,13 @@ var UserEditProfileContainer = React.createClass({
     window.history.back(); // just go back!
   },
 
+  // image upload handler
+  handleImageAutoUpload: function(file){
+    var user = this.state.user;
+    // pass file to user model method
+    user.updateAvatar(file);
+  },
+
   render: function (){
     var user = this.state.user.toJSON();
     return(
@@ -106,7 +111,7 @@ var UserEditProfileContainer = React.createClass({
           <AppHeaderMain />
           <div>
 
-            <UserProfileImageForm user={user} />
+            <UserProfileImageForm user={user} imageUpdate={this.handleImageAutoUpload}/>
 
             <form onSubmit={this.handleSubmit} >
 
