@@ -52,20 +52,62 @@ var HomeContainer = React.createClass({
   
   getInitialState: function(){
     return {
-      storyCollection: new StoryCollection()
+      userStoryCollection: new StoryCollection(),
+      othersStoryCollection: new StoryCollection()
     }
   },
 
   componentWillMount: function(){
-    var storyCollection = this.state.storyCollection
+    this.fetchUserStories();
+    this.fetchOthersStories();
+  },
+
+  fetchUserStories: function(){
+    var storyCollection = this.state.userStoryCollection
     , user = User.current();
     
     storyCollection
-      .parseWhere('owner', user.get('objectId'), '_User')
+      .parseQuery('owner', user.get('objectId'), "_User")
       .fetch()
       .then(response => {
-        this.setState({storyCollection: storyCollection});
+        this.setState({userStoryCollection: storyCollection});
       });
+      // .parseQuery('where', 'owner', '!equals', user.get('objectId'))
+  },
+
+  fetchOthersStories: function(){
+    var storyCollection = this.state.othersStoryCollection
+    , user = User.current();
+    
+    storyCollection
+      .cQuery('where', 'owner', {
+        $notInQuery: {
+          where: {
+            objectId: user.get('objectId')
+          },
+          className: "_User"
+        }
+      })
+      .fetch()
+      .then(response => {
+        console.log(response.results);
+        this.setState({othersStoryCollection: storyCollection});
+        console.log(this.state)
+      });
+      // .parseQuery('where', 'owner', user.get('objectId'))
+
+  // 'where={
+  //   "post": {
+  //     "$inQuery":{
+  //       "where":{
+  //         "image":{
+  //           "$exists":true
+  //         }
+  //       },
+  //       "className":"Post"
+  //     }
+  //   }
+  // }'
 
   },
 
@@ -81,8 +123,8 @@ var HomeContainer = React.createClass({
             <h2>Hi {currentUser.get('firstName')}!</h2>
           </div>
           <div className="my-stories">
-            <UserStoryList stories={this.state.storyCollection}/>
-            <OthersStoryList stories={this.state.storyCollection}/>
+            <UserStoryList stories={this.state.userStoryCollection}/>
+            <OthersStoryList stories={this.state.othersStoryCollection}/>
           </div>
         </ContainerRow>
       </AppWrapper>

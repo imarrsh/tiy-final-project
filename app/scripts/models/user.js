@@ -55,7 +55,7 @@ var User = ParseUser.extend({
         // set the file pointer on the user profile
         this.setFile('avatar', resp.name, resp.url)
           .save().then(function(response){
-            console.log('updateAvatar', response);
+            // console.log('updateAvatar', response);
           });
       });
   }

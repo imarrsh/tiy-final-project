@@ -48,7 +48,7 @@ var StoryReadContainer = React.createClass({
 
 
     contributions
-      .parseWhere('story', story.get('objectId'), 'Story')
+      .parseQuery('story', story.get('objectId'), 'Story')
       .fetch()
       .then(() => {
         story.set('contributions', contributions);

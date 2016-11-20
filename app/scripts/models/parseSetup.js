@@ -30,9 +30,29 @@ var ParseModel = Backbone.Model.extend({
 
 var ParseCollection = Backbone.Collection.extend({
   // collection layer to handle the parse server
-  parseWhere: function(field, objectId, className){
-    this.clause = encodeURI('?where={"' + field + '":{"objectId":"' + objectId +
-        '","__type":"Pointer","className":"' + className + '"}}');
+  // (clause, field, objectId, className)
+  cQuery: function(param, field, options){
+    var query = {
+      [field]: options
+    };
+
+    this.constraint = encodeURI('?' + param + '=' + JSON.stringify(query));
+    return this;
+  },
+
+  parseQuery: function(field, objectId, className){
+    // this.clause = encodeURI('?' + constraints + '={"' + field + '":{"objectId":"' + objectId +
+    //     '","__type":"Pointer","className":"' + className + '"}}');
+    var query = {
+      [field]: {
+        objectId: objectId,
+        className: className,
+        __type: 'Pointer'
+      }
+    };
+
+    // console.log(query, JSON.stringify(query));
+    this.clause = encodeURI('?where=' + JSON.stringify(query));
 
     return this;
   },
@@ -42,6 +62,8 @@ var ParseCollection = Backbone.Collection.extend({
 
     if (this.clause) {
       url += this.clause;
+    } else if (this.constraint) {
+      url += this.constraint;
     }
 
     return url;
