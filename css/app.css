@@ -252,8 +252,8 @@ th {
     border: 1px solid #ddd !important; } }
 @font-face {
   font-family: 'Glyphicons Halflings';
-  src: url("../fonts/bootstrap/glyphicons-halflings-regular.eot");
-  src: url("../fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"), url("../fonts/bootstrap/glyphicons-halflings-regular.woff2") format("woff2"), url("../fonts/bootstrap/glyphicons-halflings-regular.woff") format("woff"), url("../fonts/bootstrap/glyphicons-halflings-regular.ttf") format("truetype"), url("../fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons_halflingsregular") format("svg"); }
+  src: url("../../node_modules/bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.eot");
+  src: url("../../node_modules/bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"), url("../../node_modules/bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.woff2") format("woff2"), url("../../node_modules/bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.woff") format("woff"), url("../../node_modules/bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.ttf") format("truetype"), url("../../node_modules/bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons_halflingsregular") format("svg"); }
 .glyphicon {
   position: relative;
   top: 1px;
@@ -5767,9 +5767,42 @@ img {
   max-width: 100%; }
 
 .user-avatar {
+  position: relative;
   width: 150px;
   height: 150px;
   border-radius: 50%;
   overflow: hidden;
-  cursor: pointer; }
+  z-index: 1; }
+  .user-avatar .edit {
+    cursor: pointer; }
+    .user-avatar .edit img {
+      -webkit-transition: -webkit-filter 200ms ease-in-out;
+      transition: -webkit-filter 200ms ease-in-out;
+      transition: filter 200ms ease-in-out;
+      transition: filter 200ms ease-in-out, -webkit-filter 200ms ease-in-out; }
+    .user-avatar .edit:after {
+      font-family: "Glyphicons Halflings";
+      content: "\e046";
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 54px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-48%, 120%);
+              transform: translate(-48%, 120%);
+      -webkit-transition: -webkit-transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms;
+      transition: -webkit-transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms;
+      transition: transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms;
+      transition: transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms, -webkit-transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms; }
+  .user-avatar:hover .edit:after {
+    -webkit-transition: -webkit-transform 200ms cubic-bezier(0.57, -0.01, 0.13, 1.25) 200ms;
+    transition: -webkit-transform 200ms cubic-bezier(0.57, -0.01, 0.13, 1.25) 200ms;
+    transition: transform 200ms cubic-bezier(0.57, -0.01, 0.13, 1.25) 200ms;
+    transition: transform 200ms cubic-bezier(0.57, -0.01, 0.13, 1.25) 200ms, -webkit-transform 200ms cubic-bezier(0.57, -0.01, 0.13, 1.25) 200ms;
+    -webkit-transform: translate(-48%, -53%);
+            transform: translate(-48%, -53%); }
+  .user-avatar:hover .edit img {
+    -webkit-filter: saturate(120%) blur(5px) brightness(0.5);
+            filter: saturate(120%) blur(5px) brightness(0.5); }
+
 /*# sourceMappingURL=app.css.map */

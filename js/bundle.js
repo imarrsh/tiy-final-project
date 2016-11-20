@@ -13,19 +13,41 @@ var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
 
 
 
-var StoriesList = React.createClass({displayName: "StoriesList",
+var UserStoryList = React.createClass({displayName: "UserStoryList",
   render: function(){
     return(
       React.createElement("div", {className: "list-group"}, 
+        React.createElement("h3", null, "Your Stories"), 
         this.props.stories.map(function(story){
           return(
-            React.createElement("a", {href: '#stories/' + story.get('objectId') + '/', key: story.get('objectId'), className: "list-group-item"}, story.get('title'))
+            React.createElement("a", {href: '#stories/' + story.get('objectId') + '/', 
+              key: story.get('objectId'), className: "list-group-item"}, 
+              story.get('title')
+            )
           )
         })
       )
     );
   }
 });
+
+var OthersStoryList = React.createClass({displayName: "OthersStoryList",
+  render: function(){
+    return(
+      React.createElement("div", {className: "list-group"}, 
+        React.createElement("h3", null, "Other Stories"), 
+        this.props.stories.map(function(story){
+          return(
+            React.createElement("a", {href: '#stories/' + story.get('objectId') + '/', 
+              key: story.get('objectId'), className: "list-group-item"}, 
+              story.get('title')
+            )
+          )
+        })
+      )
+    );
+  }
+})
 
 
 var HomeContainer = React.createClass({displayName: "HomeContainer",
@@ -61,7 +83,8 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
             React.createElement("h2", null, "Hi ", currentUser.get('firstName'), "!")
           ), 
           React.createElement("div", {className: "my-stories"}, 
-            React.createElement(StoriesList, {stories: this.state.storyCollection})
+            React.createElement(UserStoryList, {stories: this.state.storyCollection}), 
+            React.createElement(OthersStoryList, {stories: this.state.storyCollection})
           )
         )
       )
@@ -730,7 +753,7 @@ var UserDetailContainer = React.createClass({displayName: "UserDetailContainer",
 
           React.createElement("figure", {className: "user-profile-avatar"}, 
             React.createElement("div", {className: "user-avatar"}, 
-              React.createElement("img", {src: user.get('profileImage').url || "http://placehold.it/250x250", 
+              React.createElement("img", {src: user.get('avatar') ? user.get('avatar').url : "http://placehold.it/250x250", 
                 alt: user.get('alias') || 'Profile Picture'})
             ), 
             React.createElement("figcaption", null, 
@@ -799,8 +822,10 @@ var UserProfileImageForm = React.createClass({displayName: "UserProfileImageForm
     return(
       React.createElement("figure", {className: "user-profile-avatar"}, 
         React.createElement("div", {className: "user-avatar", onClick: this.handleImageClick}, 
-          React.createElement("img", {src: user.profileImage.url || "http://placehold.it/150x150", 
-            alt: user.alias || 'Profile Picture'})
+          React.createElement("div", {className: "edit"}, 
+            React.createElement("img", {src: user.avatar ? user.avatar.url : "http://placehold.it/150x150", 
+              alt: user.alias || 'Profile Picture'})
+          )
         ), 
 
         React.createElement("form", {encType: "multipart/form-data"}, 
@@ -1189,7 +1214,7 @@ var User = ParseUser.extend({
       .save().then(resp => {
         // now that the image has been saved,
         // set the file pointer on the user profile
-        this.setFile('profileImage', resp.name, resp.url)
+        this.setFile('avatar', resp.name, resp.url)
           .save().then(function(response){
             console.log('updateAvatar', response);
           });
