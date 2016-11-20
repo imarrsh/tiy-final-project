@@ -53,7 +53,7 @@ var User = ParseUser.extend({
       .save().then(resp => {
         // now that the image has been saved,
         // set the file pointer on the user profile
-        this.setFile('profileImage', resp.name, resp.url)
+        this.setFile('avatar', resp.name, resp.url)
           .save().then(function(response){
             console.log('updateAvatar', response);
           });

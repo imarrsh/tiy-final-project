@@ -11,19 +11,41 @@ var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
 
 
 
-var StoriesList = React.createClass({
+var UserStoryList = React.createClass({
   render: function(){
     return(
       <div className="list-group">
+        <h3>Your Stories</h3>
         {this.props.stories.map(function(story){
           return(
-            <a href={'#stories/' + story.get('objectId') + '/'} key={story.get('objectId')} className="list-group-item">{story.get('title')}</a>
+            <a href={'#stories/' + story.get('objectId') + '/'} 
+              key={story.get('objectId')} className="list-group-item">
+              {story.get('title')}
+            </a>
           )
         })}
       </div>
     );
   }
 });
+
+var OthersStoryList = React.createClass({
+  render: function(){
+    return(
+      <div className="list-group">
+        <h3>Other Stories</h3>
+        {this.props.stories.map(function(story){
+          return(
+            <a href={'#stories/' + story.get('objectId') + '/'} 
+              key={story.get('objectId')} className="list-group-item">
+              {story.get('title')}
+            </a>
+          )
+        })}
+      </div>
+    );
+  }
+})
 
 
 var HomeContainer = React.createClass({
@@ -59,7 +81,8 @@ var HomeContainer = React.createClass({
             <h2>Hi {currentUser.get('firstName')}!</h2>
           </div>
           <div className="my-stories">
-            <StoriesList stories={this.state.storyCollection}/>
+            <UserStoryList stories={this.state.storyCollection}/>
+            <OthersStoryList stories={this.state.storyCollection}/>
           </div>
         </ContainerRow>
       </AppWrapper>

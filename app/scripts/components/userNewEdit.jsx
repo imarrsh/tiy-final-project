@@ -31,8 +31,10 @@ var UserProfileImageForm = React.createClass({
     return(
       <figure className="user-profile-avatar">
         <div className="user-avatar" onClick={this.handleImageClick}>
-          <img src={user.profileImage.url || "http://placehold.it/150x150"} 
-            alt={user.alias || 'Profile Picture'} />
+          <div className="edit">
+            <img src={user.avatar ? user.avatar.url : "http://placehold.it/150x150"} 
+              alt={user.alias || 'Profile Picture'} />
+          </div>
         </div>
 
         <form encType="multipart/form-data">

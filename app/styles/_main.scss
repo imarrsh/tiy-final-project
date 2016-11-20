@@ -9,9 +9,38 @@ img {
 }
 
 .user-avatar {
+  position: relative;
   width: 150px;
   height: 150px;
   border-radius: 50%;
   overflow: hidden;
-  cursor: pointer;
+  z-index: 1;
+  .edit {
+    cursor: pointer;
+    img {
+      transition: filter 200ms ease-in-out;
+    }
+    &:after {
+      font-family: "Glyphicons Halflings";
+      content: "\e046";
+      color: rgba(255,255,255,0.95);
+      font-size: 54px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-48%, 120%);
+      transition: transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms
+    }
+  }
+  &:hover {
+    .edit {
+      &:after {
+        transition: transform 200ms cubic-bezier(0.57,-0.01, 0.13, 1.25) 200ms;
+        transform: translate(-48%, -53%);
+      }
+      img {
+        filter: saturate(120%) blur(5px) brightness(0.5);
+      }
+    }
+  }
 }

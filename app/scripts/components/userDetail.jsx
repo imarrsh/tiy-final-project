@@ -48,7 +48,7 @@ var UserDetailContainer = React.createClass({
 
           <figure className="user-profile-avatar">
             <div className="user-avatar">
-              <img src={user.get('profileImage').url || "http://placehold.it/250x250"} 
+              <img src={user.get('avatar') ? user.get('avatar').url : "http://placehold.it/250x250"} 
                 alt={user.get('alias') || 'Profile Picture'} />
             </div>
             <figcaption>
