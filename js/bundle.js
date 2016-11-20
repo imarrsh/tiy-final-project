@@ -54,20 +54,62 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
   
   getInitialState: function(){
     return {
-      storyCollection: new StoryCollection()
+      userStoryCollection: new StoryCollection(),
+      othersStoryCollection: new StoryCollection()
     }
   },
 
   componentWillMount: function(){
-    var storyCollection = this.state.storyCollection
+    this.fetchUserStories();
+    this.fetchOthersStories();
+  },
+
+  fetchUserStories: function(){
+    var storyCollection = this.state.userStoryCollection
     , user = User.current();
     
     storyCollection
-      .parseWhere('owner', user.get('objectId'), '_User')
+      .parseQuery('owner', user.get('objectId'), "_User")
       .fetch()
       .then(response => {
-        this.setState({storyCollection: storyCollection});
+        this.setState({userStoryCollection: storyCollection});
       });
+      // .parseQuery('where', 'owner', '!equals', user.get('objectId'))
+  },
+
+  fetchOthersStories: function(){
+    var storyCollection = this.state.othersStoryCollection
+    , user = User.current();
+    
+    storyCollection
+      .cQuery('where', 'owner', {
+        $notInQuery: {
+          where: {
+            objectId: user.get('objectId')
+          },
+          className: "_User"
+        }
+      })
+      .fetch()
+      .then(response => {
+        console.log(response.results);
+        this.setState({othersStoryCollection: storyCollection});
+        console.log(this.state)
+      });
+      // .parseQuery('where', 'owner', user.get('objectId'))
+
+  // 'where={
+  //   "post": {
+  //     "$inQuery":{
+  //       "where":{
+  //         "image":{
+  //           "$exists":true
+  //         }
+  //       },
+  //       "className":"Post"
+  //     }
+  //   }
+  // }'
 
   },
 
@@ -83,8 +125,8 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
             React.createElement("h2", null, "Hi ", currentUser.get('firstName'), "!")
           ), 
           React.createElement("div", {className: "my-stories"}, 
-            React.createElement(UserStoryList, {stories: this.state.storyCollection}), 
-            React.createElement(OthersStoryList, {stories: this.state.storyCollection})
+            React.createElement(UserStoryList, {stories: this.state.userStoryCollection}), 
+            React.createElement(OthersStoryList, {stories: this.state.othersStoryCollection})
           )
         )
       )
@@ -355,7 +397,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
 
 
     contributions
-      .parseWhere('story', story.get('objectId'), 'Story')
+      .parseQuery('story', story.get('objectId'), 'Story')
       .fetch()
       .then(() => {
         story.set('contributions', contributions);
@@ -1091,9 +1133,29 @@ var ParseModel = Backbone.Model.extend({
 
 var ParseCollection = Backbone.Collection.extend({
   // collection layer to handle the parse server
-  parseWhere: function(field, objectId, className){
-    this.clause = encodeURI('?where={"' + field + '":{"objectId":"' + objectId +
-        '","__type":"Pointer","className":"' + className + '"}}');
+  // (clause, field, objectId, className)
+  cQuery: function(param, field, options){
+    var query = {
+      [field]: options
+    };
+
+    this.constraint = encodeURI('?' + param + '=' + JSON.stringify(query));
+    return this;
+  },
+
+  parseQuery: function(field, objectId, className){
+    // this.clause = encodeURI('?' + constraints + '={"' + field + '":{"objectId":"' + objectId +
+    //     '","__type":"Pointer","className":"' + className + '"}}');
+    var query = {
+      [field]: {
+        objectId: objectId,
+        className: className,
+        __type: 'Pointer'
+      }
+    };
+
+    // console.log(query, JSON.stringify(query));
+    this.clause = encodeURI('?where=' + JSON.stringify(query));
 
     return this;
   },
@@ -1103,6 +1165,8 @@ var ParseCollection = Backbone.Collection.extend({
 
     if (this.clause) {
       url += this.clause;
+    } else if (this.constraint) {
+      url += this.constraint;
     }
 
     return url;
@@ -1216,7 +1280,7 @@ var User = ParseUser.extend({
         // set the file pointer on the user profile
         this.setFile('avatar', resp.name, resp.url)
           .save().then(function(response){
-            console.log('updateAvatar', response);
+            // console.log('updateAvatar', response);
           });
       });
   }
