@@ -47,7 +47,26 @@ var OthersStoryList = React.createClass({displayName: "OthersStoryList",
       )
     );
   }
+});
+
+var Experiment = React.createClass({displayName: "Experiment",
+  render: function(){
+    return(
+      React.createElement("div", {className: "list-group"}, 
+        React.createElement("h3", null, "New Query"), 
+        this.props.stories.map(function(story){
+          return(
+            React.createElement("a", {href: '#stories/' + story.get('objectId') + '/', 
+              key: story.get('objectId'), className: "list-group-item"}, 
+              story.get('title')
+            )
+          )
+        })
+      )
+    );
+  }
 })
+
 
 
 var HomeContainer = React.createClass({displayName: "HomeContainer",
@@ -55,13 +74,15 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
   getInitialState: function(){
     return {
       userStoryCollection: new StoryCollection(),
-      othersStoryCollection: new StoryCollection()
+      othersStoryCollection: new StoryCollection(),
+      experimentStoryCollection: new StoryCollection()
     }
   },
 
   componentWillMount: function(){
     this.fetchUserStories();
     this.fetchOthersStories();
+    this.experimental();
   },
 
   fetchUserStories: function(){
@@ -70,11 +91,13 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
     
     storyCollection
       .parseQuery('owner', user.get('objectId'), "_User")
+      .also('include', 'owner.alias')
       .fetch()
       .then(response => {
+        // console.log(response.results);
         this.setState({userStoryCollection: storyCollection});
       });
-      // .parseQuery('where', 'owner', '!equals', user.get('objectId'))
+  
   },
 
   fetchOthersStories: function(){
@@ -92,25 +115,27 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
       })
       .fetch()
       .then(response => {
-        console.log(response.results);
         this.setState({othersStoryCollection: storyCollection});
-        console.log(this.state)
       });
-      // .parseQuery('where', 'owner', user.get('objectId'))
 
-  // 'where={
-  //   "post": {
-  //     "$inQuery":{
-  //       "where":{
-  //         "image":{
-  //           "$exists":true
-  //         }
-  //       },
-  //       "className":"Post"
-  //     }
-  //   }
-  // }'
+  },
 
+  experimental: function(){
+    var storyCollection = this.state.experimentStoryCollection
+    , user = User.current();
+
+    storyCollection
+      .query('where', 'owner')
+        // .field('owner')
+        .meets('objectId', user.get('objectId'))
+        .ofClass('_User')
+        .ofType('Pointer')
+        .endQuery()
+      .fetch()
+      .then(response => {
+        console.log(response.results)
+          this.setState({experimentStoryCollection: storyCollection});
+      });
   },
 
   render: function(){
@@ -126,7 +151,10 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
           ), 
           React.createElement("div", {className: "my-stories"}, 
             React.createElement(UserStoryList, {stories: this.state.userStoryCollection}), 
-            React.createElement(OthersStoryList, {stories: this.state.othersStoryCollection})
+            React.createElement(OthersStoryList, {stories: this.state.othersStoryCollection}), 
+
+            React.createElement(Experiment, {stories: this.state.experimentStoryCollection})
+
           )
         )
       )
@@ -137,6 +165,31 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
 module.exports = {
   HomeContainer: HomeContainer
 }
+
+
+  // experimental ideas & stuff:
+  // .parseQuery('where', 'owner', user.get('objectId'))
+
+  // .query('where', 'owner') // start the query
+  // .meets('objectId', user.get('objectId') // set field contraints
+  // .ofClass('_User') // set the class
+  // .ofType('Pointer') // the the data type
+  // .also('include', 'owner.alias') // also add any other information you'd like
+  // .fetch()
+
+  // parse $inQuery example
+  // 'where={
+  //   "post": {
+  //     "$inQuery":{
+  //       "where":{
+  //         "image":{
+  //           "$exists":true
+  //         }
+  //       },
+  //       "className":"Post"
+  //     }
+  //   }
+  // }'
 
 },{"../models/story":12,"../models/user":13,"./layouts/general.jsx":2,"react":175}],2:[function(require,module,exports){
 "use strict";
@@ -1131,9 +1184,88 @@ var ParseModel = Backbone.Model.extend({
 
 });
 
+var Query = Backbone.Model.extend({});
+
 var ParseCollection = Backbone.Collection.extend({
-  // collection layer to handle the parse server
-  // (clause, field, objectId, className)
+
+  // ##############################################
+  // query tools for parse server:
+  // ##############################################
+
+  // example usage:
+  // .query('where', 'owner') // start the query
+  // .meets('objectId', user.get('objectId') // set field contraints
+  // .ofClass('_User') // set the class
+  // .ofType('Pointer') // the the data type
+  // .also('include', 'owner.alias') // & other contraints or inclusions
+  // queryObject: {},
+  // clause: '',
+
+  query: function(param, field){
+    this.queryField = field;
+    this.queryModel = new Query({ [field]: {} });
+
+    this.newclause = encodeURI('?' + param + '=');
+
+    return this;
+  },
+  // var field = function(name){
+  //   query.set(name, {});
+  //   return this;
+  // };
+
+  meets: function(value, id){
+    var query = this.queryModel
+    , field = this.queryField
+    // get the current state of query
+    , current = query.get(field);
+    
+    // set a new key/value
+    current[value] = id;
+    // update the state of this.queryModel
+    query.set(field, current);
+
+    return this;
+  },
+
+  ofClass: function(className){
+    var query = this.queryModel
+    , field = this.queryField
+    , current = query.get(field);
+
+    current.className = className;
+    query.set(field, current);
+    return this;
+  },
+
+  ofType: function(type){
+    var query = this.queryModel
+    , field = this.queryField
+    , current = query.get(field);
+
+    current.__type = type;
+    query.set(field, current);
+    // console.log(this);
+    return this;
+  },
+
+  // also: function(key, values){
+
+  //   this.extra = '&' + key + '=' + values;
+  //   return this;
+  // },
+   
+  endQuery: function(){
+    var query = JSON.stringify(this.queryModel.toJSON());
+
+    this.newclause += encodeURI(query);
+
+    return this;
+  },
+
+
+  // ############################## end query tools
+
   cQuery: function(param, field, options){
     var query = {
       [field]: options
@@ -1143,9 +1275,7 @@ var ParseCollection = Backbone.Collection.extend({
     return this;
   },
 
-  parseQuery: function(field, objectId, className){
-    // this.clause = encodeURI('?' + constraints + '={"' + field + '":{"objectId":"' + objectId +
-    //     '","__type":"Pointer","className":"' + className + '"}}');
+  parseQuery: function(field, objectId, className, options){
     var query = {
       [field]: {
         objectId: objectId,
@@ -1160,13 +1290,28 @@ var ParseCollection = Backbone.Collection.extend({
     return this;
   },
 
+  also: function(key, values){
+    this.extra = '&' + key + '=' + values;
+    return this;
+  },
+
   url: function(){
     var url = this.baseURL;
 
     if (this.clause) {
       url += this.clause;
-    } else if (this.constraint) {
+    }
+
+    if (this.constraint) {
       url += this.constraint;
+    }
+
+    if (this.extra){
+      url += this.extra;
+    }
+
+    if (this.newclause){
+      url += this.newclause;
     }
 
     return url;
