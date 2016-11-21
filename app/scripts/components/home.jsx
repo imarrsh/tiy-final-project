@@ -140,6 +140,10 @@ var HomeContainer = React.createClass({
   //       console.log(response.results)
   //         this.setState({experimentStoryCollection: storyCollection});
   //     });
+  //     
+  //     // inner query could interrupt the chain
+  //     .innerQuery('$notInQuery', 'where')
+  //     
   // },
 
   render: function(){

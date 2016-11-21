@@ -55,7 +55,7 @@ var ParseCollection = Backbone.Collection.extend({
 
     return this;
   },
-  
+
   extra: '',
   also: function(key, values){
     this.extra += '&' + key + '=' + values;
@@ -88,9 +88,10 @@ var ParseCollection = Backbone.Collection.extend({
 
   // ##############################################
   // query tools for parse server:
+  // NOT READY FOR PRODUCTION!!
   // ##############################################
 
-  // example usage:
+  // example of desired usage:
   // .query('where', 'owner') // start the query
   // .meets('objectId', user.get('objectId') // set field contraints
   // .ofClass('_User') // set the class

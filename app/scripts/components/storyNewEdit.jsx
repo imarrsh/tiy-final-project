@@ -1,5 +1,5 @@
 
-var $ = require('jquery'); // use jquery for demoing the api request
+// var $ = require('jquery'); // use jquery for demoing the api request
 var React = require('react');
 var User = require('../models/user').User;
 var Story = require('../models/story').Story;
@@ -111,7 +111,7 @@ var StoryCreateContainer = React.createClass({
         <ContainerRow>
 
           <div>
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleSubmit} name="checkform">
               <input onChange={this.handleTitleChange} type="text" name="title" className="form-control" 
                 placeholder="Your Story Title" />
 

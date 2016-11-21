@@ -14,9 +14,12 @@ var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
 var ContributorListItem = React.createClass({
   render: function(){
     var contributor = this.props.contributor;
+    var avatar = contributor.get('avatar') ? 
+      contributor.get('avatar').url  : 'https://placehold.it/100';
+
     return(
       <span>
-        <img src={contributor.get('avatar').url} 
+        <img src={avatar} 
           alt={contributor.get('alias')}
         /> 
         {contributor.get('alias')} 
@@ -109,19 +112,19 @@ var StoryReadContainer = React.createClass({
             </div>
 
             <Footer contributions={contributions}/>
-            <footer className="story-footer">
-              {contributions.map(function(contribution){
-                // console.log(contributor);
-                return(
-                  <span key={contributor.get('objectId') + contribution.get('objectId')}>
-                    <img src={contributor.get('avatar').url} 
-                      alt={contributor.get('alias')}
-                    /> 
-                    {contributor.get('alias')} 
-                  </span>
-                );
-              })}
-            </footer>
+            {/*<footer className="story-footer">
+                {contributions.map(function(contribution){
+                  // console.log(contributor);
+                  return(
+                    <span key={contributor.get('objectId') + contribution.get('objectId')}>
+                      <img src={contributor.get('avatar').url} 
+                        alt={contributor.get('alias')}
+                      /> 
+                      {contributor.get('alias')} 
+                    </span>
+                  );
+                })}
+              </footer> */}
 
           </div>
         </ContainerRow>
