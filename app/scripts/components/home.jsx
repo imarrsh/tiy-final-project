@@ -95,6 +95,7 @@ var HomeContainer = React.createClass({
     storyCollection
       .parseQuery('owner', user.get('objectId'), "_User")
       .also('include', 'owner.alias')
+      .also('order', '-createdAt')
       .fetch()
       .then(response => {
         console.log(response.results);
@@ -116,6 +117,7 @@ var HomeContainer = React.createClass({
           className: "_User"
         }
       })
+      .also('include', 'owner.alias')
       .fetch()
       .then(response => {
         this.setState({othersStoryCollection: storyCollection});

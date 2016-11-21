@@ -4,11 +4,11 @@ var ParseModel = require('./parseSetup').ParseModel;
 var ParseCollection = require('./parseSetup').ParseCollection;
 
 var Contribution = ParseModel.extend({
-  defaults: {
-    user: 'anon',
-    content: '',
-    order: 0
-  },
+  // defaults: {
+  //   user: 'anon',
+  //   content: '',
+  //   order: 0
+  // },
 
   urlRoot: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution',
 

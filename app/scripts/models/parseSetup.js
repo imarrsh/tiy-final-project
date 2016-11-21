@@ -55,9 +55,10 @@ var ParseCollection = Backbone.Collection.extend({
 
     return this;
   },
-
+  
+  extra: '',
   also: function(key, values){
-    this.extra = '&' + key + '=' + values;
+    this.extra += '&' + key + '=' + values;
     return this;
   },
 
