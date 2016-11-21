@@ -45,7 +45,26 @@ var OthersStoryList = React.createClass({
       </div>
     );
   }
+});
+
+var Experiment = React.createClass({
+  render: function(){
+    return(
+      <div className="list-group">
+        <h3>New Query</h3>
+        {this.props.stories.map(function(story){
+          return(
+            <a href={'#stories/' + story.get('objectId') + '/'} 
+              key={story.get('objectId')} className="list-group-item">
+              {story.get('title')}
+            </a>
+          )
+        })}
+      </div>
+    );
+  }
 })
+
 
 
 var HomeContainer = React.createClass({
@@ -53,13 +72,15 @@ var HomeContainer = React.createClass({
   getInitialState: function(){
     return {
       userStoryCollection: new StoryCollection(),
-      othersStoryCollection: new StoryCollection()
+      othersStoryCollection: new StoryCollection(),
+      experimentStoryCollection: new StoryCollection()
     }
   },
 
   componentWillMount: function(){
     this.fetchUserStories();
     this.fetchOthersStories();
+    this.experimental();
   },
 
   fetchUserStories: function(){
@@ -68,11 +89,13 @@ var HomeContainer = React.createClass({
     
     storyCollection
       .parseQuery('owner', user.get('objectId'), "_User")
+      .also('include', 'owner.alias')
       .fetch()
       .then(response => {
+        // console.log(response.results);
         this.setState({userStoryCollection: storyCollection});
       });
-      // .parseQuery('where', 'owner', '!equals', user.get('objectId'))
+  
   },
 
   fetchOthersStories: function(){
@@ -90,25 +113,27 @@ var HomeContainer = React.createClass({
       })
       .fetch()
       .then(response => {
-        console.log(response.results);
         this.setState({othersStoryCollection: storyCollection});
-        console.log(this.state)
       });
-      // .parseQuery('where', 'owner', user.get('objectId'))
 
-  // 'where={
-  //   "post": {
-  //     "$inQuery":{
-  //       "where":{
-  //         "image":{
-  //           "$exists":true
-  //         }
-  //       },
-  //       "className":"Post"
-  //     }
-  //   }
-  // }'
+  },
 
+  experimental: function(){
+    var storyCollection = this.state.experimentStoryCollection
+    , user = User.current();
+
+    storyCollection
+      .query('where', 'owner')
+        // .field('owner')
+        .meets('objectId', user.get('objectId'))
+        .ofClass('_User')
+        .ofType('Pointer')
+        .endQuery()
+      .fetch()
+      .then(response => {
+        console.log(response.results)
+          this.setState({experimentStoryCollection: storyCollection});
+      });
   },
 
   render: function(){
@@ -125,6 +150,9 @@ var HomeContainer = React.createClass({
           <div className="my-stories">
             <UserStoryList stories={this.state.userStoryCollection}/>
             <OthersStoryList stories={this.state.othersStoryCollection}/>
+
+            <Experiment stories={this.state.experimentStoryCollection}/>
+
           </div>
         </ContainerRow>
       </AppWrapper>
@@ -135,3 +163,28 @@ var HomeContainer = React.createClass({
 module.exports = {
   HomeContainer: HomeContainer
 }
+
+
+  // experimental ideas & stuff:
+  // .parseQuery('where', 'owner', user.get('objectId'))
+
+  // .query('where', 'owner') // start the query
+  // .meets('objectId', user.get('objectId') // set field contraints
+  // .ofClass('_User') // set the class
+  // .ofType('Pointer') // the the data type
+  // .also('include', 'owner.alias') // also add any other information you'd like
+  // .fetch()
+
+  // parse $inQuery example
+  // 'where={
+  //   "post": {
+  //     "$inQuery":{
+  //       "where":{
+  //         "image":{
+  //           "$exists":true
+  //         }
+  //       },
+  //       "className":"Post"
+  //     }
+  //   }
+  // }'
