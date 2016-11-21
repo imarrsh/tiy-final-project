@@ -9,20 +9,28 @@ var AppWrapper = require('./layouts/general.jsx').AppWrapper;
 var ContainerRow = require('./layouts/general.jsx').ContainerRow;
 var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
 
-
+var StoryListItem = React.createClass({
+  render: function(){
+    var story = this.props.story;
+    return(
+      <a href={'#stories/' + story.get('objectId') + '/'} 
+        className="list-group-item">
+        {story.get('title')} <em>by {story.get('owner').alias}</em>
+      </a>
+    );
+  }
+});
 
 var UserStoryList = React.createClass({
   render: function(){
+
     return(
       <div className="list-group">
         <h3>Your Stories</h3>
         {this.props.stories.map(function(story){
           return(
-            <a href={'#stories/' + story.get('objectId') + '/'} 
-              key={story.get('objectId')} className="list-group-item">
-              {story.get('title')}
-            </a>
-          )
+            <StoryListItem story={story} key={story.get('objectId')}/>
+          );
         })}
       </div>
     );
@@ -36,34 +44,31 @@ var OthersStoryList = React.createClass({
         <h3>Other Stories</h3>
         {this.props.stories.map(function(story){
           return(
-            <a href={'#stories/' + story.get('objectId') + '/'} 
-              key={story.get('objectId')} className="list-group-item">
-              {story.get('title')}
-            </a>
-          )
+            <StoryListItem story={story} key={story.get('objectId')}/>
+          );
         })}
       </div>
     );
   }
 });
 
-var Experiment = React.createClass({
-  render: function(){
-    return(
-      <div className="list-group">
-        <h3>New Query</h3>
-        {this.props.stories.map(function(story){
-          return(
-            <a href={'#stories/' + story.get('objectId') + '/'} 
-              key={story.get('objectId')} className="list-group-item">
-              {story.get('title')}
-            </a>
-          )
-        })}
-      </div>
-    );
-  }
-})
+// var Experiment = React.createClass({
+//   render: function(){
+//     return(
+//       <div className="list-group">
+//         <h3>New Query</h3>
+//         {this.props.stories.map(function(story){
+//           return(
+//             <a href={'#stories/' + story.get('objectId') + '/'} 
+//               key={story.get('objectId')} className="list-group-item">
+//               {story.get('title')}
+//             </a>
+//           )
+//         })}
+//       </div>
+//     );
+//   }
+// })
 
 
 
@@ -71,16 +76,16 @@ var HomeContainer = React.createClass({
   
   getInitialState: function(){
     return {
+      // experimentStoryCollection: new StoryCollection(),
       userStoryCollection: new StoryCollection(),
-      othersStoryCollection: new StoryCollection(),
-      experimentStoryCollection: new StoryCollection()
+      othersStoryCollection: new StoryCollection()
     }
   },
 
   componentWillMount: function(){
     this.fetchUserStories();
     this.fetchOthersStories();
-    this.experimental();
+    // this.experimental();
   },
 
   fetchUserStories: function(){
@@ -92,7 +97,7 @@ var HomeContainer = React.createClass({
       .also('include', 'owner.alias')
       .fetch()
       .then(response => {
-        // console.log(response.results);
+        console.log(response.results);
         this.setState({userStoryCollection: storyCollection});
       });
   
@@ -103,7 +108,7 @@ var HomeContainer = React.createClass({
     , user = User.current();
     
     storyCollection
-      .cQuery('where', 'owner', {
+      .deepQuery('where', 'owner', {
         $notInQuery: {
           where: {
             objectId: user.get('objectId')
@@ -118,23 +123,22 @@ var HomeContainer = React.createClass({
 
   },
 
-  experimental: function(){
-    var storyCollection = this.state.experimentStoryCollection
-    , user = User.current();
+  // experimental: function(){
+  //   var storyCollection = this.state.experimentStoryCollection
+  //   , user = User.current();
 
-    storyCollection
-      .query('where', 'owner')
-        // .field('owner')
-        .meets('objectId', user.get('objectId'))
-        .ofClass('_User')
-        .ofType('Pointer')
-        .endQuery()
-      .fetch()
-      .then(response => {
-        console.log(response.results)
-          this.setState({experimentStoryCollection: storyCollection});
-      });
-  },
+  //   storyCollection
+  //     .query('where', 'owner')
+  //       .meets('objectId', user.get('objectId'))
+  //       .ofClass('_User')
+  //       .ofType('Pointer')
+  //     .endQuery()
+  //     .fetch()
+  //     .then(response => {
+  //       console.log(response.results)
+  //         this.setState({experimentStoryCollection: storyCollection});
+  //     });
+  // },
 
   render: function(){
     var currentUser = User.current();
@@ -151,7 +155,7 @@ var HomeContainer = React.createClass({
             <UserStoryList stories={this.state.userStoryCollection}/>
             <OthersStoryList stories={this.state.othersStoryCollection}/>
 
-            <Experiment stories={this.state.experimentStoryCollection}/>
+            {/* <Experiment stories={this.state.experimentStoryCollection}/> */}
 
           </div>
         </ContainerRow>

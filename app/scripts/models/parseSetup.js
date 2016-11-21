@@ -32,6 +32,59 @@ var Query = Backbone.Model.extend({});
 
 var ParseCollection = Backbone.Collection.extend({
 
+  deepQuery: function(param, field, options){
+    var query = {
+      [field]: options
+    };
+
+    this.constraint = encodeURI('?' + param + '=' + JSON.stringify(query));
+    return this;
+  },
+
+  parseQuery: function(field, objectId, className){
+    var query = {
+      [field]: {
+        objectId: objectId,
+        className: className,
+        __type: 'Pointer'
+      }
+    };
+
+    // console.log(query, JSON.stringify(query));
+    this.clause = encodeURI('?where=' + JSON.stringify(query));
+
+    return this;
+  },
+
+  also: function(key, values){
+    this.extra = '&' + key + '=' + values;
+    return this;
+  },
+
+  url: function(){
+    var url = this.baseURL;
+
+    if (this.clause) {
+      url += this.clause;
+    }
+
+    if (this.constraint) {
+      url += this.constraint;
+    }
+
+    if (this.extra){
+      url += this.extra;
+    }
+
+    // for experiemental queries
+    // if (this.newclause){
+    //   url += this.newclause;
+    // }
+
+    return url;
+  }
+
+
   // ##############################################
   // query tools for parse server:
   // ##############################################
@@ -42,10 +95,8 @@ var ParseCollection = Backbone.Collection.extend({
   // .ofClass('_User') // set the class
   // .ofType('Pointer') // the the data type
   // .also('include', 'owner.alias') // & other contraints or inclusions
-  // queryObject: {},
-  // clause: '',
 
-  query: function(param, field){
+  , query: function(param, field){
     this.queryField = field;
     this.queryModel = new Query({ [field]: {} });
 
@@ -93,12 +144,7 @@ var ParseCollection = Backbone.Collection.extend({
     return this;
   },
 
-  // also: function(key, values){
-
-  //   this.extra = '&' + key + '=' + values;
-  //   return this;
-  // },
-   
+  // also:   
   endQuery: function(){
     var query = JSON.stringify(this.queryModel.toJSON());
 
@@ -108,58 +154,9 @@ var ParseCollection = Backbone.Collection.extend({
   },
 
 
-  // ############################## end query tools
-
-  cQuery: function(param, field, options){
-    var query = {
-      [field]: options
-    };
-
-    this.constraint = encodeURI('?' + param + '=' + JSON.stringify(query));
-    return this;
-  },
-
-  parseQuery: function(field, objectId, className, options){
-    var query = {
-      [field]: {
-        objectId: objectId,
-        className: className,
-        __type: 'Pointer'
-      }
-    };
-
-    // console.log(query, JSON.stringify(query));
-    this.clause = encodeURI('?where=' + JSON.stringify(query));
-
-    return this;
-  },
-
-  also: function(key, values){
-    this.extra = '&' + key + '=' + values;
-    return this;
-  },
-
-  url: function(){
-    var url = this.baseURL;
-
-    if (this.clause) {
-      url += this.clause;
-    }
-
-    if (this.constraint) {
-      url += this.constraint;
-    }
-
-    if (this.extra){
-      url += this.extra;
-    }
-
-    if (this.newclause){
-      url += this.newclause;
-    }
-
-    return url;
-  }
+  // ##############################################
+  // end query tools for parse server:
+  // ##############################################
 
 });
 
