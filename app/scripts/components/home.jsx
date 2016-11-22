@@ -98,7 +98,7 @@ var HomeContainer = React.createClass({
       .also('order', '-createdAt')
       .fetch()
       .then(response => {
-        console.log(response.results);
+        // console.log(response.results);
         this.setState({userStoryCollection: storyCollection});
       });
   

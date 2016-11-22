@@ -17,6 +17,7 @@ var Contribution = require('../models/contribution').Contribution;
 // require('../utilities/editor_plugin.js');
 require('../utilities/editor_plugin2.js');
 
+
 var StoryTitle =  React.createClass({
   getInitialState: function(){
     return {
@@ -33,6 +34,7 @@ var StoryTitle =  React.createClass({
   }
 });
 
+
 var StoryBody = React.createClass({
   getInitialState: function(){
     return {
@@ -41,69 +43,92 @@ var StoryBody = React.createClass({
   },
 
   componentDidMount: function(){
-    // tinyMCE.init({
-    //   mode : "textareas",
-    //   plugins : "AtD,paste",
-    //   paste_text_sticky : true,
-    //   setup : function(ed) {
-    //      ed.onInit.add(function(ed) {
-    //          ed.pasteAsPlainText = true;
-    //      });
-    //   },  
-    //   /* translations: */
-    //   languagetool_i18n_no_errors : {
-    //      // "No errors were found.":
-    //      // "de-DE": "Keine Fehler gefunden."
-    //   },
-    //   languagetool_i18n_explain : {
-    //      // "Explain..." - shown if there is an URL with a detailed description:
-    //      // "de-DE": "Mehr Informationen..."
-    //   },
-    //   languagetool_i18n_ignore_once : {
-    //      // "Ignore this error":
-    //      // "de-DE": "Hier ignorieren"
-    //   },
-    //   languagetool_i18n_ignore_all : {
-    //      // "Ignore this kind of error":
-    //      // "de-DE": "Fehler dieses Typs ignorieren"
-    //   },
-    //   languagetool_i18n_rule_implementation : {
-    //      // "Rule implementation":
-    //      // "de-DE": "Implementierung der Regel"
-    //   },
+    var self = this;
+    tinyMCE.init({
+      mode : "textareas",
+      plugins : "AtD,paste",
+      paste_text_sticky : true,
+      setup : function(ed) {
+        ed.onInit.add(function(ed) {
+          ed.pasteAsPlainText = true;
+        });
+       
+        ed.onChange.add(function(ed, l) {
+          ed.getBody().addEventListener('keydown', self.handleLTEditorChange);
+          console.debug('Editor contents was modified. Contents: ' + l.content);
+        });
 
-    //   languagetool_i18n_current_lang : function() { return 'en_US' },
+      },
+
+      oninit: function(ed){
+        // set an event listener on the editor body
+        // console.log(tinyMCE.activeEditor);
+        console.log('register event')
+        tinyMCE.activeEditor.getBody().addEventListener('keydown', self.props.onChange);
+      },
+
+      /* translations: */
+      languagetool_i18n_no_errors : {
+         // "No errors were found.":
+         // "de-DE": "Keine Fehler gefunden."
+      },
+      languagetool_i18n_explain : {
+         // "Explain..." - shown if there is an URL with a detailed description:
+         // "de-DE": "Mehr Informationen..."
+      },
+      languagetool_i18n_ignore_once : {
+         // "Ignore this error":
+         // "de-DE": "Hier ignorieren"
+      },
+      languagetool_i18n_ignore_all : {
+         // "Ignore this kind of error":
+         // "de-DE": "Fehler dieses Typs ignorieren"
+      },
+      languagetool_i18n_rule_implementation : {
+         // "Rule implementation":
+         // "de-DE": "Implementierung der Regel"
+      },
+
+      languagetool_i18n_current_lang : function() { return 'en_US' },
           
-    //   // The URL of your LanguageTool server.
-    //   // If you use your own server here and it's not running on the same domain 
-    //   // as the text form, make sure the server gets started with '--allow-origin ...' 
-    //   // and use 'https://your-server/v2/check' as URL: 
+      // The URL of your LanguageTool server.
+      // If you use your own server here and it's not running on the same domain 
+      // as the text form, make sure the server gets started with '--allow-origin ...' 
+      // and use 'https://your-server/v2/check' as URL: 
         
-    //   languagetool_rpc_url: "https://languagetool.org/api/v2/check",
-    //   /* edit this file to customize how LanguageTool shows errors: */
-    //   languagetool_css_url:
-    //      "https://www.languagetool.org/online-check/" +
-    //      "tiny_mce/plugins/atd-tinymce/css/content.css",
-    //   /* this stuff is a matter of preference: */
-    //   theme                              : "advanced",
-    //   theme_advanced_buttons1            : "",
-    //   theme_advanced_buttons2            : "",
-    //   theme_advanced_buttons3            : "",
-    //   theme_advanced_toolbar_location    : "none",
-    //   theme_advanced_toolbar_align       : "left",
-    //   theme_advanced_statusbar_location  : "bottom",
-    //   theme_advanced_path                : false,
-    //   theme_advanced_resizing            : true,
-    //   theme_advanced_resizing_use_cookie : false,
-    //   gecko_spellcheck                   : false
-    // });
+      languagetool_rpc_url: "https://languagetool.org/api/v2/check",
+      /* edit this file to customize how LanguageTool shows errors: */
+      languagetool_css_url:
+         "https://www.languagetool.org/online-check/" +
+         "tiny_mce/plugins/atd-tinymce/css/content.css",
+      /* this stuff is a matter of preference: */
+      theme                              : "advanced",
+      theme_advanced_buttons1            : "",
+      theme_advanced_buttons2            : "",
+      theme_advanced_buttons3            : "",
+      theme_advanced_toolbar_location    : "none",
+      theme_advanced_toolbar_align       : "left",
+      theme_advanced_statusbar_location  : "bottom",
+      theme_advanced_path                : false,
+      theme_advanced_resizing            : true,
+      theme_advanced_resizing_use_cookie : false,
+      gecko_spellcheck                   : false
+    });
+
+    // tinyMCE.activeEditor.getBody().addEventListener('keydown', this.handleLTEditorChange);
+
   },
 
   handleLTCheck: function(e){
     e.preventDefault();
-    console.log(tinyMCE.activeEditor);
+    // tinyMCE.activeEditor.getBody().addEventListener('keydown', this.handleLTEditorChange)
+    // console.log(tinyMCE.activeEditor.getBody().addEventListener('change'));
     tinyMCE.activeEditor.execCommand("mceWritingImprovementTool", "en-US");
     return false;
+  },
+
+  handleLTEditorChange: function(e){
+    console.warn(e.target)
   },
 
   // for react-tinymce
@@ -124,20 +149,20 @@ var StoryBody = React.createClass({
         <textarea onChange={this.props.onChange} 
           id="checktext" name="body"
           className="text form-control" rows="6"
-          placeholder="Start typing your amazing story here!">
+          placeholder="Start typing your amazing story here!"
+          defaultValue="Paste your own text here... or check check this text.">
         </textarea>
-
-
-        {/* <textarea onChange={this.props.onChange} className="contribution" 
-          rows="5" className="form-control" 
-          placeholder="Your amazing story body">
-        </textarea> */}
-
+        <button onClick={this.handleLTCheck} 
+          className="btn btn-warning" 
+          name="_action_checkText">
+          Grammar Check
+        </button>
       </div>
 
     );
   }
 });
+
 
 var StoryFormContainer = React.createClass({
   getInitialState: function () {
@@ -163,12 +188,14 @@ var StoryFormContainer = React.createClass({
   },
 
   handleTextChange: function(e){
+    console.log('handleTextChange')
     this.state.contribution
-      .set('content', e.target.value);
+      .set('content', $(e.target).html());
 
     this.setState({
       contribution: this.state.contribution
     });
+    console.log(this.state.contribution);
   },
 
   handleSubmit: function(e){
@@ -178,19 +205,11 @@ var StoryFormContainer = React.createClass({
     , story = this.state.story
     , contribution = this.state.contribution;
 
-    // // log some stately stuff
-    // console.log(
-    //   'submit event,',
-    //   user.get('objectId'), user.get('alias'),
-    //   ',',
-    //   story.get('title'),
-    //   ',', 
-    //   contribution.get('content')
-    // );
-
     // set the story owner pointer
     story.setPointer('owner', '_User', user.get('objectId'));
+    console.warn(story);
     story.save().then(response => {
+      console.warn(response);
       var storyId = response.objectId
       contribution
         .setPointer('contributor', '_User', user.get('objectId'))
@@ -202,26 +221,6 @@ var StoryFormContainer = React.createClass({
         });
 
     });
-    
-    // set the contribution pointer to user and story
-    this.state.contribution
-      .setPointer('contributor', '_User', user.get('objectId'))
-      .setPointer('story', 'Story', story.get('objectId'));
-
-    // pseudo code
-    // model.save().then(response => {
-    //   response.fetch().then(response => {
-    //     model2.save().then(respsonse => {
-
-    //     });
-    //   });
-    // });
-
-
-    // console.log('story model: ', this.state.story);
-    // this.state.story.save();
-
-    // this.contribution.save();
 
   },
 
@@ -240,7 +239,6 @@ var StoryFormContainer = React.createClass({
 
         <button onClick={this.handleGrammarCheck} 
           className="btn btn-warning">Raw API Check</button>
-        {/* <button onClick={this.handleLTCheck} className="btn btn-warning" name="_action_checkText">Grammar Check</button> */}
                   
         <input type="submit" className="btn btn-success" value="Submit"/>
 

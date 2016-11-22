@@ -51,10 +51,11 @@ var StoryFooter = React.createClass({
 var StoryContributuionList = React.createClass({
   render: function(){
     var contributions = this.props.contributions;
+    // console.warn(contributions)
     return(
       <div>
         {contributions.map(function(contribution){
-          console.log(contribution)
+          // console.log(contribution)
           return(
             <section className="contribution" key={contribution.get('objectId')}>
               <Row>
@@ -97,6 +98,12 @@ var StoryReadContainer = React.createClass({
     this.getStory().getContributions();
   },
 
+  componentWillUnmount: function(){
+    // console.warn(this.state.story);
+    // console.warn(this.state.story.get('contributions'));
+    // delete this.state.story;
+  },
+
   getStory: function(){
     var story = this.state.story;
     var storyId = this.props.storyId;
@@ -114,7 +121,6 @@ var StoryReadContainer = React.createClass({
   getContributions: function(){
     var story = this.state.story
     , contributions = story.get('contributions');
-    // console.log('contributions: ',contributions);
 
     contributions
       .parseQuery('story', story.get('objectId'), 'Story')
@@ -123,14 +129,14 @@ var StoryReadContainer = React.createClass({
       .then((response) => {
         // console.log(response.results)
         story.set('contributions', contributions);
-        this.setState({story: story})
+        this.setState({story: story});
       });
 
     return this;
   },
 
   handleContributing: function(){
-    console.log('handle add contribution', this.state.isContributing);
+    // console.log('handle add contribution', this.state.isContributing);
     this.setState({isContributing: !this.state.isContributing});
   },
 
@@ -155,7 +161,7 @@ var StoryReadContainer = React.createClass({
                 Contribute
               </button>
 
-              {isContributing ? <StoryFormContainer /> : null}
+              {isContributing ? <StoryFormContainer thisStory={story.get('objectId')}/> : null}
             
             </div>
           </div>

@@ -14,15 +14,23 @@ var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
 
 
 var StoryCreateContainer = React.createClass({
+  getInitialState: function(){
+    return {
+      story: new Story()
+    }
+  },
 
   render: function(){
-    
+    console.warn(this.state.story.get('contributions'))
     return(
       <AppWrapper>
         <AppHeaderMain />
         <ContainerRow>
 
-          <StoryFormContainer showTitle={true} router={this.props.router}/>
+          <StoryFormContainer 
+            showTitle={true} 
+            router={this.props.router}
+          />
 
         </ContainerRow>
       </AppWrapper>

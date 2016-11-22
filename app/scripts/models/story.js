@@ -17,7 +17,19 @@ var Story = ParseModel.extend({
     contributions: new ContributionCollection()
   },
 
-  urlRoot: 'https://mt-parse-server.herokuapp.com/Classes/Story'
+  urlRoot: 'https://mt-parse-server.herokuapp.com/Classes/Story',
+
+  save: function(key, val, options){
+
+    // prevent from saving a lingering collection
+    // there is likely some sort of leak to take care of
+    // but this solves the problem for now.
+    delete this.attributes.contributions;
+
+    console.log(this, key, val, options);
+
+    return Backbone.Model.prototype.save.call(this, key, val, options);
+  }
 
 });
 
