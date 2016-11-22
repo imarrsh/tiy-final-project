@@ -5,6 +5,9 @@ var User = require('../models/user').User;
 var Story = require('../models/story').Story;
 var Contribution = require('../models/contribution').Contribution;
 
+// var TinyMCE = require('react-tinymce'); // react version of tinymce
+
+
 var ContributionContainer = require('./contribute.jsx').ContributionContainer
 
 
@@ -89,7 +92,7 @@ var StoryCreateContainer = React.createClass({
 
   handleTextChange: function(e){
     var contribution = this.state.contribution;
-
+    console.log(e.target.value)
     contribution.set('content', e.target.value);
     this.setState({contribution: contribution});
   },
@@ -99,7 +102,7 @@ var StoryCreateContainer = React.createClass({
     this.state.contribution.checkGrammar();
   },
 
-  //  handleEditorChange(e) {
+  // handleEditorChange(e) {
   //   console.log(e.target.getContent());
   // },
 
@@ -114,15 +117,6 @@ var StoryCreateContainer = React.createClass({
             <form onSubmit={this.handleSubmit} name="checkform">
               <input onChange={this.handleTitleChange} type="text" name="title" className="form-control" 
                 placeholder="Your Story Title" />
-
-              {/* <textarea onChange={this.handleTextChange} name="contribution" 
-                    rows="5" className="form-control" 
-                    placeholder="Your amazing story body">
-                  </textarea>
-                  
-                  <button onClick={this.handleGrammarCheck} className="btn btn-warning">Check Grammar</button>
-                  
-                  <input type="submit" className="btn btn-success" value="Submit"/> */}
 
               <ContributionContainer 
                 onChange={this.handleTextChange} 
@@ -168,3 +162,14 @@ module.exports = {
 // checkUrl += '?' + key + '&text=' + text;
 
 // $.post(checkUrl) // for when the data is all one url string; TextGears, AtD
+
+
+              // <TinyMCE
+              //   className="form-control"
+              //   content="<p>This is the initial content of the editor</p>"
+              //   config={{
+              //    // plugins: 'autolink link image lists print preview',
+              //    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright'
+              //   }}
+              //   onChange={this.handleEditorChange} 
+              // />

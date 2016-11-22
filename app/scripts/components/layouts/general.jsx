@@ -2,13 +2,21 @@ var React = require('react');
 
 var User = require('../../models/user').User;
 
+var Row = function(props){
+  return(
+      <div className="row">
+        {props.children}
+      </div>
+  );
+};
+
 // container+row block
 var ContainerRow = function(props){
   return(
     <div className="container">
-      <div className="row">
+      <Row>
         {props.children}
-      </div>
+      </Row>
     </div>
   );
 };
@@ -73,6 +81,7 @@ var AppWrapper = function(props){
 module.exports = {
   AppWrapper: AppWrapper,
   ContainerRow: ContainerRow,
+  Row: Row,
   Section: Section,
   AppHeaderMain: AppHeaderMain,
   AppHeaderLogin: AppHeaderLogin

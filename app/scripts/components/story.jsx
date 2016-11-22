@@ -7,9 +7,11 @@ var Story = require('../models/story').Story;
 // var StoryCollection = require('../models/story').StoryCollection;
 
 // layouts
-var AppWrapper = require('./layouts/general.jsx').AppWrapper;
-var ContainerRow = require('./layouts/general.jsx').ContainerRow;
-var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
+var layout = require('./layouts/general.jsx');
+var AppWrapper = layout.AppWrapper;
+var ContainerRow = layout.ContainerRow;
+var AppHeaderMain = layout.AppHeaderMain;
+var Row = layout.Row;
 
 var ContributorListItem = React.createClass({
   render: function(){
@@ -45,12 +47,40 @@ var Footer = React.createClass({
   }
 });
 
+var StoryContributuionList = React.createClass({
+  render: function(){
+    var contributions = this.props.contributions;
+    return(
+      <div>
+        {contributions.map(function(contribution){
+          console.log(contribution)
+          return(
+            <section className="contribution" key={contribution.get('objectId')}>
+              <Row>
+                <article>
+                  <p>
+                    {contribution.get('content')}
+                  </p>
+                </article>
+                <aside>
+                  Contributed by {contribution.get('contributor').alias}
+                </aside>
+              </Row>
+            </section>
+          );
+        })}
+      </div>
+    );
+  } 
+});
+
 var StoryReadContainer = React.createClass({
   getInitialState: function(){
     return {
       story: new Story()
     }
   },
+
   componentWillMount: function(){
     this.getStory().getContributions();
   },
@@ -99,33 +129,15 @@ var StoryReadContainer = React.createClass({
       <AppWrapper>
         <AppHeaderMain />
         <ContainerRow>
-          <div className="story-container">
-            <h1>{story.get('title')}</h1>
-            <div>
-              {contributions.map(function(contribution){
-                return(
-                  <p key={contribution.get('objectId')}>
-                    {contribution.get('content')}
-                  </p>
-                );
-              })}
+          <div className="col-sm-10 col-sm-offset-1">
+            <div className="story-container">
+              <h1>{story.get('title')}</h1>
+              
+              <StoryContributuionList contributions={contributions} />
+
+              <Footer contributions={contributions} />
+
             </div>
-
-            <Footer contributions={contributions}/>
-            {/*<footer className="story-footer">
-                {contributions.map(function(contribution){
-                  // console.log(contributor);
-                  return(
-                    <span key={contributor.get('objectId') + contribution.get('objectId')}>
-                      <img src={contributor.get('avatar').url} 
-                        alt={contributor.get('alias')}
-                      /> 
-                      {contributor.get('alias')} 
-                    </span>
-                  );
-                })}
-              </footer> */}
-
           </div>
         </ContainerRow>
       </AppWrapper>
