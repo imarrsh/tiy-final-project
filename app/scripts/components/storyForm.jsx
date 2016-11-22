@@ -4,6 +4,10 @@
 
 var React = require('react');
 
+var User = require('../models/user').User;
+var Story = require('../models/story').Story;
+var Contribution = require('../models/contribution').Contribution;
+
 // var TinyMCE = require('react-tinymce'); // react version of tinymce
 
 // tinymce dependencies
@@ -12,12 +16,27 @@ var React = require('react');
 // require('../utilities/editor_template.js');
 // require('../utilities/editor_plugin.js');
 require('../utilities/editor_plugin2.js');
-// 
 
-var ContributionContainer = React.createClass({
+var StoryTitle =  React.createClass({
   getInitialState: function(){
     return {
-      text: ''
+      title: this.props.title
+    }
+  },
+
+  render: function(){
+    return(
+      <input onChange={this.props.onChange}
+        type="text" name="title" className="form-control" 
+        placeholder="Your Story Title" />
+    );
+  }
+});
+
+var StoryBody = React.createClass({
+  getInitialState: function(){
+    return {
+      text: this.props.body
     }
   },
 
@@ -103,10 +122,8 @@ var ContributionContainer = React.createClass({
     return(
       <div>
         <textarea onChange={this.props.onChange} 
-          id="checktext" 
-          className="text form-control"
-          rows="6" 
-          defaultValue={this.state.text}
+          id="checktext" name="body"
+          className="text form-control" rows="6"
           placeholder="Start typing your amazing story here!">
         </textarea>
 
@@ -116,19 +133,124 @@ var ContributionContainer = React.createClass({
           placeholder="Your amazing story body">
         </textarea> */}
 
-        <button onClick={this.props.onCheck} className="btn btn-warning">Raw API Check</button>
+      </div>
+
+    );
+  }
+});
+
+var StoryFormContainer = React.createClass({
+  getInitialState: function () {
+    // models
+    return {
+      story: new Story(),
+      contribution: new Contribution()
+    }
+  },
+
+  handleGrammarCheck: function(e){
+    e.preventDefault();
+    this.state.contribution.checkGrammar();
+  },
+
+  handleTitleChange: function(e){
+    this.state.story
+      .set('title', e.target.value);
+
+    this.setState({
+      story: this.state.story
+    });
+  },
+
+  handleTextChange: function(e){
+    this.state.contribution
+      .set('content', e.target.value);
+
+    this.setState({
+      contribution: this.state.contribution
+    });
+  },
+
+  handleSubmit: function(e){
+    e.preventDefault();
+    
+    var user = User.current()
+    , story = this.state.story
+    , contribution = this.state.contribution;
+
+    // // log some stately stuff
+    // console.log(
+    //   'submit event,',
+    //   user.get('objectId'), user.get('alias'),
+    //   ',',
+    //   story.get('title'),
+    //   ',', 
+    //   contribution.get('content')
+    // );
+
+    // set the story owner pointer
+    story.setPointer('owner', '_User', user.get('objectId'));
+    story.save().then(response => {
+      var storyId = response.objectId
+      contribution
+        .setPointer('contributor', '_User', user.get('objectId'))
+        .setPointer('story', 'Story', storyId);
+      
+      contribution
+        .save().then(response => {
+          this.props.router.navigate('stories/' + storyId + '/', {trigger: true});
+        });
+
+    });
+    
+    // set the contribution pointer to user and story
+    this.state.contribution
+      .setPointer('contributor', '_User', user.get('objectId'))
+      .setPointer('story', 'Story', story.get('objectId'));
+
+    // pseudo code
+    // model.save().then(response => {
+    //   response.fetch().then(response => {
+    //     model2.save().then(respsonse => {
+
+    //     });
+    //   });
+    // });
+
+
+    // console.log('story model: ', this.state.story);
+    // this.state.story.save();
+
+    // this.contribution.save();
+
+  },
+
+  render: function(){
+    var title = this.state.story.get('title')
+    , body = this.state.contribution.get('content');
+
+    return(
+      <form onSubmit={this.handleSubmit} name="checkform">
+        
+        { this.props.showTitle ?
+            <StoryTitle onChange={this.handleTitleChange} title={title}/>
+          : null }
+
+        <StoryBody onChange={this.handleTextChange} body={body}/>
+
+        <button onClick={this.handleGrammarCheck} 
+          className="btn btn-warning">Raw API Check</button>
         {/* <button onClick={this.handleLTCheck} className="btn btn-warning" name="_action_checkText">Grammar Check</button> */}
                   
         <input type="submit" className="btn btn-success" value="Submit"/>
 
-        
-      </div>
+      </form>
     );
   }
 });
 
 module.exports = {
-  ContributionContainer: ContributionContainer
+  StoryFormContainer: StoryFormContainer
 }
 
 

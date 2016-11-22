@@ -56,6 +56,13 @@ p {
 }
 
 // story view
+.contribution{
+  .avatar {
+    witdh: 56px;
+    height: 56px;
+    border-radius: 50%;
+  }
+}
 .story-footer {
   img {
     width: 24px;

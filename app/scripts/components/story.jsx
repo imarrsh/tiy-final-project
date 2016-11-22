@@ -6,6 +6,7 @@ var Story = require('../models/story').Story;
 // var ContributionCollection = require('../models/contribution').ContributionCollection;
 // var StoryCollection = require('../models/story').StoryCollection;
 
+var StoryFormContainer = require('./storyForm.jsx').StoryFormContainer
 // layouts
 var layout = require('./layouts/general.jsx');
 var AppWrapper = layout.AppWrapper;
@@ -20,7 +21,7 @@ var ContributorListItem = React.createClass({
       contributor.get('avatar').url  : 'https://placehold.it/100';
 
     return(
-      <span>
+      <span>        
         <img src={avatar} 
           alt={contributor.get('alias')}
         /> 
@@ -30,7 +31,7 @@ var ContributorListItem = React.createClass({
   }
 });
 
-var Footer = React.createClass({
+var StoryFooter = React.createClass({
   render: function(){
     return(
       <footer className="story-footer">
@@ -57,14 +58,20 @@ var StoryContributuionList = React.createClass({
           return(
             <section className="contribution" key={contribution.get('objectId')}>
               <Row>
-                <article>
-                  <p>
-                    {contribution.get('content')}
-                  </p>
-                </article>
-                <aside>
-                  Contributed by {contribution.get('contributor').alias}
-                </aside>
+                <div className="col-sm-9">
+                  <article>
+                    <p>
+                      {contribution.get('content')}
+                    </p>
+                  </article>
+                </div>
+                <div className="col-sm-3">
+                  <aside>
+                    <img className="avatar" src={contribution.get('contributor').avatar.url} 
+                      alt={contribution.get('contributor').alias}/>
+                    by {contribution.get('contributor').alias}
+                  </aside>
+                </div>
               </Row>
             </section>
           );
@@ -77,7 +84,8 @@ var StoryContributuionList = React.createClass({
 var StoryReadContainer = React.createClass({
   getInitialState: function(){
     return {
-      story: new Story()
+      story: new Story(),
+      isContributing: false
     }
   },
 
@@ -108,7 +116,6 @@ var StoryReadContainer = React.createClass({
     , contributions = story.get('contributions');
     // console.log('contributions: ',contributions);
 
-
     contributions
       .parseQuery('story', story.get('objectId'), 'Story')
       .also('include', 'contributor')
@@ -122,9 +129,15 @@ var StoryReadContainer = React.createClass({
     return this;
   },
 
+  handleContributing: function(){
+    console.log('handle add contribution', this.state.isContributing);
+    this.setState({isContributing: !this.state.isContributing});
+  },
+
   render: function(){
     var story = this.state.story;
     var contributions = story.get('contributions');
+    var isContributing = this.state.isContributing;
     return(
       <AppWrapper>
         <AppHeaderMain />
@@ -135,8 +148,15 @@ var StoryReadContainer = React.createClass({
               
               <StoryContributuionList contributions={contributions} />
 
-              <Footer contributions={contributions} />
+              <StoryFooter contributions={contributions} />
 
+              <button onClick={this.handleContributing} 
+                className="btn btn-primary">
+                Contribute
+              </button>
+
+              {isContributing ? <StoryFormContainer /> : null}
+            
             </div>
           </div>
         </ContainerRow>
