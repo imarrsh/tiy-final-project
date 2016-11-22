@@ -654,10 +654,10 @@ var StoryBody = React.createClass({displayName: "StoryBody",
           ed.pasteAsPlainText = true;
         });
        
-        ed.onChange.add(function(ed, l) {
-          // ed.getBody().addEventListener('keydown', self.handleLTEditorChange);
-          console.warn('Editor contents was modified. Contents: ' + l.content);
-        });
+        // ed.onChange.add(function(ed, l) {
+        //   // ed.getBody().addEventListener('keydown', self.handleLTEditorChange);
+        //   console.warn('Editor contents was modified. Contents: ' + l.content);
+        // });
 
         ed.onKeyUp.add(function(ed, e) {
           // console.log(ed.getContent());
