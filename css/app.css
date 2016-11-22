@@ -5758,6 +5758,31 @@ button.close {
 @media print {
   .hidden-print {
     display: none !important; } }
+@font-face {
+  font-family: 'Buenard';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Buenard"), local("Buenard-Regular"), url("../fonts/_rjRFgQ8TJpAj5YkMnZgHwLUuEpTyoUstqEm5AMlJo4.woff") format("woff"); }
+@font-face {
+  font-family: 'Buenard';
+  font-style: normal;
+  font-weight: 700;
+  src: local("Buenard Bold"), local("Buenard-Bold"), url("../fonts/8T0adwz_RAtKrxbccQmEFL3hpw3pgy2gAi-Ip7WPMi0.woff") format("woff"); }
+@font-face {
+  font-family: 'Petrona';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Petrona Regular"), local("Petrona-Regular"), url("../fonts/2fuQd9BLYXP2WuqQZNabvgLUuEpTyoUstqEm5AMlJo4.woff") format("woff"); }
+@font-face {
+  font-family: 'Enriqueta';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Enriqueta-Regular"), url("../fonts/-KTKVm0Mx9ZCRXL9CXVIbbO3LdcAZYWl9Si6vvxL-qU.woff") format("woff"); }
+@font-face {
+  font-family: 'Enriqueta';
+  font-style: normal;
+  font-weight: 700;
+  src: local("Enriqueta-Bold"), url("../fonts/v5/I27Pb-wEGH2ajLYP0QrtSKRDOzjiPcYnFooOUGCOsRk.woff") format("woff"); }
 *,
 *::before,
 *::after {
@@ -5765,6 +5790,12 @@ button.close {
 
 img {
   max-width: 100%; }
+
+p {
+  font-family: 'Enriqueta', 'Times', serif;
+  font-weight: 400;
+  font-size: 22px;
+  color: #323232; }
 
 .user-avatar {
   position: relative;
@@ -5776,10 +5807,10 @@ img {
   .user-avatar .edit {
     cursor: pointer; }
     .user-avatar .edit img {
-      -webkit-transition: -webkit-filter 200ms ease-in-out;
-      transition: -webkit-filter 200ms ease-in-out;
-      transition: filter 200ms ease-in-out;
-      transition: filter 200ms ease-in-out, -webkit-filter 200ms ease-in-out; }
+      -webkit-transition: -webkit-filter 200ms ease-in-out 300ms;
+      transition: -webkit-filter 200ms ease-in-out 300ms;
+      transition: filter 200ms ease-in-out 300ms;
+      transition: filter 200ms ease-in-out 300ms, -webkit-filter 200ms ease-in-out 300ms; }
     .user-avatar .edit:after {
       font-family: "Glyphicons Halflings";
       content: "\e046";
@@ -5790,10 +5821,10 @@ img {
       left: 50%;
       -webkit-transform: translate(-48%, 120%);
               transform: translate(-48%, 120%);
-      -webkit-transition: -webkit-transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms;
-      transition: -webkit-transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms;
-      transition: transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms;
-      transition: transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms, -webkit-transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 200ms; }
+      -webkit-transition: -webkit-transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 50ms;
+      transition: -webkit-transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 50ms;
+      transition: transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 50ms;
+      transition: transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 50ms, -webkit-transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 50ms; }
   .user-avatar:hover .edit:after {
     -webkit-transition: -webkit-transform 200ms cubic-bezier(0.57, -0.01, 0.13, 1.25) 200ms;
     transition: -webkit-transform 200ms cubic-bezier(0.57, -0.01, 0.13, 1.25) 200ms;
@@ -5803,5 +5834,25 @@ img {
             transform: translate(-48%, -53%); }
   .user-avatar:hover .edit img {
     -webkit-filter: saturate(120%) blur(5px) brightness(0.5);
-            filter: saturate(120%) blur(5px) brightness(0.5); }
+            filter: saturate(120%) blur(5px) brightness(0.5);
+    -webkit-transition: -webkit-filter 200ms ease-in-out;
+    transition: -webkit-filter 200ms ease-in-out;
+    transition: filter 200ms ease-in-out;
+    transition: filter 200ms ease-in-out, -webkit-filter 200ms ease-in-out; }
+
+.story-segment {
+  font-family: 'Enriqueta', 'Times', serif;
+  font-weight: 400;
+  font-size: 22px;
+  color: #323232; }
+  .story-segment .avatar {
+    witdh: 56px;
+    height: 56px;
+    border-radius: 50%; }
+
+.story-footer img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%; }
+
 /*# sourceMappingURL=app.css.map */
