@@ -57,14 +57,13 @@ var StoryContributuionList = React.createClass({
         {contributions.map(function(contribution){
           // console.log(contribution)
           return(
-            <section className="contribution" key={contribution.get('objectId')}>
+            <section className="story-segment" key={contribution.get('objectId')}>
               <Row>
                 <div className="col-sm-9">
-                  <article>
-                    <p>
-                      {contribution.get('content')}
-                    </p>
-                  </article>
+                  
+                  <article // would be smart to verify the source of the html server side
+                    dangerouslySetInnerHTML={{__html: contribution.get('content')}} />  
+                    
                 </div>
                 <div className="col-sm-3">
                   <aside>

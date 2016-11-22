@@ -56,7 +56,13 @@ p {
 }
 
 // story view
-.contribution{
+.story-segment{
+  font: {
+    family: 'Enriqueta', 'Times', serif;
+    weight: 400;
+    size: 22px;
+  }
+  color: rgb(50, 50, 50);
   .avatar {
     witdh: 56px;
     height: 56px;

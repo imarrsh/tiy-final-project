@@ -49,23 +49,30 @@ var StoryBody = React.createClass({
       plugins : "AtD,paste",
       paste_text_sticky : true,
       setup : function(ed) {
+
         ed.onInit.add(function(ed) {
           ed.pasteAsPlainText = true;
         });
        
         ed.onChange.add(function(ed, l) {
-          ed.getBody().addEventListener('keydown', self.handleLTEditorChange);
-          console.debug('Editor contents was modified. Contents: ' + l.content);
+          // ed.getBody().addEventListener('keydown', self.handleLTEditorChange);
+          console.warn('Editor contents was modified. Contents: ' + l.content);
+        });
+
+        ed.onKeyUp.add(function(ed, e) {
+          // console.log(ed.getContent());
+          // console.log(e.target.textContent);
+          self.props.onChange(e, ed);
         });
 
       },
 
-      oninit: function(ed){
-        // set an event listener on the editor body
-        // console.log(tinyMCE.activeEditor);
-        console.log('register event')
-        tinyMCE.activeEditor.getBody().addEventListener('keydown', self.props.onChange);
-      },
+      // oninit: function(ed){
+      //   // set an event listener on the editor body
+      //   // console.log(tinyMCE.activeEditor);
+      //   console.log('register event')
+      //   tinyMCE.activeEditor.getBody().addEventListener('keydown', self.props.onChange);
+      // },
 
       /* translations: */
       languagetool_i18n_no_errors : {
@@ -122,13 +129,13 @@ var StoryBody = React.createClass({
   handleLTCheck: function(e){
     e.preventDefault();
     // tinyMCE.activeEditor.getBody().addEventListener('keydown', this.handleLTEditorChange)
-    // console.log(tinyMCE.activeEditor.getBody().addEventListener('change'));
+    // console.log(tinyMCE.activeEditor);
     tinyMCE.activeEditor.execCommand("mceWritingImprovementTool", "en-US");
     return false;
   },
 
   handleLTEditorChange: function(e){
-    console.warn(e.target)
+    // console.warn(e.target)
   },
 
   // for react-tinymce
@@ -187,15 +194,16 @@ var StoryFormContainer = React.createClass({
     });
   },
 
-  handleTextChange: function(e){
-    console.log('handleTextChange')
+  handleTextChange: function(e, ed){
+    // console.log('handleTextChange', ed.getContent())
     this.state.contribution
-      .set('content', $(e.target).html());
+      .set('content', ed.getContent());
 
     this.setState({
       contribution: this.state.contribution
     });
-    console.log(this.state.contribution);
+
+    // console.log(this.state.contribution);
   },
 
   handleSubmit: function(e){
