@@ -57,23 +57,27 @@ var StoryContributuionList = React.createClass({
         {contributions.map(function(contribution){
           // console.log(contribution)
           return(
-            <section className="story-segment" key={contribution.get('objectId')}>
-              <Row>
-                <div className="col-sm-9">
-                  
-                  <article // would be smart to verify the source of the html server side
-                    dangerouslySetInnerHTML={{__html: contribution.get('content')}} />  
-
-                </div>
-                <div className="col-sm-3">
-                  <aside>
-                    <img className="avatar" src={contribution.get('contributor').avatar.url} 
-                      alt={contribution.get('contributor').alias}/>
-                    by {contribution.get('contributor').alias}
-                  </aside>
-                </div>
-              </Row>
-            </section>
+            <div className="panel panel-default" key={contribution.get('objectId')}>
+              <div className="panel-body">
+                <section className="story-segment">
+                  <Row>
+                    <div className="col-sm-9">
+                      
+                      <article // would be smart to verify the source of the html server side
+                        dangerouslySetInnerHTML={{__html: contribution.get('content')}} />  
+                
+                    </div>
+                    <div className="col-sm-3">
+                      <aside>
+                        <img className="avatar" src={contribution.get('contributor').avatar.url} 
+                          alt={contribution.get('contributor').alias}/>
+                        by {contribution.get('contributor').alias}
+                      </aside>
+                    </div>
+                  </Row>
+                </section>
+              </div>
+            </div>
           );
         })}
       </div>
@@ -95,12 +99,6 @@ var StoryReadContainer = React.createClass({
 
   componentWillReciveProps: function(){
     this.getStory().getContributions();
-  },
-
-  componentWillUnmount: function(){
-    // console.warn(this.state.story);
-    // console.warn(this.state.story.get('contributions'));
-    // delete this.state.story;
   },
 
   getStory: function(){
@@ -175,7 +173,7 @@ var StoryReadContainer = React.createClass({
                 Contribute
               </button>
 
-              {isContributing ? <StoryFormContainer thisStory={story.get('objectId')}/> : null}
+              {isContributing ? <StoryFormContainer storyId={story.get('objectId')}/> : null}
             
             </div>
           </div>

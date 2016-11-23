@@ -33,7 +33,13 @@ var UserStoryList = React.createClass({
             return(
               <StoryListItem story={story} key={story.get('objectId')}/>
             );
-          }) : <span><i className="glyphicon glyphicon-plus"></i>Start a new Story!</span>}
+          }) : 
+          <h5>
+            <a href="#stories/new/">
+              <i className="glyphicon glyphicon-plus"></i>
+              Start a new Story!
+            </a>
+          </h5>}
       </div>
     );
   }

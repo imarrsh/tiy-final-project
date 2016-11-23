@@ -89,21 +89,10 @@ var StoryBody = React.createClass({
 
   },
 
-  handleLTCheck: function(e){
-    e.preventDefault();
-    // tinyMCE.activeEditor.getBody().addEventListener('keydown', this.handleLTEditorChange)
-    // console.log(tinyMCE.activeEditor);
-    tinyMCE.activeEditor.execCommand("mceWritingImprovementTool", "en-US");
-    return false;
-  },
-
-  handleLTEditorChange: function(e){
-    // console.warn(e.target)
-  },
-
-  // for react-tinymce
-  // handleEditorChange: function(e) {
-  //   console.log(e.target.getContent());
+  // handleCheck: function(e){
+  //   e.preventDefault();
+  //   tinyMCE.activeEditor.execCommand("mceWritingImprovementTool", "en-US");
+  //   return false;
   // },
   
   // handleChange: function(e){
@@ -119,14 +108,9 @@ var StoryBody = React.createClass({
         <textarea onChange={this.props.onChange} 
           id="checktext" name="body"
           className="text form-control" rows="6"
-          placeholder="Start typing your amazing story here!"
-          defaultValue="Begin your story here... or paste paste it in!">
+          placeholder="Begin your story here... or paste paste it in!"
+          value={this.state.text}>
         </textarea>
-        <button onClick={this.handleLTCheck} 
-          className="btn btn-warning" 
-          name="_action_checkText">
-          Grammar Check
-        </button>
       </div>
 
     );
@@ -158,15 +142,12 @@ var StoryFormContainer = React.createClass({
   },
 
   handleTextChange: function(e, ed){
-    // console.log('handleTextChange', ed.getContent())
     this.state.contribution
       .set('content', ed.getContent());
 
     this.setState({
       contribution: this.state.contribution
     });
-
-    // console.log(this.state.contribution);
   },
 
   handleSubmit: function(e){
@@ -176,23 +157,42 @@ var StoryFormContainer = React.createClass({
     , story = this.state.story
     , contribution = this.state.contribution;
 
-    // set the story owner pointer
-    story.setPointer('owner', '_User', user.get('objectId'));
-    console.warn(story);
-    story.save().then(response => {
-      console.warn(response);
-      var storyId = response.objectId
-      contribution
-        .setPointer('contributor', '_User', user.get('objectId'))
-        .setPointer('story', 'Story', storyId);
-      
-      contribution
+    if (this.props.storyId) {
+      // set just the contribition owner
+      this.setContributor(user, this.props.storyId, (response) => {
+        console.log(response)
+      });
+
+    } else {
+      // set the story owner pointer instead
+      story
+        .setPointer('owner', '_User', user.get('objectId'))
         .save().then(response => {
-          this.props.router.navigate('stories/' + storyId + '/', {trigger: true});
+          var storyId = response.objectId;
+
+          this.setContributor(user, storyId, () => {
+            this.props.router
+              .navigate('stories/' + storyId + '/', {trigger: true});
+          });
+
         });
+    }
+  },
 
-    });
+  setContributor: function(user, storyId, callback){
 
+    this.state.contribution
+      .setPointer('contributor', '_User', user.get('objectId'))
+      .setPointer('story', 'Story', storyId)
+      .save().then(response => {
+        callback(response);
+      });
+  },
+
+  handleCheck: function(e){
+    e.preventDefault();
+    tinyMCE.activeEditor.execCommand("mceWritingImprovementTool", "en-US");
+    return false;
   },
 
   render: function(){
@@ -200,20 +200,36 @@ var StoryFormContainer = React.createClass({
     , body = this.state.contribution.get('content');
 
     return(
-      <form onSubmit={this.handleSubmit} name="checkform">
-        
-        { this.props.showTitle ?
-            <StoryTitle onChange={this.handleTitleChange} title={title}/>
-          : null }
+      <div className="panel panel-default">
+        <div className="panel-body">
 
-        <StoryBody onChange={this.handleTextChange} body={body}/>
-
-        <button onClick={this.handleGrammarCheck} 
-          className="btn btn-warning">Raw API Check</button>
-                  
-        <input type="submit" className="btn btn-success" value="Submit"/>
-
-      </form>
+          <form onSubmit={this.handleSubmit} name="checkform">
+            
+            { this.props.showTitle ?
+                <StoryTitle 
+                  onChange={this.handleTitleChange}
+                  title={title}
+                />
+              : null }
+          
+            <StoryBody 
+              onChange={this.handleTextChange}
+              body={body}
+            />
+            
+            <button onClick={this.handleCheck} 
+              className="btn btn-warning" 
+              name="_action_checkText">
+              Grammar Check
+            </button>
+            <input type="submit" 
+              className="btn btn-success" 
+              value="Submit"
+            />
+            
+          </form>
+        </div>
+      </div>
     );
   }
 });
