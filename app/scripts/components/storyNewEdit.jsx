@@ -1,5 +1,4 @@
 
-// var $ = require('jquery'); // use jquery for demoing the api request
 var React = require('react');
 
 var User = require('../models/user').User;

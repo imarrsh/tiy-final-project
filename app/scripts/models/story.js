@@ -29,6 +29,19 @@ var Story = ParseModel.extend({
     console.log(this, key, val, options);
 
     return Backbone.Model.prototype.save.call(this, key, val, options);
+  },
+
+  deleteStory: function(callback){
+    var contributions = this.get('contributions');
+
+    contributions.forEach(contribution => {
+      contribution.destroy();
+    });
+
+    this.destroy().then(() => {
+      callback();
+    });
+
   }
 
 });

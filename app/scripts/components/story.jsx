@@ -63,7 +63,7 @@ var StoryContributuionList = React.createClass({
                   
                   <article // would be smart to verify the source of the html server side
                     dangerouslySetInnerHTML={{__html: contribution.get('content')}} />  
-                    
+
                 </div>
                 <div className="col-sm-3">
                   <aside>
@@ -139,6 +139,16 @@ var StoryReadContainer = React.createClass({
     this.setState({isContributing: !this.state.isContributing});
   },
 
+  handleDelete: function(){
+    // console.log('handleDelete')
+    // console.log(this.state.story);
+
+    this.state.story.deleteStory(() => {
+      this.props.router.navigate('', {trigger: true});
+    });
+    
+  },
+
   render: function(){
     var story = this.state.story;
     var contributions = story.get('contributions');
@@ -149,6 +159,11 @@ var StoryReadContainer = React.createClass({
         <ContainerRow>
           <div className="col-sm-10 col-sm-offset-1">
             <div className="story-container">
+              <div>
+                <button onClick={this.handleDelete}className="btn btn-danger btn-xs">Delete Story</button>
+                <button className="btn btn-success btn-xs">Edit</button>
+              </div>
+
               <h1>{story.get('title')}</h1>
               
               <StoryContributuionList contributions={contributions} />

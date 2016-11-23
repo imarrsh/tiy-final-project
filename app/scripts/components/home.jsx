@@ -24,14 +24,16 @@ var StoryListItem = React.createClass({
 var UserStoryList = React.createClass({
   render: function(){
 
+    var stories = this.props.stories;
     return(
       <div className="list-group">
         <h3>Your Stories</h3>
-        {this.props.stories.map(function(story){
-          return(
-            <StoryListItem story={story} key={story.get('objectId')}/>
-          );
-        })}
+        {stories.length ? 
+          stories.map(function(story){
+            return(
+              <StoryListItem story={story} key={story.get('objectId')}/>
+            );
+          }) : <span><i className="glyphicon glyphicon-plus"></i>Start a new Story!</span>}
       </div>
     );
   }
