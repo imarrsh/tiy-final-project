@@ -217,15 +217,17 @@ var StoryFormContainer = React.createClass({
               body={body}
             />
             
-            <button onClick={this.handleCheck} 
-              className="btn btn-warning" 
-              name="_action_checkText">
-              Grammar Check
-            </button>
-            <input type="submit" 
-              className="btn btn-success" 
-              value="Submit"
-            />
+            <div className="btn-toolbar">
+              <button onClick={this.handleCheck} 
+                className="btn btn-warning" 
+                name="_action_checkText">
+                Grammar Check
+              </button>
+              <input type="submit" 
+                className="btn btn-success" 
+                value="Submit"
+              />
+            </div>
             
           </form>
         </div>

@@ -59,19 +59,30 @@ var StoryContributuionList = React.createClass({
           return(
             <div className="panel panel-default" key={contribution.get('objectId')}>
               <div className="panel-body">
-                <section className="story-segment">
+                <section className="story-segment"> 
                   <Row>
                     <div className="col-sm-9">
                       
-                      <article // would be smart to verify the source of the html server side
-                        dangerouslySetInnerHTML={{__html: contribution.get('content')}} />  
+                      <article // hopefully the input has been sanitized at some point
+                        dangerouslySetInnerHTML={{
+                          __html: contribution.get('content')
+                        }} 
+                      />  
                 
                     </div>
                     <div className="col-sm-3">
                       <aside>
-                        <img className="avatar" src={contribution.get('contributor').avatar.url} 
-                          alt={contribution.get('contributor').alias}/>
+                        <div>
+                          <img className="avatar" 
+                            src={contribution.get('contributor').avatar.url} 
+                            alt={contribution.get('contributor').alias}
+                          />
+                        </div>
                         by {contribution.get('contributor').alias}
+                        <div className="btn-toolbar">
+                          <button className="btn btn-danger btn-xs">X</button>
+                          <button className="btn btn-success btn-xs">E</button>
+                        </div>
                       </aside>
                     </div>
                   </Row>
@@ -157,17 +168,21 @@ var StoryReadContainer = React.createClass({
         <ContainerRow>
           <div className="col-sm-10 col-sm-offset-1">
             <div className="story-container">
-              <div>
+              <div className="btn-toolbar">
                 <button onClick={this.handleDelete}className="btn btn-danger btn-xs">Delete Story</button>
                 <button className="btn btn-success btn-xs">Edit</button>
               </div>
 
               <h1>{story.get('title')}</h1>
               
-              <StoryContributuionList contributions={contributions} />
-
-              <StoryFooter contributions={contributions} />
-
+              <div className="panel panel-default">
+                <div className="panel-body">
+                  <StoryContributuionList contributions={contributions} />
+                </div>
+                <div className="panel-footer">
+                  <StoryFooter contributions={contributions} />
+                </div>
+              </div>
               <button onClick={this.handleContributing} 
                 className="btn btn-primary">
                 Contribute
