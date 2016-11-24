@@ -115,6 +115,11 @@ var StoryBody = React.createClass({
   }
 });
 
+// ############################
+// BUGS
+//
+// 1. fix bug with grammar checker not updating state!
+// ############################
 
 var StoryFormContainer = React.createClass({
   getInitialState: function () {
@@ -128,7 +133,7 @@ var StoryFormContainer = React.createClass({
   componentWillMount: function(){
     
     if (this.props.story){
-      console.log('got props')
+      console.log('mounted')
       this.setState({story: this.props.story});
     }
   },
@@ -136,15 +141,15 @@ var StoryFormContainer = React.createClass({
   handleGrammarCheck: function(e){
     e.preventDefault();
     this.state.contribution.checkGrammar();
+
   },
-
   handleTitleChange: function(e){
-    this.state.story
-      .set('title', e.target.value);
-
     this.setState({
       story: this.state.story
     });
+
+    this.state.story
+      .set('title', e.target.value);
   },
 
   handleTextChange: function(e, ed){
@@ -168,12 +173,19 @@ var StoryFormContainer = React.createClass({
       // set just the contribition owner
       this.setContributor(user, story.get('objectId'), 
         (response, contribution) => {
-
+          
+          // contribution doesnt have user information 
+          // attached at this point so add it for display purposes...
           contribution.set('contributor', user.toJSON());
           this.props.addContribution(contribution);
+
+          // reset the state
+          this.setState({contribution: new Contribution()});
+          this.props.handleContributing();
         });
 
     } else {
+
       console.log('story is NEW');
       // set the story owner & pointer instead
       story
@@ -198,6 +210,7 @@ var StoryFormContainer = React.createClass({
       .setPointer('contributor', '_User', user.get('objectId'))
       .setPointer('story', 'Story', storyId)
       .save().then(response => {
+        console.log(contribution);
         callback(response, contribution);
       });
 

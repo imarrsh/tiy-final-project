@@ -154,8 +154,9 @@ var StoryReadContainer = React.createClass({
   },
 
   handleContributing: function(){
-
-    this.setState({isContributing: !this.state.isContributing});
+    this.setState({
+      isContributing: !this.state.isContributing
+    });
   },
 
   handleDelete: function(contribution){
@@ -217,7 +218,7 @@ var StoryReadContainer = React.createClass({
               </div>
               <button onClick={this.handleContributing} 
                 className="btn btn-primary">
-                Contribute
+                {(isContributing) ? 'Nevermind' : 'Contribute'}
               </button>
 
               {isContributing ? 
@@ -225,6 +226,7 @@ var StoryReadContainer = React.createClass({
                   story={story}
                   router={this.props.router}
                   addContribution={this.addContribution}
+                  handleContributing={this.handleContributing}
                 /> 
                 : null}
             

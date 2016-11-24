@@ -126,6 +126,7 @@ var HomeContainer = React.createClass({
         }
       })
       .also('include', 'owner.alias')
+      .also('order', '-createdAt')
       .fetch()
       .then(response => {
         this.setState({othersStoryCollection: storyCollection});
