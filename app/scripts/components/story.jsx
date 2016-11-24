@@ -49,8 +49,15 @@ var StoryFooter = React.createClass({
 });
 
 var StoryContributuionList = React.createClass({
+  getInitialState: function(){
+    return {
+      contributions: this.props.contributions
+    }
+  },
+
   render: function(){
-    var contributions = this.props.contributions;
+    var self = this;
+    var contributions = this.state.contributions;
     // console.warn(contributions)
     return(
       <div>
@@ -73,14 +80,16 @@ var StoryContributuionList = React.createClass({
                     <div className="col-sm-3">
                       <aside>
                         <div>
-                          <img className="avatar" 
+                          <img className="avatar"
                             src={contribution.get('contributor').avatar.url} 
                             alt={contribution.get('contributor').alias}
                           />
                         </div>
                         by {contribution.get('contributor').alias}
                         <div className="btn-toolbar">
-                          <button className="btn btn-danger btn-xs">X</button>
+                          <button 
+                            onClick={() => self.props.handleDelete(contribution)}
+                            className="btn btn-danger btn-xs">X</button>
                           <button className="btn btn-success btn-xs">E</button>
                         </div>
                       </aside>
@@ -108,7 +117,8 @@ var StoryReadContainer = React.createClass({
     this.getStory().getContributions();
   },
 
-  componentWillReciveProps: function(){
+  componentWillReciveProps: function(nextProps){
+    console.log('componentWillReciveProps', nextProps);
     this.getStory().getContributions();
   },
 
@@ -144,18 +154,32 @@ var StoryReadContainer = React.createClass({
   },
 
   handleContributing: function(){
-    // console.log('handle add contribution', this.state.isContributing);
+
     this.setState({isContributing: !this.state.isContributing});
   },
 
-  handleDelete: function(){
-    // console.log('handleDelete')
-    // console.log(this.state.story);
+  handleDelete: function(contribution){
 
-    this.state.story.deleteStory(() => {
-      this.props.router.navigate('', {trigger: true});
-    });
+    contribution.deleteSegment();
+
+    this.setState({story: this.state.story});
     
+  },
+
+  deleteSegment: function(){
+    console.log('delete segment');
+  },
+
+  addContribution: function(contribution){
+    console.log('adding:', contribution);
+    
+    var story = this.state.story
+    , contributions = story.get('contributions');
+
+    contributions.add(contribution);
+    story.set('contributions', contributions);
+
+    this.setState({story: story});
   },
 
   render: function(){
@@ -169,15 +193,23 @@ var StoryReadContainer = React.createClass({
           <div className="col-sm-10 col-sm-offset-1">
             <div className="story-container">
               <div className="btn-toolbar">
-                <button onClick={this.handleDelete}className="btn btn-danger btn-xs">Delete Story</button>
-                <button className="btn btn-success btn-xs">Edit</button>
+                <button 
+                  onClick={this.handleDelete}
+                  className="btn btn-danger btn-xs">Delete Story
+                </button>
+                <button
+                  className="btn btn-success btn-xs">Edit
+                </button>
               </div>
 
               <h1>{story.get('title')}</h1>
               
               <div className="panel panel-default">
                 <div className="panel-body">
-                  <StoryContributuionList contributions={contributions} />
+                  <StoryContributuionList 
+                    contributions={contributions} 
+                    handleDelete={this.handleDelete}
+                  />
                 </div>
                 <div className="panel-footer">
                   <StoryFooter contributions={contributions} />
@@ -188,7 +220,13 @@ var StoryReadContainer = React.createClass({
                 Contribute
               </button>
 
-              {isContributing ? <StoryFormContainer storyId={story.get('objectId')}/> : null}
+              {isContributing ? 
+                <StoryFormContainer 
+                  story={story}
+                  router={this.props.router}
+                  addContribution={this.addContribution}
+                /> 
+                : null}
             
             </div>
           </div>

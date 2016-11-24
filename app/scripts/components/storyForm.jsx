@@ -85,8 +85,6 @@ var StoryBody = React.createClass({
       languagetool_css_url: 'css/app.css'
     });
 
-    // tinyMCE.activeEditor.getBody().addEventListener('keydown', this.handleLTEditorChange);
-
   },
 
   // handleCheck: function(e){
@@ -127,6 +125,14 @@ var StoryFormContainer = React.createClass({
     }
   },
 
+  componentWillMount: function(){
+    
+    if (this.props.story){
+      console.log('got props')
+      this.setState({story: this.props.story});
+    }
+  },
+
   handleGrammarCheck: function(e){
     e.preventDefault();
     this.state.contribution.checkGrammar();
@@ -157,14 +163,19 @@ var StoryFormContainer = React.createClass({
     , story = this.state.story
     , contribution = this.state.contribution;
 
-    if (this.props.storyId) {
+    if (!story.isNew()) {
+      console.log('story is NOT new');
       // set just the contribition owner
-      this.setContributor(user, this.props.storyId, (response) => {
-        console.log(response)
-      });
+      this.setContributor(user, story.get('objectId'), 
+        (response, contribution) => {
+
+          contribution.set('contributor', user.toJSON());
+          this.props.addContribution(contribution);
+        });
 
     } else {
-      // set the story owner pointer instead
+      console.log('story is NEW');
+      // set the story owner & pointer instead
       story
         .setPointer('owner', '_User', user.get('objectId'))
         .save().then(response => {
@@ -180,13 +191,16 @@ var StoryFormContainer = React.createClass({
   },
 
   setContributor: function(user, storyId, callback){
+    // set the pointers for the contribution and story
+    var contribution = this.state.contribution;
 
-    this.state.contribution
+    contribution
       .setPointer('contributor', '_User', user.get('objectId'))
       .setPointer('story', 'Story', storyId)
       .save().then(response => {
-        callback(response);
+        callback(response, contribution);
       });
+
   },
 
   handleCheck: function(e){

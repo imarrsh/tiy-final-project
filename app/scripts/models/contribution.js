@@ -32,6 +32,10 @@ var Contribution = ParseModel.extend({
       console.log(response);
     });
 
+  },
+
+  deleteSegment: function(){
+    this.destroy();
   }
 
 });
