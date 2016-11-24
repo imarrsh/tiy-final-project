@@ -35,7 +35,13 @@ var UserStoryList = React.createClass({displayName: "UserStoryList",
             return(
               React.createElement(StoryListItem, {story: story, key: story.get('objectId')})
             );
-          }) : React.createElement("h5", null, React.createElement("i", {className: "glyphicon glyphicon-plus"}), "Start a new Story!")
+          }) : 
+          React.createElement("h5", null, 
+            React.createElement("a", {href: "#stories/new/"}, 
+              React.createElement("i", {className: "glyphicon glyphicon-plus"}), 
+              "Start a new Story!"
+            )
+          )
       )
     );
   }
@@ -472,27 +478,51 @@ var StoryFooter = React.createClass({displayName: "StoryFooter",
 });
 
 var StoryContributuionList = React.createClass({displayName: "StoryContributuionList",
+  getInitialState: function(){
+    return {
+      contributions: this.props.contributions
+    }
+  },
+
   render: function(){
-    var contributions = this.props.contributions;
+    var self = this;
+    var contributions = this.state.contributions;
     // console.warn(contributions)
     return(
       React.createElement("div", null, 
         contributions.map(function(contribution){
           // console.log(contribution)
           return(
-            React.createElement("section", {className: "story-segment", key: contribution.get('objectId')}, 
-              React.createElement(Row, null, 
-                React.createElement("div", {className: "col-sm-9"}, 
-                  
-                  React.createElement("article", {// would be smart to verify the source of the html server side
-                    dangerouslySetInnerHTML: {__html: contribution.get('content')}})
-
-                ), 
-                React.createElement("div", {className: "col-sm-3"}, 
-                  React.createElement("aside", null, 
-                    React.createElement("img", {className: "avatar", src: contribution.get('contributor').avatar.url, 
-                      alt: contribution.get('contributor').alias}), 
-                    "by ", contribution.get('contributor').alias
+            React.createElement("div", {className: "panel panel-default", key: contribution.get('objectId')}, 
+              React.createElement("div", {className: "panel-body"}, 
+                React.createElement("section", {className: "story-segment"}, 
+                  React.createElement(Row, null, 
+                    React.createElement("div", {className: "col-sm-9"}, 
+                      
+                      React.createElement("article", {// hopefully the input has been sanitized at some point
+                        dangerouslySetInnerHTML: {
+                          __html: contribution.get('content')
+                        }}
+                      )
+                
+                    ), 
+                    React.createElement("div", {className: "col-sm-3"}, 
+                      React.createElement("aside", null, 
+                        React.createElement("div", null, 
+                          React.createElement("img", {className: "avatar", 
+                            src: contribution.get('contributor').avatar.url, 
+                            alt: contribution.get('contributor').alias}
+                          )
+                        ), 
+                        "by ", contribution.get('contributor').alias, 
+                        React.createElement("div", {className: "btn-toolbar"}, 
+                          React.createElement("button", {
+                            onClick: () => self.props.handleDelete(contribution), 
+                            className: "btn btn-danger btn-xs"}, "X"), 
+                          React.createElement("button", {className: "btn btn-success btn-xs"}, "E")
+                        )
+                      )
+                    )
                   )
                 )
               )
@@ -516,14 +546,9 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     this.getStory().getContributions();
   },
 
-  componentWillReciveProps: function(){
+  componentWillReciveProps: function(nextProps){
+    console.log('componentWillReciveProps', nextProps);
     this.getStory().getContributions();
-  },
-
-  componentWillUnmount: function(){
-    // console.warn(this.state.story);
-    // console.warn(this.state.story.get('contributions'));
-    // delete this.state.story;
   },
 
   getStory: function(){
@@ -558,18 +583,32 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
   },
 
   handleContributing: function(){
-    // console.log('handle add contribution', this.state.isContributing);
+
     this.setState({isContributing: !this.state.isContributing});
   },
 
-  handleDelete: function(){
-    // console.log('handleDelete')
-    // console.log(this.state.story);
+  handleDelete: function(contribution){
 
-    this.state.story.deleteStory(() => {
-      this.props.router.navigate('', {trigger: true});
-    });
+    contribution.deleteSegment();
+
+    this.setState({story: this.state.story});
     
+  },
+
+  deleteSegment: function(){
+    console.log('delete segment');
+  },
+
+  addContribution: function(contribution){
+    console.log('adding:', contribution);
+    
+    var story = this.state.story
+    , contributions = story.get('contributions');
+
+    contributions.add(contribution);
+    story.set('contributions', contributions);
+
+    this.setState({story: story});
   },
 
   render: function(){
@@ -582,23 +621,41 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
         React.createElement(ContainerRow, null, 
           React.createElement("div", {className: "col-sm-10 col-sm-offset-1"}, 
             React.createElement("div", {className: "story-container"}, 
-              React.createElement("div", null, 
-                React.createElement("button", {onClick: this.handleDelete, className: "btn btn-danger btn-xs"}, "Delete Story"), 
-                React.createElement("button", {className: "btn btn-success btn-xs"}, "Edit")
+              React.createElement("div", {className: "btn-toolbar"}, 
+                React.createElement("button", {
+                  onClick: this.handleDelete, 
+                  className: "btn btn-danger btn-xs"}, "Delete Story"
+                ), 
+                React.createElement("button", {
+                  className: "btn btn-success btn-xs"}, "Edit"
+                )
               ), 
 
               React.createElement("h1", null, story.get('title')), 
               
-              React.createElement(StoryContributuionList, {contributions: contributions}), 
-
-              React.createElement(StoryFooter, {contributions: contributions}), 
-
+              React.createElement("div", {className: "panel panel-default"}, 
+                React.createElement("div", {className: "panel-body"}, 
+                  React.createElement(StoryContributuionList, {
+                    contributions: contributions, 
+                    handleDelete: this.handleDelete}
+                  )
+                ), 
+                React.createElement("div", {className: "panel-footer"}, 
+                  React.createElement(StoryFooter, {contributions: contributions})
+                )
+              ), 
               React.createElement("button", {onClick: this.handleContributing, 
                 className: "btn btn-primary"}, 
                 "Contribute"
               ), 
 
-              isContributing ? React.createElement(StoryFormContainer, {thisStory: story.get('objectId')}) : null
+              isContributing ? 
+                React.createElement(StoryFormContainer, {
+                  story: story, 
+                  router: this.props.router, 
+                  addContribution: this.addContribution}
+                ) 
+                : null
             
             )
           )
@@ -702,25 +759,12 @@ var StoryBody = React.createClass({displayName: "StoryBody",
       languagetool_css_url: 'css/app.css'
     });
 
-    // tinyMCE.activeEditor.getBody().addEventListener('keydown', this.handleLTEditorChange);
-
   },
 
-  handleLTCheck: function(e){
-    e.preventDefault();
-    // tinyMCE.activeEditor.getBody().addEventListener('keydown', this.handleLTEditorChange)
-    // console.log(tinyMCE.activeEditor);
-    tinyMCE.activeEditor.execCommand("mceWritingImprovementTool", "en-US");
-    return false;
-  },
-
-  handleLTEditorChange: function(e){
-    // console.warn(e.target)
-  },
-
-  // for react-tinymce
-  // handleEditorChange: function(e) {
-  //   console.log(e.target.getContent());
+  // handleCheck: function(e){
+  //   e.preventDefault();
+  //   tinyMCE.activeEditor.execCommand("mceWritingImprovementTool", "en-US");
+  //   return false;
   // },
   
   // handleChange: function(e){
@@ -736,13 +780,8 @@ var StoryBody = React.createClass({displayName: "StoryBody",
         React.createElement("textarea", {onChange: this.props.onChange, 
           id: "checktext", name: "body", 
           className: "text form-control", rows: "6", 
-          placeholder: "Start typing your amazing story here!", 
-          defaultValue: "Begin your story here... or paste paste it in!"}
-        ), 
-        React.createElement("button", {onClick: this.handleLTCheck, 
-          className: "btn btn-warning", 
-          name: "_action_checkText"}, 
-          "Grammar Check"
+          placeholder: "Begin your story here... or paste paste it in!", 
+          value: this.state.text}
         )
       )
 
@@ -757,6 +796,14 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
     return {
       story: new Story(),
       contribution: new Contribution()
+    }
+  },
+
+  componentWillMount: function(){
+    
+    if (this.props.story){
+      console.log('got props')
+      this.setState({story: this.props.story});
     }
   },
 
@@ -775,15 +822,12 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
   },
 
   handleTextChange: function(e, ed){
-    // console.log('handleTextChange', ed.getContent())
     this.state.contribution
       .set('content', ed.getContent());
 
     this.setState({
       contribution: this.state.contribution
     });
-
-    // console.log(this.state.contribution);
   },
 
   handleSubmit: function(e){
@@ -793,23 +837,50 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
     , story = this.state.story
     , contribution = this.state.contribution;
 
-    // set the story owner pointer
-    story.setPointer('owner', '_User', user.get('objectId'));
-    console.warn(story);
-    story.save().then(response => {
-      console.warn(response);
-      var storyId = response.objectId
-      contribution
-        .setPointer('contributor', '_User', user.get('objectId'))
-        .setPointer('story', 'Story', storyId);
-      
-      contribution
-        .save().then(response => {
-          this.props.router.navigate('stories/' + storyId + '/', {trigger: true});
+    if (!story.isNew()) {
+      console.log('story is NOT new');
+      // set just the contribition owner
+      this.setContributor(user, story.get('objectId'), 
+        (response, contribution) => {
+
+          contribution.set('contributor', user.toJSON());
+          this.props.addContribution(contribution);
         });
 
-    });
+    } else {
+      console.log('story is NEW');
+      // set the story owner & pointer instead
+      story
+        .setPointer('owner', '_User', user.get('objectId'))
+        .save().then(response => {
+          var storyId = response.objectId;
 
+          this.setContributor(user, storyId, () => {
+            this.props.router
+              .navigate('stories/' + storyId + '/', {trigger: true});
+          });
+
+        });
+    }
+  },
+
+  setContributor: function(user, storyId, callback){
+    // set the pointers for the contribution and story
+    var contribution = this.state.contribution;
+
+    contribution
+      .setPointer('contributor', '_User', user.get('objectId'))
+      .setPointer('story', 'Story', storyId)
+      .save().then(response => {
+        callback(response, contribution);
+      });
+
+  },
+
+  handleCheck: function(e){
+    e.preventDefault();
+    tinyMCE.activeEditor.execCommand("mceWritingImprovementTool", "en-US");
+    return false;
   },
 
   render: function(){
@@ -817,19 +888,37 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
     , body = this.state.contribution.get('content');
 
     return(
-      React.createElement("form", {onSubmit: this.handleSubmit, name: "checkform"}, 
-        
-         this.props.showTitle ?
-            React.createElement(StoryTitle, {onChange: this.handleTitleChange, title: title})
-          : null, 
+      React.createElement("div", {className: "panel panel-default"}, 
+        React.createElement("div", {className: "panel-body"}, 
 
-        React.createElement(StoryBody, {onChange: this.handleTextChange, body: body}), 
-
-        React.createElement("button", {onClick: this.handleGrammarCheck, 
-          className: "btn btn-warning"}, "Raw API Check"), 
-                  
-        React.createElement("input", {type: "submit", className: "btn btn-success", value: "Submit"})
-
+          React.createElement("form", {onSubmit: this.handleSubmit, name: "checkform"}, 
+            
+             this.props.showTitle ?
+                React.createElement(StoryTitle, {
+                  onChange: this.handleTitleChange, 
+                  title: title}
+                )
+              : null, 
+          
+            React.createElement(StoryBody, {
+              onChange: this.handleTextChange, 
+              body: body}
+            ), 
+            
+            React.createElement("div", {className: "btn-toolbar"}, 
+              React.createElement("button", {onClick: this.handleCheck, 
+                className: "btn btn-warning", 
+                name: "_action_checkText"}, 
+                "Grammar Check"
+              ), 
+              React.createElement("input", {type: "submit", 
+                className: "btn btn-success", 
+                value: "Submit"}
+              )
+            )
+            
+          )
+        )
       )
     );
   }
@@ -1194,6 +1283,10 @@ var Contribution = ParseModel.extend({
       console.log(response);
     });
 
+  },
+
+  deleteSegment: function(){
+    this.destroy();
   }
 
 });
