@@ -128,6 +128,7 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
         }
       })
       .also('include', 'owner.alias')
+      .also('order', '-createdAt')
       .fetch()
       .then(response => {
         this.setState({othersStoryCollection: storyCollection});
@@ -583,8 +584,9 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
   },
 
   handleContributing: function(){
-
-    this.setState({isContributing: !this.state.isContributing});
+    this.setState({
+      isContributing: !this.state.isContributing
+    });
   },
 
   handleDelete: function(contribution){
@@ -646,14 +648,15 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
               ), 
               React.createElement("button", {onClick: this.handleContributing, 
                 className: "btn btn-primary"}, 
-                "Contribute"
+                (isContributing) ? 'Nevermind' : 'Contribute'
               ), 
 
               isContributing ? 
                 React.createElement(StoryFormContainer, {
                   story: story, 
                   router: this.props.router, 
-                  addContribution: this.addContribution}
+                  addContribution: this.addContribution, 
+                  handleContributing: this.handleContributing}
                 ) 
                 : null
             
@@ -789,6 +792,11 @@ var StoryBody = React.createClass({displayName: "StoryBody",
   }
 });
 
+// ############################
+// BUGS
+//
+// 1. fix bug with grammar checker not updating state!
+// ############################
 
 var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
   getInitialState: function () {
@@ -802,7 +810,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
   componentWillMount: function(){
     
     if (this.props.story){
-      console.log('got props')
+      console.log('mounted')
       this.setState({story: this.props.story});
     }
   },
@@ -810,15 +818,15 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
   handleGrammarCheck: function(e){
     e.preventDefault();
     this.state.contribution.checkGrammar();
+
   },
-
   handleTitleChange: function(e){
-    this.state.story
-      .set('title', e.target.value);
-
     this.setState({
       story: this.state.story
     });
+
+    this.state.story
+      .set('title', e.target.value);
   },
 
   handleTextChange: function(e, ed){
@@ -842,12 +850,19 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
       // set just the contribition owner
       this.setContributor(user, story.get('objectId'), 
         (response, contribution) => {
-
+          
+          // contribution doesnt have user information 
+          // attached at this point so add it for display purposes...
           contribution.set('contributor', user.toJSON());
           this.props.addContribution(contribution);
+
+          // reset the state
+          this.setState({contribution: new Contribution()});
+          this.props.handleContributing();
         });
 
     } else {
+
       console.log('story is NEW');
       // set the story owner & pointer instead
       story
@@ -872,6 +887,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
       .setPointer('contributor', '_User', user.get('objectId'))
       .setPointer('story', 'Story', storyId)
       .save().then(response => {
+        console.log(contribution);
         callback(response, contribution);
       });
 
