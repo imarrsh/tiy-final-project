@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var Backbone = require('backbone');
 
 var ParseModel = require('./parseSetup').ParseModel;
@@ -32,9 +33,12 @@ var Story = ParseModel.extend({
   },
 
   deleteStory: function(callback){
-    var contributions = this.get('contributions');
 
-    contributions.forEach(contribution => {
+    var contributions = this.get('contributions');
+    // make a clone of the contributions and perform detroy on each one
+    // a normal forEach will skip elements and cause some 
+    // references to be unedefined
+    _.each(_.clone(contributions.models), function(contribution){
       contribution.destroy();
     });
 

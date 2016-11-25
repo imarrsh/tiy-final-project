@@ -44,10 +44,15 @@ var StoryBody = React.createClass({
           ed.pasteAsPlainText = true;
         });
 
-        ed.onKeyUp.add(function(ed, e) {
-          self.props.onChange(e, ed);
+        ed.onKeyUp.add(function(ed, e, c, d) {
+          // console.log(ed.getContent());
+          self.props.onChange(ed.getContent()); 
         });
 
+        ed.onChange.add(function(ed, c){
+          console.log(c.content)
+          self.props.onChange(c.content);
+        });
       },
       
       mode : "textareas",
@@ -152,9 +157,9 @@ var StoryFormContainer = React.createClass({
       .set('title', e.target.value);
   },
 
-  handleTextChange: function(e, ed){
+  handleTextChange: function(content){
     this.state.contribution
-      .set('content', ed.getContent());
+      .set('content', content);
 
     this.setState({
       contribution: this.state.contribution

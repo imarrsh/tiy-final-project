@@ -61,7 +61,7 @@ var StoryContributuionListItem = React.createClass({
   },
 
   componentWillReceiveProps(nextProps){
-    console.log(nextProps)
+    // console.log(nextProps)
   },
 
   componentWillMount: function(){
@@ -121,7 +121,7 @@ var StoryContributuionListItem = React.createClass({
                   by {contribution.get('contributor').alias}
                   <div className="btn-toolbar">
                     <button 
-                      onClick={() => this.props.handleDelete(contribution)}
+                      onClick={() => this.props.deleteSegment(contribution)}
                       className="btn btn-danger btn-xs">
                       <i className="glyphicon glyphicon-remove" />
                     </button>
@@ -177,9 +177,9 @@ var StoryContributuionList = React.createClass({
               key={contribution.get('objectId')}
               contribution={contribution}
               handleVote={self.props.handleVote}
+              deleteSegment={self.props.deleteSegment}
             />
 
-            
           );
         })}
 
@@ -244,19 +244,20 @@ var StoryReadContainer = React.createClass({
     });
   },
 
-  handleDelete: function(contribution){
+  deleteStory: function(contribution){
+    var story = this.state.story;
 
-    contribution.deleteSegment();
-
-    this.setState({story: this.state.story});
+    story.deleteStory(() => {
+      this.props.router.navigate('', {trigger: true});
+    });
     
   },
 
-  // ########################
-  // handle this today!
-  // ########################
-  deleteSegment: function(){
-    console.log('delete segment');
+  deleteSegment: function(contribution){
+    // console.log('delete segment');
+    contribution.deleteSegment();
+
+    this.setState({story: this.state.story});
   },
 
   addContribution: function(contribution){
@@ -290,7 +291,7 @@ var StoryReadContainer = React.createClass({
             <div className="story-container">
               <div className="btn-toolbar">
                 <button 
-                  onClick={this.handleDelete}
+                  onClick={this.deleteStory}
                   className="btn btn-danger btn-xs">Delete Story
                 </button>
                 <button
@@ -305,7 +306,7 @@ var StoryReadContainer = React.createClass({
 
                   <StoryContributuionList 
                     contributions={contributions} 
-                    handleDelete={this.handleDelete}
+                    deleteSegment={this.deleteSegment}
                     handleVote={this.handleVote}
                   />
 
