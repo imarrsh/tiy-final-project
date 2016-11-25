@@ -14,6 +14,7 @@ var ContainerRow = layout.ContainerRow;
 var AppHeaderMain = layout.AppHeaderMain;
 var Row = layout.Row;
 
+
 var ContributorListItem = React.createClass({
   render: function(){
     var contributor = this.props.contributor;
@@ -48,6 +49,114 @@ var StoryFooter = React.createClass({
   }
 });
 
+
+var StoryContributuionListItem = React.createClass({
+  
+  getInitialState: function(){
+    return {
+      contribution: this.props.contribution,
+      upvotes: 0,
+      downvotes: 0
+    }
+  },
+
+  componentWillReceiveProps(nextProps){
+    console.log(nextProps)
+  },
+
+  componentWillMount: function(){
+    this.setState({
+      upvotes: this.state.contribution.get('upvotes')
+    });
+
+    this.setState({
+      downvotes: this.state.contribution.get('downvotes')
+    });
+  },
+
+  // this could be beter - its thanksgiving and im tired
+  handleVote: function(bool, contribution){
+  
+    var up = this.state.upvotes
+    , down = this.state.downvotes;
+
+    // set some ui state
+    if (bool) {
+      up++;
+      this.setState({upvotes: up});  
+    } else {
+      down++;
+      this.setState({downvotes: down});
+    }
+    
+    // hand off to model logic
+    this.props.handleVote(bool, contribution);
+  },
+
+  render: function(){
+    var contribution = this.state.contribution;
+
+    return(
+      <div className="panel panel-default">
+        <div className="panel-body">
+          <section className="story-segment"> 
+            <Row>
+              <div className="col-sm-9">
+                
+                <article // hopefully the input has been sanitized at some point
+                  dangerouslySetInnerHTML={{
+                    __html: contribution.get('content')
+                  }} 
+                />  
+          
+              </div>
+              <div className="col-sm-3">
+                <aside>
+                  <div>
+                    <img className="avatar"
+                      src={contribution.get('contributor').avatar.url} 
+                      alt={contribution.get('contributor').alias}
+                    />
+                  </div>
+                  by {contribution.get('contributor').alias}
+                  <div className="btn-toolbar">
+                    <button 
+                      onClick={() => this.props.handleDelete(contribution)}
+                      className="btn btn-danger btn-xs">
+                      <i className="glyphicon glyphicon-remove" />
+                    </button>
+
+                    <button className="btn btn-success btn-xs">
+                      <i className="glyphicon glyphicon-edit" />
+                    </button>
+
+                    <button 
+                      onClick={() => this.handleVote(true, contribution)}
+                      className="btn btn-default btn-xs">
+                      <i className="glyphicon glyphicon-arrow-up" /> 
+                        {this.state.upvotes || 0 }
+                    </button>
+
+                    <button 
+                      onClick={() => this.handleVote(false, contribution)}
+                      className="btn btn-default btn-xs">
+                      <i className="glyphicon glyphicon-arrow-down" /> 
+                        {this.state.downvotes || 0}
+                    </button>
+
+                  </div>
+                </aside>
+              </div>
+            </Row>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
+});
+
+
 var StoryContributuionList = React.createClass({
   getInitialState: function(){
     return {
@@ -60,52 +169,29 @@ var StoryContributuionList = React.createClass({
     var contributions = this.state.contributions;
     // console.warn(contributions)
     return(
-      <div>
+      <div className="panel-body">
         {contributions.map(function(contribution){
           // console.log(contribution)
-          return(
-            <div className="panel panel-default" key={contribution.get('objectId')}>
-              <div className="panel-body">
-                <section className="story-segment"> 
-                  <Row>
-                    <div className="col-sm-9">
-                      
-                      <article // hopefully the input has been sanitized at some point
-                        dangerouslySetInnerHTML={{
-                          __html: contribution.get('content')
-                        }} 
-                      />  
-                
-                    </div>
-                    <div className="col-sm-3">
-                      <aside>
-                        <div>
-                          <img className="avatar"
-                            src={contribution.get('contributor').avatar.url} 
-                            alt={contribution.get('contributor').alias}
-                          />
-                        </div>
-                        by {contribution.get('contributor').alias}
-                        <div className="btn-toolbar">
-                          <button 
-                            onClick={() => self.props.handleDelete(contribution)}
-                            className="btn btn-danger btn-xs">X</button>
-                          <button className="btn btn-success btn-xs">E</button>
-                        </div>
-                      </aside>
-                    </div>
-                  </Row>
-                </section>
-              </div>
-            </div>
+          return( 
+            <StoryContributuionListItem 
+              key={contribution.get('objectId')}
+              contribution={contribution}
+              handleVote={self.props.handleVote}
+            />
+
+            
           );
         })}
+
       </div>
     );
   } 
 });
 
+
+
 var StoryReadContainer = React.createClass({
+  
   getInitialState: function(){
     return {
       story: new Story(),
@@ -145,7 +231,6 @@ var StoryReadContainer = React.createClass({
       .also('include', 'contributor')
       .fetch()
       .then((response) => {
-        // console.log(response.results)
         story.set('contributions', contributions);
         this.setState({story: story});
       });
@@ -167,6 +252,9 @@ var StoryReadContainer = React.createClass({
     
   },
 
+  // ########################
+  // handle this today!
+  // ########################
   deleteSegment: function(){
     console.log('delete segment');
   },
@@ -181,6 +269,13 @@ var StoryReadContainer = React.createClass({
     story.set('contributions', contributions);
 
     this.setState({story: story});
+  },
+
+  handleVote: function(vote, contribution){
+    contribution.vote(vote)
+
+    this.state.story
+      .set('contributions')
   },
 
   render: function(){
@@ -207,15 +302,21 @@ var StoryReadContainer = React.createClass({
               
               <div className="panel panel-default">
                 <div className="panel-body">
+
                   <StoryContributuionList 
                     contributions={contributions} 
                     handleDelete={this.handleDelete}
+                    handleVote={this.handleVote}
                   />
+
                 </div>
                 <div className="panel-footer">
+
                   <StoryFooter contributions={contributions} />
+
                 </div>
               </div>
+
               <button onClick={this.handleContributing} 
                 className="btn btn-primary">
                 {(isContributing) ? 'Nevermind' : 'Contribute'}

@@ -36,6 +36,30 @@ var Contribution = ParseModel.extend({
 
   deleteSegment: function(){
     this.destroy();
+  },
+
+  vote: function(bool){
+    // true is an upvote, false is a downvote
+    var upvotes = this.get('upvotes')
+    , downvotes = this.get('downvotes')
+    , data;
+
+    if (bool) {
+      // only provide options here since
+      // parse server doesnt support PATCH
+      data = this.increment('upvotes', 1);
+      this.save({}, {
+        data: JSON.stringify(data),
+        contentType: 'application/json'
+      });
+
+    } else {
+      data = this.increment('downvotes', 1);
+      this.save({}, {
+        data: JSON.stringify(data),
+        contentType: 'application/json'
+      });
+    }
   }
 
 });

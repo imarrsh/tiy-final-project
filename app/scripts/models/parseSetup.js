@@ -16,6 +16,7 @@ var ParseModel = Backbone.Model.extend({
     return this;
   },
 
+  // set up a file pointer
   setFile: function(field, fileName, fileUrl){
     this.set(field, {
       __type: 'File',
@@ -24,6 +25,26 @@ var ParseModel = Backbone.Model.extend({
     });
 
     return this;
+  },
+
+  // use server to increment/decrement
+  // server will send back the new value
+  increment: function(field, amount){
+    return {
+      [field]: {
+        __op: 'Increment',
+        amount: amount
+      }
+    };
+  },
+
+  decrement: function(field, amount){
+    return {
+      [field]: {
+        __op: 'Decrement',
+        amount: amount
+      }
+    };
   }
 
 });
