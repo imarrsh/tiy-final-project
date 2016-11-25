@@ -444,6 +444,7 @@ var ContainerRow = layout.ContainerRow;
 var AppHeaderMain = layout.AppHeaderMain;
 var Row = layout.Row;
 
+
 var ContributorListItem = React.createClass({displayName: "ContributorListItem",
   render: function(){
     var contributor = this.props.contributor;
@@ -478,6 +479,114 @@ var StoryFooter = React.createClass({displayName: "StoryFooter",
   }
 });
 
+
+var StoryContributuionListItem = React.createClass({displayName: "StoryContributuionListItem",
+  
+  getInitialState: function(){
+    return {
+      contribution: this.props.contribution,
+      upvotes: 0,
+      downvotes: 0
+    }
+  },
+
+  componentWillReceiveProps(nextProps){
+    console.log(nextProps)
+  },
+
+  componentWillMount: function(){
+    this.setState({
+      upvotes: this.state.contribution.get('upvotes')
+    });
+
+    this.setState({
+      downvotes: this.state.contribution.get('downvotes')
+    });
+  },
+
+  // this could be beter - its thanksgiving and im tired
+  handleVote: function(bool, contribution){
+  
+    var up = this.state.upvotes
+    , down = this.state.downvotes;
+
+    // set some ui state
+    if (bool) {
+      up++;
+      this.setState({upvotes: up});  
+    } else {
+      down++;
+      this.setState({downvotes: down});
+    }
+    
+    // hand off to model logic
+    this.props.handleVote(bool, contribution);
+  },
+
+  render: function(){
+    var contribution = this.state.contribution;
+
+    return(
+      React.createElement("div", {className: "panel panel-default"}, 
+        React.createElement("div", {className: "panel-body"}, 
+          React.createElement("section", {className: "story-segment"}, 
+            React.createElement(Row, null, 
+              React.createElement("div", {className: "col-sm-9"}, 
+                
+                React.createElement("article", {// hopefully the input has been sanitized at some point
+                  dangerouslySetInnerHTML: {
+                    __html: contribution.get('content')
+                  }}
+                )
+          
+              ), 
+              React.createElement("div", {className: "col-sm-3"}, 
+                React.createElement("aside", null, 
+                  React.createElement("div", null, 
+                    React.createElement("img", {className: "avatar", 
+                      src: contribution.get('contributor').avatar.url, 
+                      alt: contribution.get('contributor').alias}
+                    )
+                  ), 
+                  "by ", contribution.get('contributor').alias, 
+                  React.createElement("div", {className: "btn-toolbar"}, 
+                    React.createElement("button", {
+                      onClick: () => this.props.handleDelete(contribution), 
+                      className: "btn btn-danger btn-xs"}, 
+                      React.createElement("i", {className: "glyphicon glyphicon-remove"})
+                    ), 
+
+                    React.createElement("button", {className: "btn btn-success btn-xs"}, 
+                      React.createElement("i", {className: "glyphicon glyphicon-edit"})
+                    ), 
+
+                    React.createElement("button", {
+                      onClick: () => this.handleVote(true, contribution), 
+                      className: "btn btn-default btn-xs"}, 
+                      React.createElement("i", {className: "glyphicon glyphicon-arrow-up"}), 
+                        this.state.upvotes || 0
+                    ), 
+
+                    React.createElement("button", {
+                      onClick: () => this.handleVote(false, contribution), 
+                      className: "btn btn-default btn-xs"}, 
+                      React.createElement("i", {className: "glyphicon glyphicon-arrow-down"}), 
+                        this.state.downvotes || 0
+                    )
+
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    );
+  }
+
+});
+
+
 var StoryContributuionList = React.createClass({displayName: "StoryContributuionList",
   getInitialState: function(){
     return {
@@ -490,52 +599,29 @@ var StoryContributuionList = React.createClass({displayName: "StoryContributuion
     var contributions = this.state.contributions;
     // console.warn(contributions)
     return(
-      React.createElement("div", null, 
+      React.createElement("div", {className: "panel-body"}, 
         contributions.map(function(contribution){
           // console.log(contribution)
-          return(
-            React.createElement("div", {className: "panel panel-default", key: contribution.get('objectId')}, 
-              React.createElement("div", {className: "panel-body"}, 
-                React.createElement("section", {className: "story-segment"}, 
-                  React.createElement(Row, null, 
-                    React.createElement("div", {className: "col-sm-9"}, 
-                      
-                      React.createElement("article", {// hopefully the input has been sanitized at some point
-                        dangerouslySetInnerHTML: {
-                          __html: contribution.get('content')
-                        }}
-                      )
-                
-                    ), 
-                    React.createElement("div", {className: "col-sm-3"}, 
-                      React.createElement("aside", null, 
-                        React.createElement("div", null, 
-                          React.createElement("img", {className: "avatar", 
-                            src: contribution.get('contributor').avatar.url, 
-                            alt: contribution.get('contributor').alias}
-                          )
-                        ), 
-                        "by ", contribution.get('contributor').alias, 
-                        React.createElement("div", {className: "btn-toolbar"}, 
-                          React.createElement("button", {
-                            onClick: () => self.props.handleDelete(contribution), 
-                            className: "btn btn-danger btn-xs"}, "X"), 
-                          React.createElement("button", {className: "btn btn-success btn-xs"}, "E")
-                        )
-                      )
-                    )
-                  )
-                )
-              )
+          return( 
+            React.createElement(StoryContributuionListItem, {
+              key: contribution.get('objectId'), 
+              contribution: contribution, 
+              handleVote: self.props.handleVote}
             )
+
+            
           );
         })
+
       )
     );
   } 
 });
 
+
+
 var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
+  
   getInitialState: function(){
     return {
       story: new Story(),
@@ -575,7 +661,6 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
       .also('include', 'contributor')
       .fetch()
       .then((response) => {
-        // console.log(response.results)
         story.set('contributions', contributions);
         this.setState({story: story});
       });
@@ -597,6 +682,9 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     
   },
 
+  // ########################
+  // handle this today!
+  // ########################
   deleteSegment: function(){
     console.log('delete segment');
   },
@@ -611,6 +699,13 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     story.set('contributions', contributions);
 
     this.setState({story: story});
+  },
+
+  handleVote: function(vote, contribution){
+    contribution.vote(vote)
+
+    this.state.story
+      .set('contributions')
   },
 
   render: function(){
@@ -637,15 +732,21 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
               
               React.createElement("div", {className: "panel panel-default"}, 
                 React.createElement("div", {className: "panel-body"}, 
+
                   React.createElement(StoryContributuionList, {
                     contributions: contributions, 
-                    handleDelete: this.handleDelete}
+                    handleDelete: this.handleDelete, 
+                    handleVote: this.handleVote}
                   )
+
                 ), 
                 React.createElement("div", {className: "panel-footer"}, 
+
                   React.createElement(StoryFooter, {contributions: contributions})
+
                 )
               ), 
+
               React.createElement("button", {onClick: this.handleContributing, 
                 className: "btn btn-primary"}, 
                 (isContributing) ? 'Nevermind' : 'Contribute'
@@ -1303,6 +1404,30 @@ var Contribution = ParseModel.extend({
 
   deleteSegment: function(){
     this.destroy();
+  },
+
+  vote: function(bool){
+    // true is an upvote, false is a downvote
+    var upvotes = this.get('upvotes')
+    , downvotes = this.get('downvotes')
+    , data;
+
+    if (bool) {
+      // only provide options here since
+      // parse server doesnt support PATCH
+      data = this.increment('upvotes', 1);
+      this.save({}, {
+        data: JSON.stringify(data),
+        contentType: 'application/json'
+      });
+
+    } else {
+      data = this.increment('downvotes', 1);
+      this.save({}, {
+        data: JSON.stringify(data),
+        contentType: 'application/json'
+      });
+    }
   }
 
 });
@@ -1407,6 +1532,7 @@ var ParseModel = Backbone.Model.extend({
     return this;
   },
 
+  // set up a file pointer
   setFile: function(field, fileName, fileUrl){
     this.set(field, {
       __type: 'File',
@@ -1415,6 +1541,26 @@ var ParseModel = Backbone.Model.extend({
     });
 
     return this;
+  },
+
+  // use server to increment/decrement
+  // server will send back the new value
+  increment: function(field, amount){
+    return {
+      [field]: {
+        __op: 'Increment',
+        amount: amount
+      }
+    };
+  },
+
+  decrement: function(field, amount){
+    return {
+      [field]: {
+        __op: 'Decrement',
+        amount: amount
+      }
+    };
   }
 
 });
