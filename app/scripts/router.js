@@ -42,42 +42,32 @@ var AppRouter = Backbone.Router.extend({
 
   // },
 
+  gotoLogin: function(){
+    this.navigate('login/', {trigger: true});
+    this.login();
+  },
+
   execute: function(callback, args, name){
-    console.log('execute');
 
-    // this.checkUser();
     var user = User.current();
+    var token = user.get('sessionToken');
 
-    if (!user.get('sessionToken')){
-      console.log('token is', user.get('sessionToken'));
-      this.navigate('login/', {trigger: true});
-      // window.location.assign('#login/'); // vanilla js
+    if (!token){
+      console.log('token is', token);
+      this.gotoLogin();
+      return false;
     }
 
-    return Backbone.Router.prototype
-      .execute.call(this, callback, args, name);
+    if (callback) {
+      callback.apply(this, args);
+    }
+
   },
 
   initialize: function(){
-    // var that = this;
     var user = User.current() || {}; // fill user up with user model
 
-    // this.checkUser(user.get('sessionToken'));
-
-    // , function() {
-    //   that.navigate('login/', {trigger: true});
-    // });
-
-    // this.navigate('login/', {trigger: true})
-
-    // console.log('token',user);
-    // var self = this;
-    // if (!user.get('sessionToken')){
-    //   console.log('hey, token is ', user.get('sessionToken'));
-    //  this.navigate('login/', {trigger: true});
-    // }
-    // console.log('about to set headers!');
-
+    // set headers for Parse
     parseHeaders('mtparseserver', 'thompson1', user.get('sessionToken'));
 
   },
