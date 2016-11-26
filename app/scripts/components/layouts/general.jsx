@@ -54,6 +54,14 @@ var AppHeaderMain = function(props){
       <li><a href="#stories/new/">New Story</a></li>
       <li><a href={'#user/' + user.get('objectId') + '/'}>Profile</a></li>
       <li><a href="#logout/">Logout</a></li>
+      <li className="pull-right">
+        <div className="user-avatar user-avatar-sm">
+          <img
+            src={user.get('avatar').url} 
+            alt={user.get('alias')} 
+          />
+        </div>
+      </li>
     </AppHeaderWrap>
   );
 };

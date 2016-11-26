@@ -42,34 +42,47 @@ var UserDetailContainer = React.createClass({
     console.log(user.toJSON());
     return(
       <AppWrapper>
+        <AppHeaderMain />
         <ContainerRow>
-          <AppHeaderMain />
-          <p>User Detail for {user.get('firstName')}</p>
+          <div className="col-sm-6 col-sm-offset-3">
 
-          <figure className="user-profile-avatar">
-            <div className="user-avatar">
-              <img src={user.get('avatar') ? user.get('avatar').url : "http://placehold.it/250x250"} 
-                alt={user.get('alias') || 'Profile Picture'} />
+            <div className="user-profile">
+  
+              <p>User Detail for {user.get('firstName')}</p>
+              
+              <figure className="user-profile-avatar">
+                <div className="user-avatar">
+                  <img src={user.get('avatar') ? user.get('avatar').url : "http://placehold.it/250x250"} 
+                    alt={user.get('alias') || 'Profile Picture'} />
+                </div>
+                <figcaption>
+                  <h2 className="user-alias">{user.get('alias') || 'Alias not set'}</h2>
+                  <div className="location">
+                    {user.get('location')}
+                  </div>
+                </figcaption>
+              </figure>
+              
+              <div className="user-profile-details">
+                <div className="full-name">
+                  {user.get('firstName') + ' ' + user.get('lastName')}
+                </div>
+                <div className="email">
+                  {user.get('email')}
+                </div>
+                <div className="bio">
+                  {user.get('bio')}
+                </div>
+              </div>
+              
+              <div className="user-profile-controls">
+                <a href={'#user/' + user.get('objectId') + '/edit/'} 
+                  className="btn btn-primary">
+                    Edit Profile
+                </a>
+              </div>
             </div>
-            <figcaption>
-              <h2 className="user-alias">{user.get('alias') || 'Alias not set'}</h2>
-            </figcaption>
-          </figure>
 
-          <div className="user-profile-details">
-            <div className="full-name">
-              {user.get('firstName') + ' ' + user.get('lastName')}
-            </div>
-            <div className="email">
-              {user.get('email')}
-            </div>
-          </div>
-
-          <div className="user-profile-controls">
-            <a href={'#user/' + user.get('objectId') + '/edit/'} 
-              className="btn btn-primary">
-                Edit Profile
-            </a>
           </div>
 
         </ContainerRow>

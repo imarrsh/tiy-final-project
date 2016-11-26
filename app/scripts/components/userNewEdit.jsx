@@ -61,6 +61,12 @@ var UserData = React.createClass({
           className="form-control" value={user.lastName} placeholder="Last Name" />
         <input onChange={this.props.onChange} type="text" name="email" 
           className="form-control" value={user.email} placeholder="Email" />
+        <input onChange={this.props.onChange} type="text" name="location" 
+          className="form-control" value={user.location} placeholder="Location" />
+        <textarea onChange={this.props.onChange} value={user.bio} name="bio" id="bio" 
+          cols="30" rows="5" className="form-control"
+          placeholder="Tell others a bit about yourself!">
+        </textarea>
       </div>
     )
   }
@@ -109,8 +115,8 @@ var UserEditProfileContainer = React.createClass({
     var user = this.state.user.toJSON();
     return(
       <AppWrapper>
+        <AppHeaderMain />
         <ContainerRow>
-          <AppHeaderMain />
           <div>
 
             <UserProfileImageForm user={user} imageUpdate={this.handleImageAutoUpload}/>

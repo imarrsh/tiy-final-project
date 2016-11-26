@@ -20,7 +20,7 @@ var StoryCreateContainer = React.createClass({
   },
 
   render: function(){
-    console.warn(this.state.story.get('contributions'))
+    // console.warn(this.state.story.get('contributions'))
     return(
       <AppWrapper>
         <AppHeaderMain />
@@ -41,40 +41,3 @@ var StoryCreateContainer = React.createClass({
 module.exports = {
   StoryCreateContainer: StoryCreateContainer
 };
-
-
-// Other API Setups
-
-// ######################
-// After the Deadline API
-// ######################
-
-// var data = encodeURI(storyBody);
-// var key = 'key=storytelling5e836ae5397a524dc3c0a7c92c0a5cbc';
-
-// var checkUrl = 'http://service.afterthedeadline.com/checkDocument';
-// checkUrl += '?' + key + '&data=' + data;
-
-// ######################
-// TextGears API
-// ######################
-
-// var text = encodeURI(storyBody);
-// // var key = 'key=GwOf05rYyp7z5LOh';
-// var key = 'key=DEMO_KEY';
-
-// var checkUrl = 'https://api.textgears.com/check.php';
-// checkUrl += '?' + key + '&text=' + text;
-
-// $.post(checkUrl) // for when the data is all one url string; TextGears, AtD
-
-
-              // <TinyMCE
-              //   className="form-control"
-              //   content="<p>This is the initial content of the editor</p>"
-              //   config={{
-              //    // plugins: 'autolink link image lists print preview',
-              //    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright'
-              //   }}
-              //   onChange={this.handleEditorChange} 
-              // />

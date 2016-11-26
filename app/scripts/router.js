@@ -15,7 +15,8 @@ var UserEditProfileContainer = require('./components/userNewEdit.jsx').UserEditP
 
 var AppRouter = Backbone.Router.extend({
   routes: {
-    '': 'index', // home screen/dashboard view
+    '': 'index', // marketing page
+    'dashboard/': 'dashboard', // home screen/dashboard view
     // user routes
     'user/:id/edit/': 'userNewEdit', // user profile new/edit view
     'user/:id/': 'userDetail', // user profile view

@@ -20,7 +20,7 @@ var StoryTitle =  React.createClass({
   render: function(){
     return(
       <input onChange={this.props.onChange}
-        type="text" name="title" className="form-control" 
+        type="text" name="title" className="form-control title-field" 
         placeholder="Your Story Title" />
     );
   }
@@ -55,54 +55,45 @@ var StoryBody = React.createClass({
         });
       },
       
-      mode : "textareas",
-      plugins : "AtD,paste",
+      contentStyles: [
+        {'backgroundColor': 'red'}
+      ],
+      mode : 'textareas',
+      plugins : 'AtD,paste',
       paste_text_sticky : true,
       /* this stuff is a matter of preference: */
-      theme                              : "advanced",
-      theme_advanced_buttons1            : "",
-      theme_advanced_buttons2            : "",
-      theme_advanced_buttons3            : "",
-      theme_advanced_toolbar_location    : "none",
-      theme_advanced_toolbar_align       : "left",
-      theme_advanced_statusbar_location  : "bottom",
+      theme                              : 'advanced',
+      theme_advanced_buttons1            : '',
+      theme_advanced_buttons2            : '',
+      theme_advanced_buttons3            : '',
+      theme_advanced_toolbar_location    : 'none',
+      theme_advanced_toolbar_align       : 'left',
+      theme_advanced_statusbar_location  : 'bottom',
       theme_advanced_path                : false,
       theme_advanced_resizing            : true,
       theme_advanced_resizing_use_cookie : false,
       gecko_spellcheck                   : false,
       browser_spellcheck                 : true,
-      // "No errors were found.":
+      // 'No errors were found.':
       languagetool_i18n_no_errors : {},
-      // "Explain..." - shown if there is an URL with a detailed description:
+      // 'Explain...' - shown if there is an URL with a detailed description:
       languagetool_i18n_explain : {},
-      // "Ignore this error":
+      // 'Ignore this error':
       languagetool_i18n_ignore_once : {},
-      // "Ignore this kind of error":
+      // 'Ignore this kind of error':
       languagetool_i18n_ignore_all : {},
-      // "Rule implementation":
+      // 'Rule implementation':
       languagetool_i18n_rule_implementation : {},
 
       languagetool_i18n_current_lang : function() { return 'en_US' },
           
       // The URL of the LanguageTool API.
-      languagetool_rpc_url: "https://languagetool.org/api/v2/check",
+      languagetool_rpc_url: 'https://languagetool.org/api/v2/check',
       /* edit this file to customize how LanguageTool shows errors: */
       languagetool_css_url: 'css/app.css'
     });
 
   },
-
-  // handleCheck: function(e){
-  //   e.preventDefault();
-  //   tinyMCE.activeEditor.execCommand("mceWritingImprovementTool", "en-US");
-  //   return false;
-  // },
-  
-  // handleChange: function(e){
-  //   // this.setState({text: e.target.getContent()});
-  //   this.setState({text: e.target.value});
-  //   console.log(this.state.text)
-  // },
 
   render: function(){
     // change text area onchange back to this onchange
@@ -111,7 +102,7 @@ var StoryBody = React.createClass({
         <textarea onChange={this.props.onChange} 
           id="checktext" name="body"
           className="text form-control" rows="6"
-          placeholder="Begin your story here... or paste paste it in!"
+          placeholder="Begin your story here... or paste it in!"
           value={this.state.text}>
         </textarea>
       </div>
@@ -122,8 +113,7 @@ var StoryBody = React.createClass({
 
 // ############################
 // BUGS
-//
-// 1. fix bug with grammar checker not updating state!
+// 1. fix the position of the popup
 // ############################
 
 var StoryFormContainer = React.createClass({

@@ -19,7 +19,72 @@ p {
 }
 
 
-// user profile 
+#app{ 
+  .wrapper {
+    background: #fafafa;
+    padding: 80px 0 26px;
+  }
+}
+
+.app-header {
+  padding: 10px 0;
+  box-shadow: 0 0 26px rgba(0, 0, 0, 0.2);
+  background: #fff;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+}
+
+// ##################################
+// Adding a story view
+// ##################################
+
+.title-field {
+  font-family: 'Noticia Text', Times, serif;
+  font-weight: bold;
+  border: none;
+  border-radius: 0px;
+  border-bottom: 2px solid #cfcfaf;
+  font-size: 26px;
+  box-shadow: none;
+  outline: none;
+  padding: 24px 0;
+  letter-spacing: 0.02em;
+  &:focus {
+    box-shadow: none;
+    border-color: #252525;
+  }
+}
+
+// ##################################
+// user profile
+// ##################################
+
+.user-profile {
+  font-family: 'Enriqueta', Times, serif;
+    background: #ffffff;
+    border-radius: 5px;
+    padding: 16px;
+    box-shadow: 0px 0px 15px -4px rgba(0,0,0,0.3);
+  &-avatar { // avatar box
+    text-align: center;
+  }
+  &-details {
+    font-size: 20px;
+    line-height: 48px;
+    padding-bottom: 22px;
+  }
+  .user-avatar {
+    margin: 0 auto;
+    border: 5px solid #ffffff;
+    box-shadow: 2px 2px 12px -4px rgba(0,0,0,0.7)
+  }
+}
+
+
+// user avatar
 .user-avatar {
   position: relative;
   width: 150px;
@@ -56,9 +121,15 @@ p {
       }
     }
   }
+  &.user-avatar-sm {
+    width: 40px;
+    height: 40px;
+  }
 }
 
+// #################
 // story view
+// #################
 .story-segment{
   font: {
     family: 'Enriqueta', 'Times', serif;
@@ -80,7 +151,11 @@ p {
   }
 }
 
-/* edit this file to customize how LanguageTool shows errors: */
+
+// #################
+// story editor
+// #################
+/* edit these rules to customize how LanguageTool shows errors: */
 .hiddenSpellError {
     background-color: rgba(255,0,0, 0.2);
     cursor: pointer;
@@ -94,4 +169,9 @@ p {
 .hiddenSuggestion {
     background-color: rgb(201,205,255);
     cursor: pointer;
+}
+
+// tinymce styles
+#menu_checktext_spellcheckermenu_co {
+  left: 0 !important; // knock the menu back in place
 }
