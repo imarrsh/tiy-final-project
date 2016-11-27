@@ -103,7 +103,7 @@ var AppRouter = Backbone.Router.extend({
 
   userDetail: function (userId) {
     ReactDOM.render(
-      React.createElement(UserDetailContainer, { router: this }),
+      React.createElement(UserDetailContainer, { router: this, userId: userId }),
       document.getElementById('app')
     );
   },

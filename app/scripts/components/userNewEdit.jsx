@@ -37,7 +37,7 @@ var UserProfileImageForm = React.createClass({
           </div>
         </div>
 
-        <form encType="multipart/form-data">
+        <form encType="multipart/form-data" id="user-profile-img-form">
           <input onChange={this.handleChange} ref="profileImg" 
             type="file" name="profileImg" />
         </form>
@@ -53,20 +53,90 @@ var UserData = React.createClass({
     var user = this.props.user;
     return(
       <div className="form-group">
-        <input onChange={this.props.onChange} type="text" name="alias" 
-          className="form-control" value={user.alias} placeholder="Set an alias" />
-        <input onChange={this.props.onChange} type="text" name="firstName" 
-          className="form-control" value={user.firstName} placeholder="First Name" />
-        <input onChange={this.props.onChange} type="text" name="lastName" 
-          className="form-control" value={user.lastName} placeholder="Last Name" />
-        <input onChange={this.props.onChange} type="text" name="email" 
-          className="form-control" value={user.email} placeholder="Email" />
-        <input onChange={this.props.onChange} type="text" name="location" 
-          className="form-control" value={user.location} placeholder="Location" />
-        <textarea onChange={this.props.onChange} value={user.bio} name="bio" id="bio" 
-          cols="30" rows="5" className="form-control"
-          placeholder="Tell others a bit about yourself!">
+        
+        <input 
+          onChange={this.props.onChange} 
+          value={user.alias} 
+          type="text" 
+          name="alias" 
+          className="form-control"  
+          placeholder="Set an alias" 
+        />
+
+        <div className="form-group">
+          <div className="row">
+            
+            <div className="col-sm-6">
+              <label htmlFor="firstName">
+                First Name 
+              </label>
+              <input 
+                onChange={this.props.onChange} 
+                value={user.firstName}
+                type="text"
+                id="firstName" name="firstName" 
+                className="form-control" 
+                placeholder="First Name" 
+              />
+            </div>
+            
+            <div className="col-sm-6">
+              <label htmlFor="lastName">
+                Last Name
+              </label>
+              <input 
+                onChange={this.props.onChange} 
+                value={user.lastName} 
+                type="text"
+                id="lastName" name="lastName" 
+                className="form-control" 
+                placeholder="Last Name" 
+              />
+            </div>
+          
+          </div>
+        </div>
+        
+        <div className="form-group">
+          <label htmlFor="email">
+            Email Address
+          </label>
+          <input 
+            onChange={this.props.onChange}
+            value={user.email}
+            type="text"
+            id="emailx" name="email" 
+            className="form-control" 
+            placeholder="Email" 
+          />
+        </div>
+        
+        <div className="form-group">
+          <label htmlFor="location">
+            Location
+          </label>
+          <input 
+            onChange={this.props.onChange} 
+            value={user.location} 
+            type="text" 
+            id="location" name="location" 
+            className="form-control" 
+            placeholder="Location" 
+          />
+        </div>
+
+        <label htmlFor="location">
+          Tell others a bit about yourself
+        </label>
+        <textarea 
+          onChange={this.props.onChange} 
+          value={user.bio} 
+          name="bio" id="bio" 
+          cols="30" rows="2" 
+          className="form-control"
+          placeholder="What's your story?">
         </textarea>
+
       </div>
     )
   }
@@ -117,18 +187,20 @@ var UserEditProfileContainer = React.createClass({
       <AppWrapper>
         <AppHeaderMain />
         <ContainerRow>
-          <div>
+          <div className="col-sm-6 col-sm-offset-3">
 
-            <UserProfileImageForm user={user} imageUpdate={this.handleImageAutoUpload}/>
-
-            <form onSubmit={this.handleSubmit} >
-
-              <UserData user={user} onChange={this.handleChange}/>
-
-              <input type="submit" value="Save" className="btn btn-primary" />
-              <button onClick={this.handleCancel} className="btn btn-default">Cancel</button>
-
-            </form>
+            <div className="user-profile user-profile-edit">
+              <UserProfileImageForm user={user} imageUpdate={this.handleImageAutoUpload}/>
+              
+              <form onSubmit={this.handleSubmit} >
+              
+                <UserData user={user} onChange={this.handleChange}/>
+              
+                <input type="submit" value="Save" className="btn btn-primary" />
+                <button onClick={this.handleCancel} className="btn btn-default">Cancel</button>
+              
+              </form>
+            </div>
 
           </div>
         </ContainerRow>

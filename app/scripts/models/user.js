@@ -28,6 +28,15 @@ var ParseUser = ParseModel.extend({
 
 
 var User = ParseUser.extend({
+  
+  defaults: {
+    firstName: '',
+    lastName: '',
+    location: '',
+    email: '',
+    avatar: {},
+    alias: ''
+  },
 
   urlRoot: 'https://mt-parse-server.herokuapp.com/users',
 

@@ -18,12 +18,9 @@ p {
   font-size: 22px;
 }
 
-
-#app{ 
-  .wrapper {
-    background: #fafafa;
-    padding: 80px 0 26px;
-  }
+.main-content {
+  padding: 84px 0 32px;
+  min-height: calc(100vh - 59px);
 }
 
 .app-header {
@@ -32,9 +29,13 @@ p {
   background: #fff;
   position: fixed;
   top: 0;
-  right: 0;
-  left: 0;
+  width: 100%;
   z-index: 2;
+}
+
+.footer {
+  background: #252525;
+  padding: 10px 0;
 }
 
 // ##################################
@@ -64,23 +65,61 @@ p {
 
 .user-profile {
   font-family: 'Enriqueta', Times, serif;
-    background: #ffffff;
-    border-radius: 5px;
-    padding: 16px;
-    box-shadow: 0px 0px 15px -4px rgba(0,0,0,0.3);
+  background: #ffffff;
+  border-radius: 5px;
+  padding: 22px;
+  box-shadow: 0px 0px 15px -4px rgba(0,0,0,0.3);
   &-avatar { // avatar box
     text-align: center;
-  }
-  &-details {
-    font-size: 20px;
-    line-height: 48px;
-    padding-bottom: 22px;
   }
   .user-avatar {
     margin: 0 auto;
     border: 5px solid #ffffff;
     box-shadow: 2px 2px 12px -4px rgba(0,0,0,0.7)
   }
+  &-details {
+    font-size: 20px;
+    line-height: 36px;
+    padding-bottom: 22px;
+  }
+  &-edit{
+    input[type="text"],
+    textarea {
+      font-family: 'Enriqueta', Times, serif;
+      font-size: 20px;
+      border: none;
+      padding: 20px 0;
+      box-shadow: none;
+      border-radius: 0px;
+      border-bottom: 2px solid #EBEBEB;
+      &:focus {
+        border-color: #8f8f8f;
+        box-shadow: none;
+      }
+    }
+    textarea {
+      padding: 10px 0;
+    }
+    input[name="alias"]{
+      border-bottom: 0;
+      padding: 24px 0;
+      margin: 20px auto;
+      text-align: center;
+      font-size: 34px;
+    }
+    label {
+      margin-bottom: -10px;
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #afafaf;
+    }
+
+  }
+
+}
+
+#user-profile-img-form {
+  display: none;
 }
 
 

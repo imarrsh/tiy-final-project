@@ -5,31 +5,38 @@ var User = require('../models/user').User;
 var AppWrapper = require('./layouts/general.jsx').AppWrapper;
 var ContainerRow = require('./layouts/general.jsx').ContainerRow;
 var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
+var AppFooterMain = require('./layouts/general.jsx').AppFooterMain;
 
 var UserDetailContainer = React.createClass({
   
   getInitialState: function(){
     return {
-      user: User.current()
+      user: new User()
     }
   },
 
   componentWillMount: function () {
+    // console.log(this.state.user)
     this.getUserId()
   },
 
-  componentWillReceiveProps: function(){
-    this.getUserId();
+  componentWillReceiveProps: function(nextProps){
+    // this.setProps({userId: nextProps.userId});
+    console.log('nextprops', nextProps.userId)
+    this.getUserId(nextProps);
+    // this.setState({user: this.state.user});
   },
 
-  getUserId: function(){
-    var user = this.state.user; 
+  getUserId: function(nextProps){
+    var user = new User()
+    , userId;
+    
+    nextProps ?
+      userId = nextProps.userId :
+      userId = this.props.userId;
 
-    var userId = this.props.userId;
-
-    // if not editing a recipe then return now
     if (!userId){
-      return;
+      return; // bail if no user id
     }
 
     user.set('objectId', userId);
@@ -38,8 +45,11 @@ var UserDetailContainer = React.createClass({
   },
 
   render: function () {
-    var user = User.current();
-    console.log(user.toJSON());
+    var user = this.state.user
+    , currentUser = User.current();
+
+    console.log(user);
+
     return(
       <AppWrapper>
         <AppHeaderMain />
@@ -58,7 +68,7 @@ var UserDetailContainer = React.createClass({
                 <figcaption>
                   <h2 className="user-alias">{user.get('alias') || 'Alias not set'}</h2>
                   <div className="location">
-                    {user.get('location')}
+                    {user.get('location') || null}
                   </div>
                 </figcaption>
               </figure>
@@ -74,18 +84,22 @@ var UserDetailContainer = React.createClass({
                   {user.get('bio')}
                 </div>
               </div>
-              
-              <div className="user-profile-controls">
-                <a href={'#user/' + user.get('objectId') + '/edit/'} 
-                  className="btn btn-primary">
-                    Edit Profile
-                </a>
-              </div>
+
+              {(user.get('objectId') === currentUser.get('objectId')) ? 
+                <div className="user-profile-controls">
+                  <a href={'#user/' + user.get('objectId') + '/edit/'} 
+                    className="btn btn-primary">
+                      Edit Profile
+                  </a>
+                </div> 
+              : null }
+
             </div>
 
           </div>
 
         </ContainerRow>
+
       </AppWrapper>
     );
   }

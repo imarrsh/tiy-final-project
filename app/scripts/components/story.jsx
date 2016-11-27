@@ -94,7 +94,8 @@ var StoryContributuionListItem = React.createClass({
   },
 
   render: function(){
-    var contribution = this.state.contribution;
+    var contribution = this.state.contribution
+    , contributor = contribution.get('contributor');
 
     return(
       <div className="panel panel-default">
@@ -112,13 +113,16 @@ var StoryContributuionListItem = React.createClass({
               </div>
               <div className="col-sm-3">
                 <aside>
-                  <div>
-                    <img className="avatar"
-                      src={contribution.get('contributor').avatar.url} 
-                      alt={contribution.get('contributor').alias}
-                    />
-                  </div>
-                  by {contribution.get('contributor').alias}
+                  <a href={'#user/' + contribution.get('contributor').objectId + '/'}
+                    className="story-segment-profile">
+                    <div>
+                      <img className="avatar"
+                        src={contributor.avatar ? contributor.avatar.url : null} 
+                        alt={contributor.alias}
+                      />
+                    </div>
+                    by {contributor.alias}
+                  </a>
                   <div className="btn-toolbar">
                     <button 
                       onClick={() => this.props.deleteSegment(contribution)}
