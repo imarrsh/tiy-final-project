@@ -267,7 +267,15 @@ var AppHeaderMain = function(props){
       React.createElement("li", null, React.createElement("a", {href: "#"}, "Home")), 
       React.createElement("li", null, React.createElement("a", {href: "#stories/new/"}, "New Story")), 
       React.createElement("li", null, React.createElement("a", {href: '#user/' + user.get('objectId') + '/'}, "Profile")), 
-      React.createElement("li", null, React.createElement("a", {href: "#logout/"}, "Logout"))
+      React.createElement("li", null, React.createElement("a", {href: "#logout/"}, "Logout")), 
+      React.createElement("li", {className: "pull-right"}, 
+        React.createElement("div", {className: "user-avatar user-avatar-sm"}, 
+          React.createElement("img", {
+            src: user.get('avatar') ? user.get('avatar').url : null, 
+            alt: user.get('alias')}
+          )
+        )
+      )
     )
   );
 };
@@ -282,11 +290,39 @@ var AppHeaderLogin = function(props){
   );
 };
 
+var AppFooterWrap = function(props){
+  return(
+    React.createElement("footer", {className: "footer"}, 
+      props.children
+    )
+  );
+};
+
+var AppFooterMain =  function(props){
+  var user = User.current();
+  return(
+    React.createElement(AppFooterWrap, null, 
+      React.createElement(ContainerRow, null, 
+        React.createElement("nav", null, 
+          React.createElement("ul", {className: "nav nav-pills"}, 
+            React.createElement("li", null, React.createElement("a", {href: "#"}, "Home")), 
+            React.createElement("li", null, React.createElement("a", {href: "#stories/new/"}, "New")), 
+            React.createElement("li", null, React.createElement("a", {href: '#user/' + user.get('objectId') + '/'}, "Profile"))
+          )
+        )
+      )
+    )
+  );
+};
+
 // general wrapper
 var AppWrapper = function(props){
   return(
-    React.createElement("div", {className: 'wrapper ' + props.pageClass}, 
-      props.children
+    React.createElement("div", {className: 'wrapper'}, 
+      React.createElement("div", {className: "main-content"}, 
+        props.children
+      ), 
+      React.createElement(AppFooterMain, null)
     )
   );
 };
@@ -297,8 +333,9 @@ module.exports = {
   ContainerRow: ContainerRow,
   Row: Row,
   Section: Section,
+  AppHeaderLogin: AppHeaderLogin,
   AppHeaderMain: AppHeaderMain,
-  AppHeaderLogin: AppHeaderLogin
+  AppFooterMain: AppFooterMain
 };
 
 },{"../../models/user":14,"react":178}],3:[function(require,module,exports){
@@ -491,7 +528,7 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
   },
 
   componentWillReceiveProps(nextProps){
-    console.log(nextProps)
+    // console.log(nextProps)
   },
 
   componentWillMount: function(){
@@ -524,7 +561,8 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
   },
 
   render: function(){
-    var contribution = this.state.contribution;
+    var contribution = this.state.contribution
+    , contributor = contribution.get('contributor');
 
     return(
       React.createElement("div", {className: "panel panel-default"}, 
@@ -542,16 +580,19 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
               ), 
               React.createElement("div", {className: "col-sm-3"}, 
                 React.createElement("aside", null, 
-                  React.createElement("div", null, 
-                    React.createElement("img", {className: "avatar", 
-                      src: contribution.get('contributor').avatar.url, 
-                      alt: contribution.get('contributor').alias}
-                    )
+                  React.createElement("a", {href: '#user/' + contribution.get('contributor').objectId + '/', 
+                    className: "story-segment-profile"}, 
+                    React.createElement("div", null, 
+                      React.createElement("img", {className: "avatar", 
+                        src: contributor.avatar ? contributor.avatar.url : null, 
+                        alt: contributor.alias}
+                      )
+                    ), 
+                    "by ", contributor.alias
                   ), 
-                  "by ", contribution.get('contributor').alias, 
                   React.createElement("div", {className: "btn-toolbar"}, 
                     React.createElement("button", {
-                      onClick: () => this.props.handleDelete(contribution), 
+                      onClick: () => this.props.deleteSegment(contribution), 
                       className: "btn btn-danger btn-xs"}, 
                       React.createElement("i", {className: "glyphicon glyphicon-remove"})
                     ), 
@@ -606,10 +647,10 @@ var StoryContributuionList = React.createClass({displayName: "StoryContributuion
             React.createElement(StoryContributuionListItem, {
               key: contribution.get('objectId'), 
               contribution: contribution, 
-              handleVote: self.props.handleVote}
+              handleVote: self.props.handleVote, 
+              deleteSegment: self.props.deleteSegment}
             )
 
-            
           );
         })
 
@@ -674,19 +715,20 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     });
   },
 
-  handleDelete: function(contribution){
+  deleteStory: function(contribution){
+    var story = this.state.story;
 
-    contribution.deleteSegment();
-
-    this.setState({story: this.state.story});
+    story.deleteStory(() => {
+      this.props.router.navigate('', {trigger: true});
+    });
     
   },
 
-  // ########################
-  // handle this today!
-  // ########################
-  deleteSegment: function(){
-    console.log('delete segment');
+  deleteSegment: function(contribution){
+    // console.log('delete segment');
+    contribution.deleteSegment();
+
+    this.setState({story: this.state.story});
   },
 
   addContribution: function(contribution){
@@ -720,7 +762,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
             React.createElement("div", {className: "story-container"}, 
               React.createElement("div", {className: "btn-toolbar"}, 
                 React.createElement("button", {
-                  onClick: this.handleDelete, 
+                  onClick: this.deleteStory, 
                   className: "btn btn-danger btn-xs"}, "Delete Story"
                 ), 
                 React.createElement("button", {
@@ -735,7 +777,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
 
                   React.createElement(StoryContributuionList, {
                     contributions: contributions, 
-                    handleDelete: this.handleDelete, 
+                    deleteSegment: this.deleteSegment, 
                     handleVote: this.handleVote}
                   )
 
@@ -798,7 +840,7 @@ var StoryTitle =  React.createClass({displayName: "StoryTitle",
   render: function(){
     return(
       React.createElement("input", {onChange: this.props.onChange, 
-        type: "text", name: "title", className: "form-control", 
+        type: "text", name: "title", className: "form-control title-field", 
         placeholder: "Your Story Title"})
     );
   }
@@ -822,60 +864,56 @@ var StoryBody = React.createClass({displayName: "StoryBody",
           ed.pasteAsPlainText = true;
         });
 
-        ed.onKeyUp.add(function(ed, e) {
-          self.props.onChange(e, ed);
+        ed.onKeyUp.add(function(ed, e, c, d) {
+          // console.log(ed.getContent());
+          self.props.onChange(ed.getContent()); 
         });
 
+        ed.onChange.add(function(ed, c){
+          console.log(c.content)
+          self.props.onChange(c.content);
+        });
       },
       
-      mode : "textareas",
-      plugins : "AtD,paste",
+      contentStyles: [
+        {'backgroundColor': 'red'}
+      ],
+      mode : 'textareas',
+      plugins : 'AtD,paste',
       paste_text_sticky : true,
       /* this stuff is a matter of preference: */
-      theme                              : "advanced",
-      theme_advanced_buttons1            : "",
-      theme_advanced_buttons2            : "",
-      theme_advanced_buttons3            : "",
-      theme_advanced_toolbar_location    : "none",
-      theme_advanced_toolbar_align       : "left",
-      theme_advanced_statusbar_location  : "bottom",
+      theme                              : 'advanced',
+      theme_advanced_buttons1            : '',
+      theme_advanced_buttons2            : '',
+      theme_advanced_buttons3            : '',
+      theme_advanced_toolbar_location    : 'none',
+      theme_advanced_toolbar_align       : 'left',
+      theme_advanced_statusbar_location  : 'bottom',
       theme_advanced_path                : false,
       theme_advanced_resizing            : true,
       theme_advanced_resizing_use_cookie : false,
       gecko_spellcheck                   : false,
       browser_spellcheck                 : true,
-      // "No errors were found.":
+      // 'No errors were found.':
       languagetool_i18n_no_errors : {},
-      // "Explain..." - shown if there is an URL with a detailed description:
+      // 'Explain...' - shown if there is an URL with a detailed description:
       languagetool_i18n_explain : {},
-      // "Ignore this error":
+      // 'Ignore this error':
       languagetool_i18n_ignore_once : {},
-      // "Ignore this kind of error":
+      // 'Ignore this kind of error':
       languagetool_i18n_ignore_all : {},
-      // "Rule implementation":
+      // 'Rule implementation':
       languagetool_i18n_rule_implementation : {},
 
       languagetool_i18n_current_lang : function() { return 'en_US' },
           
       // The URL of the LanguageTool API.
-      languagetool_rpc_url: "https://languagetool.org/api/v2/check",
+      languagetool_rpc_url: 'https://languagetool.org/api/v2/check',
       /* edit this file to customize how LanguageTool shows errors: */
       languagetool_css_url: 'css/app.css'
     });
 
   },
-
-  // handleCheck: function(e){
-  //   e.preventDefault();
-  //   tinyMCE.activeEditor.execCommand("mceWritingImprovementTool", "en-US");
-  //   return false;
-  // },
-  
-  // handleChange: function(e){
-  //   // this.setState({text: e.target.getContent()});
-  //   this.setState({text: e.target.value});
-  //   console.log(this.state.text)
-  // },
 
   render: function(){
     // change text area onchange back to this onchange
@@ -884,7 +922,7 @@ var StoryBody = React.createClass({displayName: "StoryBody",
         React.createElement("textarea", {onChange: this.props.onChange, 
           id: "checktext", name: "body", 
           className: "text form-control", rows: "6", 
-          placeholder: "Begin your story here... or paste paste it in!", 
+          placeholder: "Begin your story here... or paste it in!", 
           value: this.state.text}
         )
       )
@@ -895,8 +933,7 @@ var StoryBody = React.createClass({displayName: "StoryBody",
 
 // ############################
 // BUGS
-//
-// 1. fix bug with grammar checker not updating state!
+// 1. fix the position of the popup
 // ############################
 
 var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
@@ -930,9 +967,9 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
       .set('title', e.target.value);
   },
 
-  handleTextChange: function(e, ed){
+  handleTextChange: function(content){
     this.state.contribution
-      .set('content', ed.getContent());
+      .set('content', content);
 
     this.setState({
       contribution: this.state.contribution
@@ -1069,7 +1106,7 @@ var StoryCreateContainer = React.createClass({displayName: "StoryCreateContainer
   },
 
   render: function(){
-    console.warn(this.state.story.get('contributions'))
+    // console.warn(this.state.story.get('contributions'))
     return(
       React.createElement(AppWrapper, null, 
         React.createElement(AppHeaderMain, null), 
@@ -1091,43 +1128,6 @@ module.exports = {
   StoryCreateContainer: StoryCreateContainer
 };
 
-
-// Other API Setups
-
-// ######################
-// After the Deadline API
-// ######################
-
-// var data = encodeURI(storyBody);
-// var key = 'key=storytelling5e836ae5397a524dc3c0a7c92c0a5cbc';
-
-// var checkUrl = 'http://service.afterthedeadline.com/checkDocument';
-// checkUrl += '?' + key + '&data=' + data;
-
-// ######################
-// TextGears API
-// ######################
-
-// var text = encodeURI(storyBody);
-// // var key = 'key=GwOf05rYyp7z5LOh';
-// var key = 'key=DEMO_KEY';
-
-// var checkUrl = 'https://api.textgears.com/check.php';
-// checkUrl += '?' + key + '&text=' + text;
-
-// $.post(checkUrl) // for when the data is all one url string; TextGears, AtD
-
-
-              // <TinyMCE
-              //   className="form-control"
-              //   content="<p>This is the initial content of the editor</p>"
-              //   config={{
-              //    // plugins: 'autolink link image lists print preview',
-              //    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright'
-              //   }}
-              //   onChange={this.handleEditorChange} 
-              // />
-
 },{"../models/contribution":10,"../models/story":13,"../models/user":14,"./layouts/general.jsx":2,"./storyForm.jsx":5,"react":178}],7:[function(require,module,exports){
 "use strict";
 var React = require('react');
@@ -1137,31 +1137,38 @@ var User = require('../models/user').User;
 var AppWrapper = require('./layouts/general.jsx').AppWrapper;
 var ContainerRow = require('./layouts/general.jsx').ContainerRow;
 var AppHeaderMain = require('./layouts/general.jsx').AppHeaderMain;
+var AppFooterMain = require('./layouts/general.jsx').AppFooterMain;
 
 var UserDetailContainer = React.createClass({displayName: "UserDetailContainer",
   
   getInitialState: function(){
     return {
-      user: User.current()
+      user: new User()
     }
   },
 
   componentWillMount: function () {
+    // console.log(this.state.user)
     this.getUserId()
   },
 
-  componentWillReceiveProps: function(){
-    this.getUserId();
+  componentWillReceiveProps: function(nextProps){
+    // this.setProps({userId: nextProps.userId});
+    console.log('nextprops', nextProps.userId)
+    this.getUserId(nextProps);
+    // this.setState({user: this.state.user});
   },
 
-  getUserId: function(){
-    var user = this.state.user; 
+  getUserId: function(nextProps){
+    var user = new User()
+    , userId;
+    
+    nextProps ?
+      userId = nextProps.userId :
+      userId = this.props.userId;
 
-    var userId = this.props.userId;
-
-    // if not editing a recipe then return now
     if (!userId){
-      return;
+      return; // bail if no user id
     }
 
     user.set('objectId', userId);
@@ -1170,41 +1177,61 @@ var UserDetailContainer = React.createClass({displayName: "UserDetailContainer",
   },
 
   render: function () {
-    var user = User.current();
-    console.log(user.toJSON());
+    var user = this.state.user
+    , currentUser = User.current();
+
+    console.log(user);
+
     return(
       React.createElement(AppWrapper, null, 
+        React.createElement(AppHeaderMain, null), 
         React.createElement(ContainerRow, null, 
-          React.createElement(AppHeaderMain, null), 
-          React.createElement("p", null, "User Detail for ", user.get('firstName')), 
+          React.createElement("div", {className: "col-sm-6 col-sm-offset-3"}, 
 
-          React.createElement("figure", {className: "user-profile-avatar"}, 
-            React.createElement("div", {className: "user-avatar"}, 
-              React.createElement("img", {src: user.get('avatar') ? user.get('avatar').url : "http://placehold.it/250x250", 
-                alt: user.get('alias') || 'Profile Picture'})
-            ), 
-            React.createElement("figcaption", null, 
-              React.createElement("h2", {className: "user-alias"}, user.get('alias') || 'Alias not set')
-            )
-          ), 
+            React.createElement("div", {className: "user-profile"}, 
+  
+              React.createElement("p", null, "User Detail for ", user.get('firstName')), 
+              
+              React.createElement("figure", {className: "user-profile-avatar"}, 
+                React.createElement("div", {className: "user-avatar"}, 
+                  React.createElement("img", {src: user.get('avatar') ? user.get('avatar').url : "http://placehold.it/250x250", 
+                    alt: user.get('alias') || 'Profile Picture'})
+                ), 
+                React.createElement("figcaption", null, 
+                  React.createElement("h2", {className: "user-alias"}, user.get('alias') || 'Alias not set'), 
+                  React.createElement("div", {className: "location"}, 
+                    user.get('location') || null
+                  )
+                )
+              ), 
+              
+              React.createElement("div", {className: "user-profile-details"}, 
+                React.createElement("div", {className: "full-name"}, 
+                  user.get('firstName') + ' ' + user.get('lastName')
+                ), 
+                React.createElement("div", {className: "email"}, 
+                  user.get('email')
+                ), 
+                React.createElement("div", {className: "bio"}, 
+                  user.get('bio')
+                )
+              ), 
 
-          React.createElement("div", {className: "user-profile-details"}, 
-            React.createElement("div", {className: "full-name"}, 
-              user.get('firstName') + ' ' + user.get('lastName')
-            ), 
-            React.createElement("div", {className: "email"}, 
-              user.get('email')
-            )
-          ), 
+              (user.get('objectId') === currentUser.get('objectId')) ? 
+                React.createElement("div", {className: "user-profile-controls"}, 
+                  React.createElement("a", {href: '#user/' + user.get('objectId') + '/edit/', 
+                    className: "btn btn-primary"}, 
+                      "Edit Profile"
+                  )
+                ) 
+              : null
 
-          React.createElement("div", {className: "user-profile-controls"}, 
-            React.createElement("a", {href: '#user/' + user.get('objectId') + '/edit/', 
-              className: "btn btn-primary"}, 
-                "Edit Profile"
             )
+
           )
 
         )
+
       )
     );
   }
@@ -1255,7 +1282,7 @@ var UserProfileImageForm = React.createClass({displayName: "UserProfileImageForm
           )
         ), 
 
-        React.createElement("form", {encType: "multipart/form-data"}, 
+        React.createElement("form", {encType: "multipart/form-data", id: "user-profile-img-form"}, 
           React.createElement("input", {onChange: this.handleChange, ref: "profileImg", 
             type: "file", name: "profileImg"})
         )
@@ -1271,14 +1298,90 @@ var UserData = React.createClass({displayName: "UserData",
     var user = this.props.user;
     return(
       React.createElement("div", {className: "form-group"}, 
-        React.createElement("input", {onChange: this.props.onChange, type: "text", name: "alias", 
-          className: "form-control", value: user.alias, placeholder: "Set an alias"}), 
-        React.createElement("input", {onChange: this.props.onChange, type: "text", name: "firstName", 
-          className: "form-control", value: user.firstName, placeholder: "First Name"}), 
-        React.createElement("input", {onChange: this.props.onChange, type: "text", name: "lastName", 
-          className: "form-control", value: user.lastName, placeholder: "Last Name"}), 
-        React.createElement("input", {onChange: this.props.onChange, type: "text", name: "email", 
-          className: "form-control", value: user.email, placeholder: "Email"})
+        
+        React.createElement("input", {
+          onChange: this.props.onChange, 
+          value: user.alias, 
+          type: "text", 
+          name: "alias", 
+          className: "form-control", 
+          placeholder: "Set an alias"}
+        ), 
+
+        React.createElement("div", {className: "form-group"}, 
+          React.createElement("div", {className: "row"}, 
+            
+            React.createElement("div", {className: "col-sm-6"}, 
+              React.createElement("label", {htmlFor: "firstName"}, 
+                "First Name" 
+              ), 
+              React.createElement("input", {
+                onChange: this.props.onChange, 
+                value: user.firstName, 
+                type: "text", 
+                id: "firstName", name: "firstName", 
+                className: "form-control", 
+                placeholder: "First Name"}
+              )
+            ), 
+            
+            React.createElement("div", {className: "col-sm-6"}, 
+              React.createElement("label", {htmlFor: "lastName"}, 
+                "Last Name"
+              ), 
+              React.createElement("input", {
+                onChange: this.props.onChange, 
+                value: user.lastName, 
+                type: "text", 
+                id: "lastName", name: "lastName", 
+                className: "form-control", 
+                placeholder: "Last Name"}
+              )
+            )
+          
+          )
+        ), 
+        
+        React.createElement("div", {className: "form-group"}, 
+          React.createElement("label", {htmlFor: "email"}, 
+            "Email Address"
+          ), 
+          React.createElement("input", {
+            onChange: this.props.onChange, 
+            value: user.email, 
+            type: "text", 
+            id: "emailx", name: "email", 
+            className: "form-control", 
+            placeholder: "Email"}
+          )
+        ), 
+        
+        React.createElement("div", {className: "form-group"}, 
+          React.createElement("label", {htmlFor: "location"}, 
+            "Location"
+          ), 
+          React.createElement("input", {
+            onChange: this.props.onChange, 
+            value: user.location, 
+            type: "text", 
+            id: "location", name: "location", 
+            className: "form-control", 
+            placeholder: "Location"}
+          )
+        ), 
+
+        React.createElement("label", {htmlFor: "location"}, 
+          "Tell others a bit about yourself"
+        ), 
+        React.createElement("textarea", {
+          onChange: this.props.onChange, 
+          value: user.bio, 
+          name: "bio", id: "bio", 
+          cols: "30", rows: "2", 
+          className: "form-control", 
+          placeholder: "What's your story?"}
+        )
+
       )
     )
   }
@@ -1327,19 +1430,21 @@ var UserEditProfileContainer = React.createClass({displayName: "UserEditProfileC
     var user = this.state.user.toJSON();
     return(
       React.createElement(AppWrapper, null, 
+        React.createElement(AppHeaderMain, null), 
         React.createElement(ContainerRow, null, 
-          React.createElement(AppHeaderMain, null), 
-          React.createElement("div", null, 
+          React.createElement("div", {className: "col-sm-6 col-sm-offset-3"}, 
 
-            React.createElement(UserProfileImageForm, {user: user, imageUpdate: this.handleImageAutoUpload}), 
-
-            React.createElement("form", {onSubmit: this.handleSubmit}, 
-
-              React.createElement(UserData, {user: user, onChange: this.handleChange}), 
-
-              React.createElement("input", {type: "submit", value: "Save", className: "btn btn-primary"}), 
-              React.createElement("button", {onClick: this.handleCancel, className: "btn btn-default"}, "Cancel")
-
+            React.createElement("div", {className: "user-profile user-profile-edit"}, 
+              React.createElement(UserProfileImageForm, {user: user, imageUpdate: this.handleImageAutoUpload}), 
+              
+              React.createElement("form", {onSubmit: this.handleSubmit}, 
+              
+                React.createElement(UserData, {user: user, onChange: this.handleChange}), 
+              
+                React.createElement("input", {type: "submit", value: "Save", className: "btn btn-primary"}), 
+                React.createElement("button", {onClick: this.handleCancel, className: "btn btn-default"}, "Cancel")
+              
+              )
             )
 
           )
@@ -1372,11 +1477,12 @@ var ParseModel = require('./parseSetup').ParseModel;
 var ParseCollection = require('./parseSetup').ParseCollection;
 
 var Contribution = ParseModel.extend({
-  // defaults: {
-  //   user: 'anon',
-  //   content: '',
-  //   order: 0
-  // },
+  defaults: {
+    content: '',
+    order: 0,
+    upvotes: 0,
+    downvotes: 0
+  },
 
   urlRoot: 'https://mt-parse-server.herokuapp.com/Classes/StoryContribution',
 
@@ -1706,6 +1812,7 @@ module.exports = {
 
 },{"backbone":19}],13:[function(require,module,exports){
 "use strict";
+var _ = require('underscore');
 var Backbone = require('backbone');
 
 var ParseModel = require('./parseSetup').ParseModel;
@@ -1740,9 +1847,12 @@ var Story = ParseModel.extend({
   },
 
   deleteStory: function(callback){
-    var contributions = this.get('contributions');
 
-    contributions.forEach(contribution => {
+    var contributions = this.get('contributions');
+    // make a clone of the contributions and perform detroy on each one
+    // a normal forEach will skip elements and cause some 
+    // references to be unedefined
+    _.each(_.clone(contributions.models), function(contribution){
       contribution.destroy();
     });
 
@@ -1771,7 +1881,7 @@ module.exports = {
   StoryCollection: StoryCollection
 };
 
-},{"./contribution":10,"./parseSetup":12,"backbone":19}],14:[function(require,module,exports){
+},{"./contribution":10,"./parseSetup":12,"backbone":19,"underscore":179}],14:[function(require,module,exports){
 "use strict";
 var $ = require('jquery');
 var Backbone = require('backbone');
@@ -1803,6 +1913,15 @@ var ParseUser = ParseModel.extend({
 
 
 var User = ParseUser.extend({
+  
+  defaults: {
+    firstName: '',
+    lastName: '',
+    location: '',
+    email: '',
+    avatar: {},
+    alias: ''
+  },
 
   urlRoot: 'https://mt-parse-server.herokuapp.com/users',
 
@@ -1969,7 +2088,8 @@ var UserEditProfileContainer = require('./components/userNewEdit.jsx').UserEditP
 
 var AppRouter = Backbone.Router.extend({
   routes: {
-    '': 'index', // home screen/dashboard view
+    '': 'index', // marketing page
+    'dashboard/': 'dashboard', // home screen/dashboard view
     // user routes
     'user/:id/edit/': 'userNewEdit', // user profile new/edit view
     'user/:id/': 'userDetail', // user profile view
@@ -1996,42 +2116,32 @@ var AppRouter = Backbone.Router.extend({
 
   // },
 
+  gotoLogin: function(){
+    this.navigate('login/', {trigger: true});
+    this.login();
+  },
+
   execute: function(callback, args, name){
-    console.log('execute');
 
-    // this.checkUser();
     var user = User.current();
+    var token = user.get('sessionToken');
 
-    if (!user.get('sessionToken')){
-      console.log('token is', user.get('sessionToken'));
-      this.navigate('login/', {trigger: true});
-      // window.location.assign('#login/'); // vanilla js
+    if (!token){
+      console.log('token is', token);
+      this.gotoLogin();
+      return false;
     }
 
-    return Backbone.Router.prototype
-      .execute.call(this, callback, args, name);
+    if (callback) {
+      callback.apply(this, args);
+    }
+
   },
 
   initialize: function(){
-    // var that = this;
     var user = User.current() || {}; // fill user up with user model
 
-    // this.checkUser(user.get('sessionToken'));
-
-    // , function() {
-    //   that.navigate('login/', {trigger: true});
-    // });
-
-    // this.navigate('login/', {trigger: true})
-
-    // console.log('token',user);
-    // var self = this;
-    // if (!user.get('sessionToken')){
-    //   console.log('hey, token is ', user.get('sessionToken'));
-    //  this.navigate('login/', {trigger: true});
-    // }
-    // console.log('about to set headers!');
-
+    // set headers for Parse
     parseHeaders('mtparseserver', 'thompson1', user.get('sessionToken'));
 
   },
@@ -2066,7 +2176,7 @@ var AppRouter = Backbone.Router.extend({
 
   userDetail: function (userId) {
     ReactDOM.render(
-      React.createElement(UserDetailContainer, { router: this }),
+      React.createElement(UserDetailContainer, { router: this, userId: userId }),
       document.getElementById('app')
     );
   },
