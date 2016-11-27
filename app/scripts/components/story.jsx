@@ -14,6 +14,9 @@ var ContainerRow = layout.ContainerRow;
 var AppHeaderMain = layout.AppHeaderMain;
 var Row = layout.Row;
 
+var NuModal = require('./modal.jsx').NuModal;
+
+
 
 var ContributorListItem = React.createClass({
   render: function(){
@@ -294,10 +297,7 @@ var StoryReadContainer = React.createClass({
           <div className="col-sm-10 col-sm-offset-1">
             <div className="story-container">
               <div className="btn-toolbar">
-                <button 
-                  onClick={this.deleteStory}
-                  className="btn btn-danger btn-xs">Delete Story
-                </button>
+                <NuModal deleteStory={this.deleteStory}/>
                 <button
                   className="btn btn-success btn-xs">Edit
                 </button>
@@ -335,7 +335,6 @@ var StoryReadContainer = React.createClass({
                   handleContributing={this.handleContributing}
                 /> 
                 : null}
-            
             </div>
           </div>
         </ContainerRow>
