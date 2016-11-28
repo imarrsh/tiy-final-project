@@ -35,7 +35,7 @@ var ContributorListItem = React.createClass({
   }
 });
 
-var StoryFooter = React.createClass({
+var ContributorList = React.createClass({
   render: function(){
     return(
       <footer className="story-footer">
@@ -236,16 +236,25 @@ var StoryContributuionList = React.createClass({
 
 var StoryAside = React.createClass({
   
-  componentWillMount: function(){
+  uniqueContributors: function(){
     var contributions = this.props.contributions;
-    // var uniques = _.uniq(contributions.objectId);
-    console.log(contributions);
+
+    var contributors = contributions.map(contribution => {
+      return contribution.get('contributor');
+    });
+
+    var result = _.uniq(contributors, function(contributor){
+      return contributor.objectId;
+    });
+
+    return result;
+
   },
 
   render: function(){
     var story = this.props.story
-    , owner = story.get('owner');
-
+    , owner = story.get('owner')
+    , contributors = this.uniqueContributors();
     return(
         <div className="panel panel-default">
           <div className="panel-body">
@@ -271,19 +280,22 @@ var StoryAside = React.createClass({
 
               <h4>Contributors</h4>
 
-              <ul className="list-group">
-                {this.props.contributions
-                  .map(contribution => {
-                    if (contribution){
-                      return(
-                        <li className="list-group-item" key={contribution.get('objectId')}>
-                          {contribution.get('contributor').alias} 
-                          <span className="badge">1</span>
-                        </li>
-                      );
-                    }
+              <div className="list-group">
+
+                {contributors
+                  .map(contributor => {
+                    return(
+                      <a
+                        href={'#user/' + contributor.objectId + '/'} 
+                        className="list-group-item" 
+                        key={contributor.objectId}
+                      >
+                        {contributor.alias} 
+                      </a>
+                    );
                   })}
-              </ul>
+
+              </div>
 
             </aside>
 
