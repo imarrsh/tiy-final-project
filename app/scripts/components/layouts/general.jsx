@@ -2,6 +2,9 @@ var React = require('react');
 
 var User = require('../../models/user').User;
 
+var NavDropdown = require('react-bootstrap').NavDropdown;
+var MenuItem = require('react-bootstrap').MenuItem;
+
 var Row = function(props){
   return(
       <div className="row">
@@ -36,9 +39,7 @@ var AppHeaderWrap = function(props){
     <header className="app-header">
       <ContainerRow>
         <nav>
-          <ul className="nav nav-pills">
             {props.children}
-          </ul>
         </nav>
       </ContainerRow>
     </header>
@@ -50,18 +51,38 @@ var AppHeaderMain = function(props){
   var user = User.current();
   return(
     <AppHeaderWrap>
-      <li><a href="#">Home</a></li>
-      <li><a href="#stories/new/">New Story</a></li>
-      <li><a href={'#user/' + user.get('objectId') + '/'}>Profile</a></li>
-      <li><a href="#logout/">Logout</a></li>
-      <li className="pull-right">
-        <div className="user-avatar user-avatar-sm">
-          <img
-            src={user.get('avatar') ? user.get('avatar').url : null } 
-            alt={user.get('alias')} 
-          />
-        </div>
-      </li>
+      <ul className="nav nav-pills pull-left">
+
+        <li><a href="#">Home</a></li>
+        <li><a href="#stories/new/">New Story</a></li>
+
+      </ul>
+      <ul className="nav nav-pills navbar-right">
+
+        <NavDropdown title={user.get('alias')} id="nav-dropdown">
+          <MenuItem 
+            href={'#user/' + user.get('objectId') + '/'}
+          >
+            View Profile
+          </MenuItem>
+          <MenuItem divider />
+          <MenuItem href="#logout/">Log out</MenuItem>
+        </NavDropdown>
+
+
+        <li>
+          <div className="user-avatar user-avatar-sm">
+            <a href={'#user/' + user.get('objectId') + '/'}>
+              <img
+                src={user.get('avatar') ? 
+                  user.get('avatar').url : null } 
+                alt={user.get('alias')} 
+              />
+            </a>
+          </div>
+        </li>
+
+      </ul>
     </AppHeaderWrap>
   );
 };
@@ -70,8 +91,10 @@ var AppHeaderMain = function(props){
 var AppHeaderLogin = function(props){
   return(
     <AppHeaderWrap>
-      <li><a href="">Login</a></li>
-      <li><a href="">Sign Up</a></li>
+      <ul className="nav nav-pills pull-left">
+        <li><a href="">Login</a></li>
+        <li><a href="">Sign Up</a></li>
+      </ul>
     </AppHeaderWrap>
   );
 };
