@@ -216,6 +216,9 @@ var React = require('react');
 
 var User = require('../../models/user').User;
 
+var NavDropdown = require('react-bootstrap').NavDropdown;
+var MenuItem = require('react-bootstrap').MenuItem;
+
 var Row = function(props){
   return(
       React.createElement("div", {className: "row"}, 
@@ -250,9 +253,7 @@ var AppHeaderWrap = function(props){
     React.createElement("header", {className: "app-header"}, 
       React.createElement(ContainerRow, null, 
         React.createElement("nav", null, 
-          React.createElement("ul", {className: "nav nav-pills"}, 
             props.children
-          )
         )
       )
     )
@@ -264,17 +265,37 @@ var AppHeaderMain = function(props){
   var user = User.current();
   return(
     React.createElement(AppHeaderWrap, null, 
-      React.createElement("li", null, React.createElement("a", {href: "#"}, "Home")), 
-      React.createElement("li", null, React.createElement("a", {href: "#stories/new/"}, "New Story")), 
-      React.createElement("li", null, React.createElement("a", {href: '#user/' + user.get('objectId') + '/'}, "Profile")), 
-      React.createElement("li", null, React.createElement("a", {href: "#logout/"}, "Logout")), 
-      React.createElement("li", {className: "pull-right"}, 
-        React.createElement("div", {className: "user-avatar user-avatar-sm"}, 
-          React.createElement("img", {
-            src: user.get('avatar') ? user.get('avatar').url : null, 
-            alt: user.get('alias')}
+      React.createElement("ul", {className: "nav nav-pills pull-left"}, 
+
+        React.createElement("li", null, React.createElement("a", {href: "#"}, "Home")), 
+        React.createElement("li", null, React.createElement("a", {href: "#stories/new/"}, "New Story"))
+
+      ), 
+      React.createElement("ul", {className: "nav nav-pills navbar-right"}, 
+
+        React.createElement(NavDropdown, {title: user.get('alias'), id: "nav-dropdown"}, 
+          React.createElement(MenuItem, {
+            href: '#user/' + user.get('objectId') + '/'
+          }, 
+            "View Profile"
+          ), 
+          React.createElement(MenuItem, {divider: true}), 
+          React.createElement(MenuItem, {href: "#logout/"}, "Log out")
+        ), 
+
+
+        React.createElement("li", null, 
+          React.createElement("div", {className: "user-avatar user-avatar-sm"}, 
+            React.createElement("a", {href: '#user/' + user.get('objectId') + '/'}, 
+              React.createElement("img", {
+                src: user.get('avatar') ? 
+                  user.get('avatar').url : null, 
+                alt: user.get('alias')}
+              )
+            )
           )
         )
+
       )
     )
   );
@@ -284,8 +305,10 @@ var AppHeaderMain = function(props){
 var AppHeaderLogin = function(props){
   return(
     React.createElement(AppHeaderWrap, null, 
-      React.createElement("li", null, React.createElement("a", {href: ""}, "Login")), 
-      React.createElement("li", null, React.createElement("a", {href: ""}, "Sign Up"))
+      React.createElement("ul", {className: "nav nav-pills pull-left"}, 
+        React.createElement("li", null, React.createElement("a", {href: ""}, "Login")), 
+        React.createElement("li", null, React.createElement("a", {href: ""}, "Sign Up"))
+      )
     )
   );
 };
@@ -338,7 +361,7 @@ module.exports = {
   AppFooterMain: AppFooterMain
 };
 
-},{"../../models/user":15,"react":428}],3:[function(require,module,exports){
+},{"../../models/user":15,"react":428,"react-bootstrap":264}],3:[function(require,module,exports){
 "use strict";
 var React = require('react');
 
@@ -488,16 +511,18 @@ var NuModal = React.createClass({displayName: "NuModal",
   },
 
   render: function() {
+    /* 
     var popover = (
-      React.createElement(Popover, {id: "modal-popover", title: "popover"}, 
-        "very popover. such engagement"
-      )
+      <Popover id="modal-popover" title="popover">
+        very popover. such engagement
+      </Popover>
     );
     var tooltip = (
-      React.createElement(Tooltip, {id: "modal-tooltip"}, 
-        "wow."
-      )
+      <Tooltip id="modal-tooltip">
+        wow.
+      </Tooltip>
     );
+    */
 
     return (
       React.createElement("div", null, 
@@ -582,7 +607,8 @@ var StoryFooter = React.createClass({displayName: "StoryFooter",
         this.props.contributions.map(function(contribution){
           var contributor = new User(contribution.get('contributor'));
           return(
-            React.createElement(ContributorListItem, {contributor: contributor, 
+            React.createElement(ContributorListItem, {
+              contributor: contributor, 
               key: contributor.get('objectId') + contribution.get('objectId')}
             )
           );
@@ -599,7 +625,8 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
     return {
       contribution: this.props.contribution,
       upvotes: 0,
-      downvotes: 0
+      downvotes: 0,
+      isEditing: false
     }
   },
 
@@ -636,9 +663,15 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
     this.props.handleVote(bool, contribution);
   },
 
+  editSegment: function(){
+    this.setState({isEditing: !this.state.isEditing});
+    console.log(this.state.isEditing)
+  },
+
   render: function(){
     var contribution = this.state.contribution
-    , contributor = contribution.get('contributor');
+    , contributor    = contribution.get('contributor')
+    , currentUserId  = this.props.currentUser.get('objectId');
 
     return(
       React.createElement("div", {className: "panel panel-default"}, 
@@ -647,16 +680,25 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
             React.createElement(Row, null, 
               React.createElement("div", {className: "col-sm-9"}, 
                 
-                React.createElement("article", {// hopefully the input has been sanitized at some point
-                  dangerouslySetInnerHTML: {
-                    __html: contribution.get('content')
-                  }}
-                )
+                (this.state.isEditing) ?
+                  React.createElement(StoryFormContainer, {
+                    story: this.props.story, 
+                    router: this.props.router, 
+                    addContribution: this.addContribution, 
+                    handleContributing: this.handleContributing}
+                  )
+                 :
+                  React.createElement("article", {// hopefully the input has been sanitized at some point
+                    dangerouslySetInnerHTML: {
+                      __html: contribution.get('content')
+                    }}
+                  )
+                
           
               ), 
               React.createElement("div", {className: "col-sm-3"}, 
                 React.createElement("aside", null, 
-                  React.createElement("a", {href: '#user/' + contribution.get('contributor').objectId + '/', 
+                  React.createElement("a", {href: '#user/' + contributor.objectId + '/', 
                     className: "story-segment-profile"}, 
                     React.createElement("div", null, 
                       React.createElement("img", {className: "avatar", 
@@ -667,15 +709,25 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
                     "by ", contributor.alias
                   ), 
                   React.createElement("div", {className: "btn-toolbar"}, 
-                    React.createElement("button", {
-                      onClick: () => this.props.deleteSegment(contribution), 
-                      className: "btn btn-danger btn-xs"}, 
-                      React.createElement("i", {className: "glyphicon glyphicon-remove"})
-                    ), 
 
-                    React.createElement("button", {className: "btn btn-success btn-xs"}, 
-                      React.createElement("i", {className: "glyphicon glyphicon-edit"})
-                    ), 
+                    (contributor.objectId === currentUserId) ?
+                        React.createElement("button", {
+                          onClick: () => this.props.deleteSegment(contribution), 
+                          className: "btn btn-danger btn-xs"
+                        }, 
+                          React.createElement("i", {className: "glyphicon glyphicon-remove"})
+                        )
+                    : null, 
+
+                    (contributor.objectId === currentUserId) ?
+                        React.createElement("button", {
+                          onClick: this.editSegment, 
+                          className: "btn btn-success btn-xs"
+                        }, 
+                          React.createElement("i", {className: "glyphicon glyphicon-edit"})
+                        )
+                    : null, 
+                    
 
                     React.createElement("button", {
                       onClick: () => this.handleVote(true, contribution), 
@@ -717,14 +769,16 @@ var StoryContributuionList = React.createClass({displayName: "StoryContributuion
     // console.warn(contributions)
     return(
       React.createElement("div", {className: "panel-body"}, 
-        contributions.map(function(contribution){
+        contributions.map(contribution => {
           // console.log(contribution)
           return( 
             React.createElement(StoryContributuionListItem, {
               key: contribution.get('objectId'), 
+              story: this.props.story, 
               contribution: contribution, 
               handleVote: self.props.handleVote, 
-              deleteSegment: self.props.deleteSegment}
+              deleteSegment: self.props.deleteSegment, 
+              currentUser: this.props.currentUser}
             )
 
           );
@@ -742,7 +796,8 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
   getInitialState: function(){
     return {
       story: new Story(),
-      isContributing: false
+      isContributing: false,
+      currentUser: User.current()
     }
   },
 
@@ -827,21 +882,24 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
   },
 
   render: function(){
-    var story = this.state.story;
-    var contributions = story.get('contributions');
-    var isContributing = this.state.isContributing;
+    var story = this.state.story
+    , contributions = story.get('contributions')
+    , isContributing = this.state.isContributing
+    , currentUserId = this.state.currentUser.get('objectId');
     return(
       React.createElement(AppWrapper, null, 
         React.createElement(AppHeaderMain, null), 
         React.createElement(ContainerRow, null, 
           React.createElement("div", {className: "col-sm-10 col-sm-offset-1"}, 
             React.createElement("div", {className: "story-container"}, 
-              React.createElement("div", {className: "btn-toolbar"}, 
-                React.createElement(NuModal, {deleteStory: this.deleteStory}), 
-                React.createElement("button", {
-                  className: "btn btn-success btn-xs"}, "Edit"
+              (currentUserId === story.get('owner').objectId) ?
+                React.createElement("div", {className: "btn-toolbar"}, 
+                  React.createElement(NuModal, {deleteStory: this.deleteStory}), 
+                  React.createElement("button", {
+                    className: "btn btn-success btn-xs"}, "Edit Title"
+                  )
                 )
-              ), 
+              : null, 
 
               React.createElement("h1", null, story.get('title')), 
               
@@ -849,9 +907,11 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
                 React.createElement("div", {className: "panel-body"}, 
 
                   React.createElement(StoryContributuionList, {
+                    story: story, 
                     contributions: contributions, 
                     deleteSegment: this.deleteSegment, 
-                    handleVote: this.handleVote}
+                    handleVote: this.handleVote, 
+                    currentUser: this.state.currentUser}
                   )
 
                 ), 
