@@ -30,6 +30,20 @@ p {
   vertical-align: middle;
 }
 
+.panel-custom {
+  box-shadow: none;
+}
+
+.panel-footer-mini {
+  background: {
+    color: #ffffff;
+  }
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+
+
 // ##################################
 // gereral app styles
 // ##################################
@@ -180,6 +194,10 @@ p {
     width: 40px;
     height: 40px;
   }
+  &.user-avatar-md {
+    width: 72px;
+    height: 72px;
+  }
 }
 
 // #################
@@ -206,6 +224,28 @@ p {
     width: 24px;
     height: 24px;
     border-radius: 50%;
+  }
+}
+.contributor-profile {
+  display: inline-block;
+  margin-left: 16px;
+}
+
+.story-aside {
+  h4 {
+    text-align: center;
+  }
+  .user-avatar { 
+    margin: 0 auto;
+  }
+  .owner-detail {
+    text-align: center;
+    a {
+      display: block;
+      .owner-alias {
+        margin: 0 auto;
+      }
+    }
   }
 }
 

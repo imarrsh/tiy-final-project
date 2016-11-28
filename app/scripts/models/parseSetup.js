@@ -5,6 +5,7 @@ var Backbone = require('backbone');
 var ParseModel = Backbone.Model.extend({
   // model layer for parse server
   idAttribute: 'objectId',
+
   // set up a pointer property on this model
   setPointer: function(field, className, objectId){
     this.set(field, {
