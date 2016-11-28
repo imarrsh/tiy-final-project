@@ -21,6 +21,7 @@ var NuModal = React.createClass({
   },
 
   render: function() {
+    /* 
     var popover = (
       <Popover id="modal-popover" title="popover">
         very popover. such engagement
@@ -31,6 +32,7 @@ var NuModal = React.createClass({
         wow.
       </Tooltip>
     );
+    */
 
     return (
       <div>
