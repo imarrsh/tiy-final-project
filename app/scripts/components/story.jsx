@@ -17,7 +17,6 @@ var Row = layout.Row;
 var NuModal = require('./modal.jsx').NuModal;
 
 
-
 var ContributorListItem = React.createClass({
   render: function(){
     var contributor = this.props.contributor;
@@ -109,12 +108,12 @@ var StoryContributuionListItem = React.createClass({
     , currentUserId  = this.props.currentUser.get('objectId');
 
     return(
-      <div className="panel panel-default">
-        <div className="panel-body">
+
           <section className="story-segment"> 
             <Row>
               <div className="col-sm-9">
                 
+                <article className="panel panel-default"> 
                 {(this.state.isEditing) ?
                   <StoryFormContainer 
                     story={this.props.story}
@@ -122,25 +121,78 @@ var StoryContributuionListItem = React.createClass({
                     addContribution={this.addContribution}
                     handleContributing={this.handleContributing}
                   />
-                 :
-                  <article // hopefully the input has been sanitized at some point
+                 : // hopefully the input has been sanitized at some point
+                  <div className="panel-body"
                     dangerouslySetInnerHTML={{
                       __html: contribution.get('content')
                     }} 
-                  />
-                }
+                  /> }
+                  <div className="panel-footer">
+
+                    <div className="pull-right">
+                      <a href={'#user/' + contributor.objectId + '/'}
+                        className="story-segment-profile">
+                      
+                          <img className="avatar"
+                            src={contributor.avatar ? contributor.avatar.url : null} 
+                            alt={contributor.alias}
+                          />
+                        <span className="alias">{contributor.alias}</span>
+                      </a>
+                      
+                      {(contributor.objectId === currentUserId) ?
+                        <div className="btn-toolbar btn-toolbar-inline">
+                          <button 
+                            onClick={() => this.props.deleteSegment(contribution)}
+                            className="btn btn-danger btn-xs"
+                          >
+                            <i className="glyphicon glyphicon-remove" />
+                          </button>
+                                                  
+                          
+                          <button
+                            onClick={this.editSegment}
+                            className="btn btn-success btn-xs"
+                          >
+                            <i className="glyphicon glyphicon-edit" />
+                          </button>
+                        </div>
+                      : null }
+                      
+                      <div className="btn-toolbar btn-toolbar-inline">
+                        <div className="btn-group">
+                          <button 
+                            onClick={() => this.handleVote(true, contribution)}
+                            className="btn btn-default btn-xs">
+                            <i className="glyphicon glyphicon-arrow-up" /> 
+                              {this.state.upvotes || 0 }
+                          </button>
+                          
+                          <button 
+                            onClick={() => this.handleVote(false, contribution)}
+                            className="btn btn-default btn-xs">
+                            <i className="glyphicon glyphicon-arrow-down" /> 
+                              {this.state.downvotes || 0}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </article>
           
               </div>
+
               <div className="col-sm-3">
                 <aside>
                   <a href={'#user/' + contributor.objectId + '/'}
                     className="story-segment-profile">
-                    <div>
+
                       <img className="avatar"
                         src={contributor.avatar ? contributor.avatar.url : null} 
                         alt={contributor.alias}
                       />
-                    </div>
                     by {contributor.alias}
                   </a>
                   <div className="btn-toolbar">
@@ -183,8 +235,8 @@ var StoryContributuionListItem = React.createClass({
               </div>
             </Row>
           </section>
-        </div>
-      </div>
+
+
     );
   }
 
@@ -203,7 +255,7 @@ var StoryContributuionList = React.createClass({
     var contributions = this.state.contributions;
     // console.warn(contributions)
     return(
-      <div className="panel-body">
+      <div className="row">
         {contributions.map(contribution => {
           // console.log(contribution)
           return( 
@@ -325,9 +377,10 @@ var StoryReadContainer = React.createClass({
       <AppWrapper>
         <AppHeaderMain />
         <ContainerRow>
-          <div className="col-sm-10 col-sm-offset-1">
-            <div className="story-container">
-              {(currentUserId === story.get('owner').objectId) ?
+          <div className="story-container">
+            <div className="col-sm-12">
+              {// display delete/edit toolbar if current user is owner
+                (currentUserId === story.get('owner').objectId) ?
                 <div className="btn-toolbar">
                   <NuModal deleteStory={this.deleteStory}/>
                   <button
@@ -338,8 +391,7 @@ var StoryReadContainer = React.createClass({
 
               <h1>{story.get('title')}</h1>
               
-              <div className="panel panel-default">
-                <div className="panel-body">
+              <div className="col-sm-12">
 
                   <StoryContributuionList 
                     story={story}
@@ -348,9 +400,7 @@ var StoryReadContainer = React.createClass({
                     handleVote={this.handleVote}
                     currentUser={this.state.currentUser}
                   />
-
-                </div>
-                <div className="panel-footer">
+                <div className="col-sm-3">
 
                   <StoryFooter contributions={contributions} />
 
@@ -362,7 +412,8 @@ var StoryReadContainer = React.createClass({
                 {(isContributing) ? 'Nevermind' : 'Contribute'}
               </button>
 
-              {isContributing ? 
+              {// display editor component if contributing 
+                isContributing ? 
                 <StoryFormContainer 
                   story={story}
                   router={this.props.router}

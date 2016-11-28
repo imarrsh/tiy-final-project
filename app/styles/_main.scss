@@ -18,6 +18,22 @@ p {
   font-size: 22px;
 }
 
+// ##################################
+// bootstrap extends
+// ##################################
+
+// ensure the story panel footer is
+// displaying control btns inline
+// add to btn-toobal class
+.btn-toolbar-inline {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+// ##################################
+// gereral app styles
+// ##################################
+
 .main-content {
   padding: 84px 0 32px;
   min-height: calc(100vh - 59px);
@@ -177,9 +193,12 @@ p {
   }
   color: rgb(50, 50, 50);
   .avatar {
-    witdh: 56px;
-    height: 56px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
+  }
+  .alias {
+    font-size: 13px;
   }
 }
 .story-footer {
