@@ -631,6 +631,10 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
     this.setState({isEditing: !this.state.isEditing});
   },
 
+  toggleEditorVisibility: function(){
+    this.setState({isEditing: !this.state.isEditing});
+  },
+
   render: function(){
     var contribution = this.state.contribution
     , contributor    = contribution.get('contributor')
@@ -649,7 +653,9 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
             addContribution: this.addContribution, 
             updateContribution: this.updateContribution, 
             content: contribution.get('content'), 
-            isAnEdit: this.state.isEditing}
+            isAnEdit: this.state.isEditing, 
+            contribution: contribution, 
+            toggleEditorVisibility: this.toggleEditorVisibility}
           )
          : // hopefully the input has been sanitized at some point
           React.createElement("div", {className: "panel-body", 
@@ -1131,7 +1137,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
     // models
     return {
       story: new Story(),
-      contribution: new Contribution()
+      contribution: this.props.contribution || new Contribution()
     }
   },
 
@@ -1177,12 +1183,26 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
     
     var user = User.current()
     , story = this.state.story
-    , contribution = this.state.contribution;
+    , contribution = this.state.contribution
+    , data;
 
-    // check if if the story is from the server
+    // check if if the story came from the server
     if (!story.isNew()) {
-      console.log('story is NOT new', this.props.isAnEdit);
-      // set just the contribition' contributor
+      console.log('story is NOT new');
+      
+      if (this.props.isAnEdit) {
+        console.log('this is an edit!');
+        // update the content only
+        contribution.updateSegment();
+      
+        this.setState({contribution: contribution});
+        
+        this.props.toggleEditorVisibility();
+
+      } else {
+        
+      // set the contribition' contributor
+      // if user is making a fresh contribution
       this.setContributor(user, story.get('objectId'), 
         (response, contribution) => {
           
@@ -1197,6 +1217,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
           // call the parent componets toggle
           this.props.toggleEditorVisibility();
         });
+      }
 
     } else {
 
@@ -1713,27 +1734,32 @@ var Contribution = ParseModel.extend({
     this.destroy();
   },
 
+  updateSegment: function(){
+    var data = {content: this.get('content')};
+    this.fauxPatch(data);
+
+    // this.save({}, {
+    //   data: JSON.stringify(data),
+    //   contentType: 'application/json'
+    // });
+  },
+
   vote: function(bool){
     // true is an upvote, false is a downvote
     var upvotes = this.get('upvotes')
     , downvotes = this.get('downvotes')
     , data;
 
+    // using a quick patch-like method from
+    // parseSetup.js
     if (bool) {
-      // only provide options here since
-      // parse server doesnt support PATCH
       data = this.increment('upvotes', 1);
-      this.save({}, {
-        data: JSON.stringify(data),
-        contentType: 'application/json'
-      });
+      this.fauxPatch(data);
 
     } else {
       data = this.increment('downvotes', 1);
-      this.save({}, {
-        data: JSON.stringify(data),
-        contentType: 'application/json'
-      });
+      this.fauxPatch(data);
+
     }
   }
 
@@ -1869,6 +1895,15 @@ var ParseModel = Backbone.Model.extend({
         amount: amount
       }
     };
+  },
+
+  // parse server doesnt support patch by default
+  // so we can do this instead.
+  fauxPatch: function(data){
+    this.save({}, {
+      data: JSON.stringify(data),
+      contentType: 'application/json'
+    });
   }
 
 });
@@ -2196,7 +2231,6 @@ var User = ParseUser.extend({
     user.urlRoot = function(){
       return 'https://mt-parse-server.herokuapp.com/users';
     };
-    // call user auth
     user
       .setFile('avatar', defaultPic, defaultPicUrl)
       .save(userCredentials)
