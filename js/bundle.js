@@ -80,6 +80,34 @@ var OthersStoryList = React.createClass({displayName: "OthersStoryList",
 //   }
 // })
 
+var UserInfoStats = React.createClass({displayName: "UserInfoStats",
+  render: function(){
+    var user = User.current();
+    return (
+      React.createElement("div", {className: "row"}, 
+        React.createElement("div", {className: "col-xs-12"}, 
+          React.createElement("div", {className: "panel panel-default"}, 
+            React.createElement("div", {className: "panel-body"}, 
+              
+              React.createElement("div", {className: "overview"}, 
+
+                React.createElement("div", {className: "user-avatar user-avatar-md"}, 
+                  React.createElement("img", {src: user.get('avatar') ?
+                    user.get('avatar').url : null, 
+                    alt: user.get('alias')}
+                  )
+                ), 
+
+                React.createElement("h2", null, "Maybe Some Quick User Stats Here")
+              )
+
+            )
+          )
+        )
+      )
+    )
+  }
+});
 
 
 var HomeContainer = React.createClass({displayName: "HomeContainer",
@@ -170,7 +198,8 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
           ), 
           React.createElement("div", {className: "my-stories"}, 
             React.createElement(UserStoryList, {stories: this.state.userStoryCollection}), 
-            React.createElement(OthersStoryList, {stories: this.state.othersStoryCollection})
+            React.createElement(OthersStoryList, {stories: this.state.othersStoryCollection}), 
+            React.createElement(UserInfoStats, null)
 
             /* <Experiment stories={this.state.experimentStoryCollection}/> */
 
@@ -186,7 +215,8 @@ module.exports = {
 }
 
 
-  // experimental ideas & stuff:
+  // experimental ideas scratch area:
+
   // .parseQuery('where', 'owner', user.get('objectId'))
 
   // .query('where', 'owner') // start the query
@@ -511,7 +541,7 @@ var NuModal = React.createClass({displayName: "NuModal",
   },
 
   render: function() {
-    /* 
+    /* props: delete btn text, delete item name
     var popover = (
       <Popover id="modal-popover" title="popover">
         very popover. such engagement
@@ -523,33 +553,33 @@ var NuModal = React.createClass({displayName: "NuModal",
       </Tooltip>
     );
     */
-
+    // props: delete btn text, delete item name, delete method
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {style: {'display': 'inline'}}, 
         React.createElement(Button, {
           bsStyle: "danger", 
           bsSize: "xs", 
           onClick: this.open
         }, 
-          "Delete Story"
+          this.props.icon, " ", this.props.buttonText
         ), 
 
         React.createElement(Modal, {show: this.state.showModal, onHide: this.close}, 
           React.createElement(Modal.Header, {closeButton: true}, 
-            React.createElement(Modal.Title, null, "Delete Story")
+            React.createElement(Modal.Title, null, "Delete ", this.props.context)
           ), 
           React.createElement(Modal.Body, null, 
-            "Really Delete this story?"
+            "Really delete this ", this.props.context, "?"
           ), 
           React.createElement(Modal.Footer, null, 
             React.createElement(Button, {
               bsStyle: "danger", 
-              onClick: this.props.deleteStory
+              onClick: this.props.action
             }, 
               "Delete"
             ), 
             
-            React.createElement(Button, {onClick: this.close}, "Close")
+            React.createElement(Button, {onClick: this.close}, "No, don't")
           )
         )
       )
@@ -582,6 +612,9 @@ var Row = layout.Row;
 
 var NuModal = require('./modal.jsx').NuModal;
 
+// ############################
+// Story Segment List Item
+// ############################
 
 var StoryContributuionListItem = React.createClass({displayName: "StoryContributuionListItem",
   
@@ -658,7 +691,7 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
             toggleEditorVisibility: this.toggleEditorVisibility}
           )
          : // hopefully the input has been sanitized at some point
-          React.createElement("div", {className: "panel-body", 
+          React.createElement("div", {className: "panel-body segment-content", 
             dangerouslySetInnerHTML: {
               __html: contribution.get('content')
             }}
@@ -707,15 +740,21 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
                     onClick: this.editSegment, 
                     className: "btn btn-success btn-xs"
                   }, 
-                    React.createElement("i", {className: "glyphicon glyphicon-edit"})
+                    React.createElement("i", {className: "glyphicon glyphicon-edit"}), " Edit"
                   ), 
 
-                  React.createElement("button", {
-                    onClick: () => this.props.deleteSegment(contribution), 
-                    className: "btn btn-danger btn-xs"
-                  }, 
-                    React.createElement("i", {className: "glyphicon glyphicon-remove"})
+                  React.createElement(NuModal, {
+                    action: () => this.props.deleteSegment(contribution), 
+                    context: 'Contribution', 
+                    icon: React.createElement("i", {className: "glyphicon glyphicon-edit"}), 
+                    buttonText: 'Delete'}
                   )
+                  /*<button 
+                      onClick={() => this.props.deleteSegment(contribution)}
+                      className="btn btn-danger btn-xs"
+                    >
+                    <i className="glyphicon glyphicon-remove" />
+                  </button>*/
                                           
                 )
 
@@ -734,6 +773,9 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
 
 });
 
+// ############################
+// Story Segments Container
+// ############################
 
 var StoryContributuionList = React.createClass({displayName: "StoryContributuionList",
   getInitialState: function(){
@@ -768,6 +810,9 @@ var StoryContributuionList = React.createClass({displayName: "StoryContributuion
   } 
 });
 
+// ########################################################
+// Side Container: Story owner and contributors
+// ########################################################
 
 var StoryAside = React.createClass({displayName: "StoryAside",
   
@@ -846,6 +891,9 @@ var StoryAside = React.createClass({displayName: "StoryAside",
   }
 });
 
+// ############################
+// Main Container
+// ############################
 
 var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
   
@@ -955,7 +1003,11 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
               // display delete/edit toolbar if current user is owner
                 (currentUserId === story.get('owner').objectId) ?
                 React.createElement("div", {className: "btn-toolbar"}, 
-                  React.createElement(NuModal, {deleteStory: this.deleteStory}), 
+                  React.createElement(NuModal, {
+                    buttonText: 'Delete Story', 
+                    action: this.deleteStory, 
+                    context: 'Story'}
+                  ), 
                   React.createElement("button", {
                     className: "btn btn-success btn-xs"}, "Edit Title"
                   )
@@ -974,7 +1026,23 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
                     deleteSegment: this.deleteSegment, 
                     handleVote: this.handleVote, 
                     currentUser: this.state.currentUser}
-                  )
+                  ), 
+
+                  React.createElement("button", {onClick: this.toggleEditorVisibility, 
+                    className: "btn btn-primary"}, 
+                    (isContributing) ? 'Nevermind' : 'Contribute'
+                  ), 
+
+                  // display editor component if contributing 
+                    isContributing ? 
+                    React.createElement(StoryFormContainer, {
+                      story: story, 
+                      router: this.props.router, 
+                      addContribution: this.addContribution, 
+                      toggleEditorVisibility: this.toggleEditorVisibility}
+                    ) 
+                    : null
+
                 ), 
                 React.createElement("div", {className: "col-sm-3"}, 
                   React.createElement(StoryAside, {
@@ -983,22 +1051,8 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
                   )
                 )
 
-              ), 
+              )
 
-              React.createElement("button", {onClick: this.toggleEditorVisibility, 
-                className: "btn btn-primary"}, 
-                (isContributing) ? 'Nevermind' : 'Contribute'
-              ), 
-
-              // display editor component if contributing 
-                isContributing ? 
-                React.createElement(StoryFormContainer, {
-                  story: story, 
-                  router: this.props.router, 
-                  addContribution: this.addContribution, 
-                  toggleEditorVisibility: this.toggleEditorVisibility}
-                ) 
-                : null
             )
           )
         )
@@ -1071,9 +1125,6 @@ var StoryBody = React.createClass({displayName: "StoryBody",
         });
       },
       
-      contentStyles: [
-        {'backgroundColor': 'red'}
-      ],
       mode : 'textareas',
       plugins : 'AtD,paste',
       paste_text_sticky : true,
@@ -1189,7 +1240,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
     // check if if the story came from the server
     if (!story.isNew()) {
       console.log('story is NOT new');
-      
+
       if (this.props.isAnEdit) {
         console.log('this is an edit!');
         // update the content only
@@ -1200,7 +1251,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
         this.props.toggleEditorVisibility();
 
       } else {
-        
+
       // set the contribition' contributor
       // if user is making a fresh contribution
       this.setContributor(user, story.get('objectId'), 

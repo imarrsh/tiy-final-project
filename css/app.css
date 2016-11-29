@@ -5809,12 +5809,12 @@ p {
   vertical-align: middle; }
 
 .panel-custom {
-  box-shadow: none; }
+  box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.2); }
 
 .panel-footer-mini {
   background-color: #ffffff;
-  padding-top: 5px;
-  padding-bottom: 5px; }
+  border: none;
+  padding-top: 0; }
 
 .main-content {
   padding: 84px 0 32px;
@@ -5958,10 +5958,8 @@ p {
   .story-segment .alias {
     font-size: 13px; }
 
-.story-footer img {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%; }
+.segment-content p:last-child {
+  margin-bottom: 0px; }
 
 .contributor-profile {
   display: inline-block;
@@ -5993,4 +5991,5 @@ p {
 
 #menu_checktext_spellcheckermenu_co {
   left: 0 !important; }
+
 /*# sourceMappingURL=app.css.map */
