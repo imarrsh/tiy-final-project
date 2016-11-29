@@ -18,42 +18,6 @@ var Row = layout.Row;
 var NuModal = require('./modal.jsx').NuModal;
 
 
-var ContributorListItem = React.createClass({
-  render: function(){
-    var contributor = this.props.contributor;
-    var avatar = contributor.get('avatar') ? 
-      contributor.get('avatar').url  : 'https://placehold.it/100';
-
-    return(
-      <span>        
-        <img src={avatar} 
-          alt={contributor.get('alias')}
-        /> 
-        {contributor.get('alias')} 
-      </span>
-    );
-  }
-});
-
-var ContributorList = React.createClass({
-  render: function(){
-    return(
-      <footer className="story-footer">
-        {this.props.contributions.map(function(contribution){
-          var contributor = new User(contribution.get('contributor'));
-          return(
-            <ContributorListItem 
-              contributor={contributor} 
-              key={contributor.get('objectId') + contribution.get('objectId')}
-            />
-          );
-        })}
-      </footer>
-    );
-  }
-});
-
-
 var StoryContributuionListItem = React.createClass({
   
   getInitialState: function(){
@@ -100,7 +64,6 @@ var StoryContributuionListItem = React.createClass({
 
   editSegment: function(){
     this.setState({isEditing: !this.state.isEditing});
-    console.log(this.state.isEditing)
   },
 
   render: function(){
@@ -110,89 +73,90 @@ var StoryContributuionListItem = React.createClass({
 
     return(
 
-          <section className="story-segment"> 
+      <section className="story-segment"> 
+            
+        <article className="panel panel-custom"> 
+
+        {(this.state.isEditing) ?
+          <StoryFormContainer 
+            story={this.props.story}
+            router={this.props.router}
+            addContribution={this.addContribution}
+            updateContribution={this.updateContribution}
+            content={contribution.get('content')}
+            isAnEdit={this.state.isEditing}
+          />
+         : // hopefully the input has been sanitized at some point
+          <div className="panel-body"
+            dangerouslySetInnerHTML={{
+              __html: contribution.get('content')
+            }} 
+          /> }
+
+          <div className="panel-footer panel-footer-mini clearfix">
+            <div className="btn-toolbar btn-toolbar-inline">
+              <div className="btn-group">
+                <button 
+                  onClick={() => this.handleVote(true, contribution)}
+                  className="btn btn-default btn-xs">
+                  <i className="glyphicon glyphicon-arrow-up" /> 
+                    {this.state.upvotes || 0 }
+                </button>
                 
-            <article className="panel panel-custom"> 
-
-            {(this.state.isEditing) ?
-              <StoryFormContainer 
-                story={this.props.story}
-                router={this.props.router}
-                addContribution={this.addContribution}
-                handleContributing={this.handleContributing}
-              />
-             : // hopefully the input has been sanitized at some point
-              <div className="panel-body"
-                dangerouslySetInnerHTML={{
-                  __html: contribution.get('content')
-                }} 
-              /> }
-
-              <div className="panel-footer panel-footer-mini clearfix">
-                <div className="btn-toolbar btn-toolbar-inline">
-                  <div className="btn-group">
-                    <button 
-                      onClick={() => this.handleVote(true, contribution)}
-                      className="btn btn-default btn-xs">
-                      <i className="glyphicon glyphicon-arrow-up" /> 
-                        {this.state.upvotes || 0 }
-                    </button>
-                    
-                    <button 
-                      onClick={() => this.handleVote(false, contribution)}
-                      className="btn btn-default btn-xs">
-                      <i className="glyphicon glyphicon-arrow-down" /> 
-                        {this.state.downvotes || 0}
-                    </button>
-
-                  </div>
-
-                </div>
-
-                <div className="contributor-profile">
-                  <a href={'#user/' + contributor.objectId + '/'}
-                    className="story-segment-profile">
-                  
-                      <img className="avatar"
-                        src={contributor.avatar ? contributor.avatar.url : null} 
-                        alt={contributor.alias}
-                      />
-                    <span className="alias">{contributor.alias}</span>
-                  </a>
-                </div>
-
-
-                <div className="pull-right">
-                  
-                  {(contributor.objectId === currentUserId) ?
-                    <div className="btn-toolbar btn-toolbar-inline">
-
-                      <button
-                        onClick={this.editSegment}
-                        className="btn btn-success btn-xs"
-                      >
-                        <i className="glyphicon glyphicon-edit" />
-                      </button>
-
-                      <button 
-                        onClick={() => this.props.deleteSegment(contribution)}
-                        className="btn btn-danger btn-xs"
-                      >
-                        <i className="glyphicon glyphicon-remove" />
-                      </button>
-                                              
-                    </div>
-
-                  : null }
-
-                </div>
+                <button 
+                  onClick={() => this.handleVote(false, contribution)}
+                  className="btn btn-default btn-xs">
+                  <i className="glyphicon glyphicon-arrow-down" /> 
+                    {this.state.downvotes || 0}
+                </button>
 
               </div>
 
-            </article>
-        
-          </section>
+            </div>
 
+            <div className="contributor-profile">
+              <a href={'#user/' + contributor.objectId + '/'}
+                className="story-segment-profile">
+              
+                  <img className="avatar"
+                    src={contributor.avatar ? contributor.avatar.url : null} 
+                    alt={contributor.alias}
+                  />
+                <span className="alias">{contributor.alias}</span>
+              </a>
+            </div>
+
+
+            <div className="pull-right">
+              
+              {(contributor.objectId === currentUserId) ?
+                <div className="btn-toolbar btn-toolbar-inline">
+
+                  <button
+                    onClick={this.editSegment}
+                    className="btn btn-success btn-xs"
+                  >
+                    <i className="glyphicon glyphicon-edit" />
+                  </button>
+
+                  <button 
+                    onClick={() => this.props.deleteSegment(contribution)}
+                    className="btn btn-danger btn-xs"
+                  >
+                    <i className="glyphicon glyphicon-remove" />
+                  </button>
+                                          
+                </div>
+
+              : null }
+
+            </div>
+
+          </div>
+
+        </article>
+    
+      </section>
 
     );
   }
@@ -256,51 +220,57 @@ var StoryAside = React.createClass({
     , owner = story.get('owner')
     , contributors = this.uniqueContributors();
     return(
-        <div className="panel panel-default">
-          <div className="panel-body">
+      <div className="panel panel-default">
+        <div className="panel-body">
 
-            <aside className="story-aside">
-              <h4>Story sparked by:</h4>
+          <aside className="story-aside">
+            <h4>Story sparked by:</h4>
 
-              <div className="owner-detail">
-                <a href={'#user/' + owner.objectId + '/'}>
-                  <div className="user-avatar user-avatar-md">
-                    <img className="avatar"
-                      src={owner.avatar ? owner.avatar.url : null} 
-                      alt={owner.alias}
-                    />
-                  </div>
-                  <div className="owner-alias">
-                    {owner.alias}
-                  </div>
-                </a>
-              </div>
+            <div className="owner-detail">
+              <a href={'#user/' + owner.objectId + '/'}>
+                <div className="user-avatar user-avatar-md">
+                  <img className="avatar"
+                    src={owner.avatar ? owner.avatar.url : null} 
+                    alt={owner.alias}
+                  />
+                </div>
+                <div className="owner-alias">
+                  {owner.alias}
+                </div>
+              </a>
+            </div>
 
-              <hr />
+            <hr />
 
-              <h4>Contributors</h4>
+            <h4>Contributors</h4>
 
-              <div className="list-group">
+            <div className="list-group">
 
-                {contributors
-                  .map(contributor => {
-                    return(
-                      <a
-                        href={'#user/' + contributor.objectId + '/'} 
-                        className="list-group-item" 
-                        key={contributor.objectId}
-                      >
-                        {contributor.alias} 
-                      </a>
-                    );
-                  })}
+              {contributors
+                .map(contributor => {
+                  return(
+                    <a
+                      href={'#user/' + contributor.objectId + '/'} 
+                      className="list-group-item" 
+                      key={contributor.objectId}
+                    >
+                      <img className="user-avatar user-avatar-xs"
+                        src={contributor.avatar ?
+                          contributor.avatar.url :
+                          null } 
+                        alt={contributor.alias}
+                      /> 
+                       {' ' + contributor.alias} 
+                    </a>
+                  );
+                })}
 
-              </div>
+            </div>
 
-            </aside>
+          </aside>
 
-          </div>
         </div>
+      </div>
     )
   }
 });
@@ -359,7 +329,7 @@ var StoryReadContainer = React.createClass({
     return this;
   },
 
-  handleContributing: function(){
+  toggleEditorVisibility: function(){
     this.setState({
       isContributing: !this.state.isContributing
     });
@@ -442,11 +412,9 @@ var StoryReadContainer = React.createClass({
                   />
                 </div>
 
-                  {/* <StoryFooter contributions={contributions} /> */}
-
               </div>
 
-              <button onClick={this.handleContributing} 
+              <button onClick={this.toggleEditorVisibility} 
                 className="btn btn-primary">
                 {(isContributing) ? 'Nevermind' : 'Contribute'}
               </button>
@@ -457,7 +425,7 @@ var StoryReadContainer = React.createClass({
                   story={story}
                   router={this.props.router}
                   addContribution={this.addContribution}
-                  handleContributing={this.handleContributing}
+                  toggleEditorVisibility={this.toggleEditorVisibility}
                 /> 
                 : null}
             </div>

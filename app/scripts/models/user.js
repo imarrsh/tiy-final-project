@@ -29,14 +29,11 @@ var ParseUser = ParseModel.extend({
 
 var User = ParseUser.extend({
   
-  defaults: {
-    firstName: '',
-    lastName: '',
-    location: '',
-    email: '',
-    avatar: {},
-    alias: ''
-  },
+  // defaults: {
+  //   avatar: {
+  //     url: 'http://mt-parse-server.herokuapp.com/files/mtparseserver/0c9f43751c0ab5df0326b1922755dd60_default.png"'
+  //   }
+  // },
 
   urlRoot: 'https://mt-parse-server.herokuapp.com/users',
 
@@ -57,7 +54,6 @@ var User = ParseUser.extend({
   updateAvatar: function(file){
     var img = new FileModel();
 
-    // img.prepare(file).save();
     img.prepare(file)
       .save().then(resp => {
         // now that the image has been saved,
@@ -69,8 +65,6 @@ var User = ParseUser.extend({
       });
   }
 
-  // url: "http://mt-parse-server.herokuapp.com/files/mtparse…33c22822338559820784359a_ocozzio-picture-day3.jpg", 
-  // name: "069c7d2e33c22822338559820784359a_ocozzio-picture-day3.jpg"
 
 }, {
   // class methods
@@ -107,18 +101,27 @@ var User = ParseUser.extend({
 
   signUp: function(userCredentials, callback){
     // instantiate user
-    var user = new User();
+    var user = new User()
+    , defaultPic = '0c9f43751c0ab5df0326b1922755dd60_default.png'
+    , defaultPicUrl = 'http://mt-parse-server.herokuapp.com/files/mtparseserver/' + 
+                       defaultPic;
     // set up url
     user.urlRoot = function(){
       return 'https://mt-parse-server.herokuapp.com/users';
     };
     // call user auth
-    user.auth();
-
-    user.save(userCredentials)
+    user
+      .setFile('avatar', defaultPic, defaultPicUrl)
+      .save(userCredentials)
       .then(function(response){
-        user.auth();   
-        // console.log(response);
+        
+        user.auth();
+        
+        // somehow makes it back to the model in here
+        // sending a password back to parse creates
+        // a new session token and invalidates the old one
+        delete user.attributes.password;
+
         localStorage.setItem('user', JSON.stringify(user.toJSON()));
 
         callback(user);

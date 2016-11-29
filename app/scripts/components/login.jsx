@@ -27,7 +27,7 @@ var SignUpForm = React.createClass({
           </div>
           <input type="submit" 
             className="form-control btn btn-primary" 
-            value="Log In" />
+            value="Sign Up" />
         </form>
       </div>
     );

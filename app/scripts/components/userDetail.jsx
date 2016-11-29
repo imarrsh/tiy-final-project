@@ -48,8 +48,8 @@ var UserDetailContainer = React.createClass({
     var user = this.state.user
     , currentUser = User.current();
 
-    console.log(user);
-
+    // console.log(currentUser);
+    
     return(
       <AppWrapper>
         <AppHeaderMain />

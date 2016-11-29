@@ -126,10 +126,16 @@ var StoryFormContainer = React.createClass({
   },
 
   componentWillMount: function(){
-    
+    var contribution = this.state.contribution;
     if (this.props.story){
-      console.log('mounted')
+      // console.log('mounted')
       this.setState({story: this.props.story});
+    }
+
+    // if the editor gets called from a segment
+    if (this.props.isAnEdit) {
+      contribution.set('content', this.props.content);
+      this.setState({contribution: contribution});
     }
   },
 
@@ -163,9 +169,10 @@ var StoryFormContainer = React.createClass({
     , story = this.state.story
     , contribution = this.state.contribution;
 
+    // check if if the story is from the server
     if (!story.isNew()) {
-      console.log('story is NOT new');
-      // set just the contribition owner
+      console.log('story is NOT new', this.props.isAnEdit);
+      // set just the contribition' contributor
       this.setContributor(user, story.get('objectId'), 
         (response, contribution) => {
           
@@ -176,7 +183,9 @@ var StoryFormContainer = React.createClass({
 
           // reset the state
           this.setState({contribution: new Contribution()});
-          this.props.handleContributing();
+          
+          // call the parent componets toggle
+          this.props.toggleEditorVisibility();
         });
 
     } else {

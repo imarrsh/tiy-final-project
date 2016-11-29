@@ -196,8 +196,10 @@ var UserEditProfileContainer = React.createClass({
               
                 <UserData user={user} onChange={this.handleChange}/>
               
-                <input type="submit" value="Save" className="btn btn-primary" />
-                <button onClick={this.handleCancel} className="btn btn-default">Cancel</button>
+                <div className="btn-toolbar">
+                  <input type="submit" value="Save" className="btn btn-primary" />
+                  <button onClick={this.handleCancel} className="btn btn-default">Cancel</button>
+                </div>
               
               </form>
             </div>
