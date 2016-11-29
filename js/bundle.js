@@ -392,7 +392,7 @@ var SignUpForm = React.createClass({displayName: "SignUpForm",
           ), 
           React.createElement("input", {type: "submit", 
             className: "form-control btn btn-primary", 
-            value: "Log In"})
+            value: "Sign Up"})
         )
       )
     );
@@ -563,6 +563,7 @@ module.exports = {
 
 },{"react":428,"react-bootstrap":264}],5:[function(require,module,exports){
 "use strict";
+var _ = require('underscore');
 var React = require('react');
 
 // models
@@ -580,43 +581,6 @@ var AppHeaderMain = layout.AppHeaderMain;
 var Row = layout.Row;
 
 var NuModal = require('./modal.jsx').NuModal;
-
-
-
-var ContributorListItem = React.createClass({displayName: "ContributorListItem",
-  render: function(){
-    var contributor = this.props.contributor;
-    var avatar = contributor.get('avatar') ? 
-      contributor.get('avatar').url  : 'https://placehold.it/100';
-
-    return(
-      React.createElement("span", null, 
-        React.createElement("img", {src: avatar, 
-          alt: contributor.get('alias')}
-        ), 
-        contributor.get('alias')
-      )
-    );
-  }
-});
-
-var StoryFooter = React.createClass({displayName: "StoryFooter",
-  render: function(){
-    return(
-      React.createElement("footer", {className: "story-footer"}, 
-        this.props.contributions.map(function(contribution){
-          var contributor = new User(contribution.get('contributor'));
-          return(
-            React.createElement(ContributorListItem, {
-              contributor: contributor, 
-              key: contributor.get('objectId') + contribution.get('objectId')}
-            )
-          );
-        })
-      )
-    );
-  }
-});
 
 
 var StoryContributuionListItem = React.createClass({displayName: "StoryContributuionListItem",
@@ -665,7 +629,6 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
 
   editSegment: function(){
     this.setState({isEditing: !this.state.isEditing});
-    console.log(this.state.isEditing)
   },
 
   render: function(){
@@ -674,82 +637,92 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
     , currentUserId  = this.props.currentUser.get('objectId');
 
     return(
-      React.createElement("div", {className: "panel panel-default"}, 
-        React.createElement("div", {className: "panel-body"}, 
-          React.createElement("section", {className: "story-segment"}, 
-            React.createElement(Row, null, 
-              React.createElement("div", {className: "col-sm-9"}, 
-                
-                (this.state.isEditing) ?
-                  React.createElement(StoryFormContainer, {
-                    story: this.props.story, 
-                    router: this.props.router, 
-                    addContribution: this.addContribution, 
-                    handleContributing: this.handleContributing}
-                  )
-                 :
-                  React.createElement("article", {// hopefully the input has been sanitized at some point
-                    dangerouslySetInnerHTML: {
-                      __html: contribution.get('content')
-                    }}
-                  )
-                
-          
-              ), 
-              React.createElement("div", {className: "col-sm-3"}, 
-                React.createElement("aside", null, 
-                  React.createElement("a", {href: '#user/' + contributor.objectId + '/', 
-                    className: "story-segment-profile"}, 
-                    React.createElement("div", null, 
-                      React.createElement("img", {className: "avatar", 
-                        src: contributor.avatar ? contributor.avatar.url : null, 
-                        alt: contributor.alias}
-                      )
-                    ), 
-                    "by ", contributor.alias
-                  ), 
-                  React.createElement("div", {className: "btn-toolbar"}, 
 
-                    (contributor.objectId === currentUserId) ?
-                        React.createElement("button", {
-                          onClick: () => this.props.deleteSegment(contribution), 
-                          className: "btn btn-danger btn-xs"
-                        }, 
-                          React.createElement("i", {className: "glyphicon glyphicon-remove"})
-                        )
-                    : null, 
+      React.createElement("section", {className: "story-segment"}, 
+            
+        React.createElement("article", {className: "panel panel-custom"}, 
 
-                    (contributor.objectId === currentUserId) ?
-                        React.createElement("button", {
-                          onClick: this.editSegment, 
-                          className: "btn btn-success btn-xs"
-                        }, 
-                          React.createElement("i", {className: "glyphicon glyphicon-edit"})
-                        )
-                    : null, 
-                    
-
-                    React.createElement("button", {
-                      onClick: () => this.handleVote(true, contribution), 
-                      className: "btn btn-default btn-xs"}, 
-                      React.createElement("i", {className: "glyphicon glyphicon-arrow-up"}), 
-                        this.state.upvotes || 0
-                    ), 
-
-                    React.createElement("button", {
-                      onClick: () => this.handleVote(false, contribution), 
-                      className: "btn btn-default btn-xs"}, 
-                      React.createElement("i", {className: "glyphicon glyphicon-arrow-down"}), 
-                        this.state.downvotes || 0
-                    )
-
-                  )
-                )
-              )
-            )
+        (this.state.isEditing) ?
+          React.createElement(StoryFormContainer, {
+            story: this.props.story, 
+            router: this.props.router, 
+            addContribution: this.addContribution, 
+            updateContribution: this.updateContribution, 
+            content: contribution.get('content'), 
+            isAnEdit: this.state.isEditing}
           )
+         : // hopefully the input has been sanitized at some point
+          React.createElement("div", {className: "panel-body", 
+            dangerouslySetInnerHTML: {
+              __html: contribution.get('content')
+            }}
+          ), 
+
+          React.createElement("div", {className: "panel-footer panel-footer-mini clearfix"}, 
+            React.createElement("div", {className: "btn-toolbar btn-toolbar-inline"}, 
+              React.createElement("div", {className: "btn-group"}, 
+                React.createElement("button", {
+                  onClick: () => this.handleVote(true, contribution), 
+                  className: "btn btn-default btn-xs"}, 
+                  React.createElement("i", {className: "glyphicon glyphicon-arrow-up"}), 
+                    this.state.upvotes || 0
+                ), 
+                
+                React.createElement("button", {
+                  onClick: () => this.handleVote(false, contribution), 
+                  className: "btn btn-default btn-xs"}, 
+                  React.createElement("i", {className: "glyphicon glyphicon-arrow-down"}), 
+                    this.state.downvotes || 0
+                )
+
+              )
+
+            ), 
+
+            React.createElement("div", {className: "contributor-profile"}, 
+              React.createElement("a", {href: '#user/' + contributor.objectId + '/', 
+                className: "story-segment-profile"}, 
+              
+                  React.createElement("img", {className: "avatar", 
+                    src: contributor.avatar ? contributor.avatar.url : null, 
+                    alt: contributor.alias}
+                  ), 
+                React.createElement("span", {className: "alias"}, contributor.alias)
+              )
+            ), 
+
+
+            React.createElement("div", {className: "pull-right"}, 
+              
+              (contributor.objectId === currentUserId) ?
+                React.createElement("div", {className: "btn-toolbar btn-toolbar-inline"}, 
+
+                  React.createElement("button", {
+                    onClick: this.editSegment, 
+                    className: "btn btn-success btn-xs"
+                  }, 
+                    React.createElement("i", {className: "glyphicon glyphicon-edit"})
+                  ), 
+
+                  React.createElement("button", {
+                    onClick: () => this.props.deleteSegment(contribution), 
+                    className: "btn btn-danger btn-xs"
+                  }, 
+                    React.createElement("i", {className: "glyphicon glyphicon-remove"})
+                  )
+                                          
+                )
+
+              : null
+
+            )
+
+          )
+
         )
+    
       )
+
     );
   }
 
@@ -768,7 +741,7 @@ var StoryContributuionList = React.createClass({displayName: "StoryContributuion
     var contributions = this.state.contributions;
     // console.warn(contributions)
     return(
-      React.createElement("div", {className: "panel-body"}, 
+      React.createElement("div", null, 
         contributions.map(contribution => {
           // console.log(contribution)
           return( 
@@ -789,6 +762,83 @@ var StoryContributuionList = React.createClass({displayName: "StoryContributuion
   } 
 });
 
+
+var StoryAside = React.createClass({displayName: "StoryAside",
+  
+  uniqueContributors: function(){
+    var contributions = this.props.contributions;
+
+    var contributors = contributions.map(contribution => {
+      return contribution.get('contributor');
+    });
+
+    var result = _.uniq(contributors, function(contributor){
+      return contributor.objectId;
+    });
+
+    return result;
+
+  },
+
+  render: function(){
+    var story = this.props.story
+    , owner = story.get('owner')
+    , contributors = this.uniqueContributors();
+    return(
+      React.createElement("div", {className: "panel panel-default"}, 
+        React.createElement("div", {className: "panel-body"}, 
+
+          React.createElement("aside", {className: "story-aside"}, 
+            React.createElement("h4", null, "Story sparked by:"), 
+
+            React.createElement("div", {className: "owner-detail"}, 
+              React.createElement("a", {href: '#user/' + owner.objectId + '/'}, 
+                React.createElement("div", {className: "user-avatar user-avatar-md"}, 
+                  React.createElement("img", {className: "avatar", 
+                    src: owner.avatar ? owner.avatar.url : null, 
+                    alt: owner.alias}
+                  )
+                ), 
+                React.createElement("div", {className: "owner-alias"}, 
+                  owner.alias
+                )
+              )
+            ), 
+
+            React.createElement("hr", null), 
+
+            React.createElement("h4", null, "Contributors"), 
+
+            React.createElement("div", {className: "list-group"}, 
+
+              contributors
+                .map(contributor => {
+                  return(
+                    React.createElement("a", {
+                      href: '#user/' + contributor.objectId + '/', 
+                      className: "list-group-item", 
+                      key: contributor.objectId
+                    }, 
+                      React.createElement("img", {className: "user-avatar user-avatar-xs", 
+                        src: contributor.avatar ?
+                          contributor.avatar.url :
+                          null, 
+                        alt: contributor.alias}
+                      ), 
+                       ' ' + contributor.alias
+                    )
+                  );
+                })
+
+            )
+
+          )
+
+        )
+      )
+    )
+  }
+});
 
 
 var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
@@ -818,8 +868,12 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
       return;
     }
 
-    story.set('objectId', storyId);
-    story.fetch().then(() => this.setState({story: story}))
+    story
+      .set('objectId', storyId);
+
+    story
+      .fetch({data: {'include': 'owner'}})
+      .then(() => this.setState({story: story}))
 
     return this;
   },
@@ -840,7 +894,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     return this;
   },
 
-  handleContributing: function(){
+  toggleEditorVisibility: function(){
     this.setState({
       isContributing: !this.state.isContributing
     });
@@ -890,9 +944,10 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
       React.createElement(AppWrapper, null, 
         React.createElement(AppHeaderMain, null), 
         React.createElement(ContainerRow, null, 
-          React.createElement("div", {className: "col-sm-10 col-sm-offset-1"}, 
-            React.createElement("div", {className: "story-container"}, 
-              (currentUserId === story.get('owner').objectId) ?
+          React.createElement("div", {className: "story-container"}, 
+            React.createElement("div", {className: "col-sm-12"}, 
+              // display delete/edit toolbar if current user is owner
+                (currentUserId === story.get('owner').objectId) ?
                 React.createElement("div", {className: "btn-toolbar"}, 
                   React.createElement(NuModal, {deleteStory: this.deleteStory}), 
                   React.createElement("button", {
@@ -901,11 +956,12 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
                 )
               : null, 
 
-              React.createElement("h1", null, story.get('title')), 
-              
-              React.createElement("div", {className: "panel panel-default"}, 
-                React.createElement("div", {className: "panel-body"}, 
+              React.createElement("div", {className: "row"}, 
 
+                React.createElement("div", {className: "col-sm-9"}, 
+                  React.createElement("h1", null, story.get('title'), 
+                    React.createElement("small", null, " ", story.get('contributions').length, " contributions")
+                  ), 
                   React.createElement(StoryContributuionList, {
                     story: story, 
                     contributions: contributions, 
@@ -913,26 +969,28 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
                     handleVote: this.handleVote, 
                     currentUser: this.state.currentUser}
                   )
-
                 ), 
-                React.createElement("div", {className: "panel-footer"}, 
-
-                  React.createElement(StoryFooter, {contributions: contributions})
-
+                React.createElement("div", {className: "col-sm-3"}, 
+                  React.createElement(StoryAside, {
+                    story: story, 
+                    contributions: contributions}
+                  )
                 )
+
               ), 
 
-              React.createElement("button", {onClick: this.handleContributing, 
+              React.createElement("button", {onClick: this.toggleEditorVisibility, 
                 className: "btn btn-primary"}, 
                 (isContributing) ? 'Nevermind' : 'Contribute'
               ), 
 
-              isContributing ? 
+              // display editor component if contributing 
+                isContributing ? 
                 React.createElement(StoryFormContainer, {
                   story: story, 
                   router: this.props.router, 
                   addContribution: this.addContribution, 
-                  handleContributing: this.handleContributing}
+                  toggleEditorVisibility: this.toggleEditorVisibility}
                 ) 
                 : null
             )
@@ -948,7 +1006,7 @@ module.exports = {
   StoryReadContainer: StoryReadContainer
 };
 
-},{"../models/story":14,"../models/user":15,"./layouts/general.jsx":2,"./modal.jsx":4,"./storyForm.jsx":6,"react":428}],6:[function(require,module,exports){
+},{"../models/story":14,"../models/user":15,"./layouts/general.jsx":2,"./modal.jsx":4,"./storyForm.jsx":6,"react":428,"underscore":432}],6:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -1078,10 +1136,16 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
   },
 
   componentWillMount: function(){
-    
+    var contribution = this.state.contribution;
     if (this.props.story){
-      console.log('mounted')
+      // console.log('mounted')
       this.setState({story: this.props.story});
+    }
+
+    // if the editor gets called from a segment
+    if (this.props.isAnEdit) {
+      contribution.set('content', this.props.content);
+      this.setState({contribution: contribution});
     }
   },
 
@@ -1115,9 +1179,10 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
     , story = this.state.story
     , contribution = this.state.contribution;
 
+    // check if if the story is from the server
     if (!story.isNew()) {
-      console.log('story is NOT new');
-      // set just the contribition owner
+      console.log('story is NOT new', this.props.isAnEdit);
+      // set just the contribition' contributor
       this.setContributor(user, story.get('objectId'), 
         (response, contribution) => {
           
@@ -1128,7 +1193,9 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
 
           // reset the state
           this.setState({contribution: new Contribution()});
-          this.props.handleContributing();
+          
+          // call the parent componets toggle
+          this.props.toggleEditorVisibility();
         });
 
     } else {
@@ -1312,8 +1379,8 @@ var UserDetailContainer = React.createClass({displayName: "UserDetailContainer",
     var user = this.state.user
     , currentUser = User.current();
 
-    console.log(user);
-
+    // console.log(currentUser);
+    
     return(
       React.createElement(AppWrapper, null, 
         React.createElement(AppHeaderMain, null), 
@@ -1573,8 +1640,10 @@ var UserEditProfileContainer = React.createClass({displayName: "UserEditProfileC
               
                 React.createElement(UserData, {user: user, onChange: this.handleChange}), 
               
-                React.createElement("input", {type: "submit", value: "Save", className: "btn btn-primary"}), 
-                React.createElement("button", {onClick: this.handleCancel, className: "btn btn-default"}, "Cancel")
+                React.createElement("div", {className: "btn-toolbar"}, 
+                  React.createElement("input", {type: "submit", value: "Save", className: "btn btn-primary"}), 
+                  React.createElement("button", {onClick: this.handleCancel, className: "btn btn-default"}, "Cancel")
+                )
               
               )
             )
@@ -1759,6 +1828,7 @@ var Backbone = require('backbone');
 var ParseModel = Backbone.Model.extend({
   // model layer for parse server
   idAttribute: 'objectId',
+
   // set up a pointer property on this model
   setPointer: function(field, className, objectId){
     this.set(field, {
@@ -2046,14 +2116,11 @@ var ParseUser = ParseModel.extend({
 
 var User = ParseUser.extend({
   
-  defaults: {
-    firstName: '',
-    lastName: '',
-    location: '',
-    email: '',
-    avatar: {},
-    alias: ''
-  },
+  // defaults: {
+  //   avatar: {
+  //     url: 'http://mt-parse-server.herokuapp.com/files/mtparseserver/0c9f43751c0ab5df0326b1922755dd60_default.png"'
+  //   }
+  // },
 
   urlRoot: 'https://mt-parse-server.herokuapp.com/users',
 
@@ -2074,7 +2141,6 @@ var User = ParseUser.extend({
   updateAvatar: function(file){
     var img = new FileModel();
 
-    // img.prepare(file).save();
     img.prepare(file)
       .save().then(resp => {
         // now that the image has been saved,
@@ -2086,8 +2152,6 @@ var User = ParseUser.extend({
       });
   }
 
-  // url: "http://mt-parse-server.herokuapp.com/files/mtparse…33c22822338559820784359a_ocozzio-picture-day3.jpg", 
-  // name: "069c7d2e33c22822338559820784359a_ocozzio-picture-day3.jpg"
 
 }, {
   // class methods
@@ -2124,18 +2188,27 @@ var User = ParseUser.extend({
 
   signUp: function(userCredentials, callback){
     // instantiate user
-    var user = new User();
+    var user = new User()
+    , defaultPic = '0c9f43751c0ab5df0326b1922755dd60_default.png'
+    , defaultPicUrl = 'http://mt-parse-server.herokuapp.com/files/mtparseserver/' + 
+                       defaultPic;
     // set up url
     user.urlRoot = function(){
       return 'https://mt-parse-server.herokuapp.com/users';
     };
     // call user auth
-    user.auth();
-
-    user.save(userCredentials)
+    user
+      .setFile('avatar', defaultPic, defaultPicUrl)
+      .save(userCredentials)
       .then(function(response){
-        user.auth();   
-        // console.log(response);
+        
+        user.auth();
+        
+        // somehow makes it back to the model in here
+        // sending a password back to parse creates
+        // a new session token and invalidates the old one
+        delete user.attributes.password;
+
         localStorage.setItem('user', JSON.stringify(user.toJSON()));
 
         callback(user);

@@ -5804,6 +5804,18 @@ p {
   font-weight: 400;
   font-size: 22px; }
 
+.btn-toolbar-inline {
+  display: inline-block;
+  vertical-align: middle; }
+
+.panel-custom {
+  box-shadow: none; }
+
+.panel-footer-mini {
+  background-color: #ffffff;
+  padding-top: 5px;
+  padding-bottom: 5px; }
+
 .main-content {
   padding: 84px 0 32px;
   min-height: calc(100vh - 59px); }
@@ -5924,9 +5936,15 @@ p {
     transition: -webkit-filter 200ms ease-in-out;
     transition: filter 200ms ease-in-out;
     transition: filter 200ms ease-in-out, -webkit-filter 200ms ease-in-out; }
+  .user-avatar.user-avatar-xs {
+    width: 24px;
+    height: 24px; }
   .user-avatar.user-avatar-sm {
     width: 40px;
     height: 40px; }
+  .user-avatar.user-avatar-md {
+    width: 72px;
+    height: 72px; }
 
 .story-segment {
   font-family: 'Enriqueta', 'Times', serif;
@@ -5934,14 +5952,31 @@ p {
   font-size: 22px;
   color: #323232; }
   .story-segment .avatar {
-    witdh: 56px;
-    height: 56px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%; }
+  .story-segment .alias {
+    font-size: 13px; }
 
 .story-footer img {
   width: 24px;
   height: 24px;
   border-radius: 50%; }
+
+.contributor-profile {
+  display: inline-block;
+  margin-left: 16px; }
+
+.story-aside h4 {
+  text-align: center; }
+.story-aside .user-avatar {
+  margin: 0 auto; }
+.story-aside .owner-detail {
+  text-align: center; }
+  .story-aside .owner-detail a {
+    display: block; }
+    .story-aside .owner-detail a .owner-alias {
+      margin: 0 auto; }
 
 /* edit these rules to customize how LanguageTool shows errors: */
 .hiddenSpellError {
