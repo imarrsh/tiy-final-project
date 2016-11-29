@@ -55,9 +55,6 @@ var StoryBody = React.createClass({
         });
       },
       
-      contentStyles: [
-        {'backgroundColor': 'red'}
-      ],
       mode : 'textareas',
       plugins : 'AtD,paste',
       paste_text_sticky : true,
@@ -173,7 +170,7 @@ var StoryFormContainer = React.createClass({
     // check if if the story came from the server
     if (!story.isNew()) {
       console.log('story is NOT new');
-      
+
       if (this.props.isAnEdit) {
         console.log('this is an edit!');
         // update the content only
@@ -184,7 +181,7 @@ var StoryFormContainer = React.createClass({
         this.props.toggleEditorVisibility();
 
       } else {
-        
+
       // set the contribition' contributor
       // if user is making a fresh contribution
       this.setContributor(user, story.get('objectId'), 

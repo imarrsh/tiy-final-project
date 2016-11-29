@@ -21,7 +21,7 @@ var NuModal = React.createClass({
   },
 
   render: function() {
-    /* 
+    /* props: delete btn text, delete item name
     var popover = (
       <Popover id="modal-popover" title="popover">
         very popover. such engagement
@@ -33,33 +33,33 @@ var NuModal = React.createClass({
       </Tooltip>
     );
     */
-
+    // props: delete btn text, delete item name, delete method
     return (
-      <div>
+      <div style={{'display': 'inline'}}>
         <Button
           bsStyle="danger"
           bsSize="xs"
           onClick={this.open}
         >
-          Delete Story
+          {this.props.icon} {this.props.buttonText}
         </Button>
 
         <Modal show={this.state.showModal} onHide={this.close}>
           <Modal.Header closeButton>
-            <Modal.Title>Delete Story</Modal.Title>
+            <Modal.Title>Delete {this.props.context}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Really Delete this story?
+            Really delete this {this.props.context}?
           </Modal.Body>
           <Modal.Footer>
             <Button 
               bsStyle="danger" 
-              onClick={this.props.deleteStory}
+              onClick={this.props.action}
             >
               Delete
             </Button>
             
-            <Button onClick={this.close}>Close</Button>
+            <Button onClick={this.close}>No, don't</Button>
           </Modal.Footer>
         </Modal>
       </div>

@@ -17,6 +17,9 @@ var Row = layout.Row;
 
 var NuModal = require('./modal.jsx').NuModal;
 
+// ############################
+// Story Segment List Item
+// ############################
 
 var StoryContributuionListItem = React.createClass({
   
@@ -93,7 +96,7 @@ var StoryContributuionListItem = React.createClass({
             toggleEditorVisibility={this.toggleEditorVisibility}
           />
          : // hopefully the input has been sanitized at some point
-          <div className="panel-body"
+          <div className="panel-body segment-content"
             dangerouslySetInnerHTML={{
               __html: contribution.get('content')
             }} 
@@ -142,15 +145,21 @@ var StoryContributuionListItem = React.createClass({
                     onClick={this.editSegment}
                     className="btn btn-success btn-xs"
                   >
-                    <i className="glyphicon glyphicon-edit" />
+                    <i className="glyphicon glyphicon-edit" /> Edit
                   </button>
 
-                  <button 
-                    onClick={() => this.props.deleteSegment(contribution)}
-                    className="btn btn-danger btn-xs"
-                  >
+                  <NuModal
+                    action={() => this.props.deleteSegment(contribution)}
+                    context={'Contribution'}
+                    icon={<i className="glyphicon glyphicon-edit" />}
+                    buttonText={'Delete'}
+                  />
+                  {/*<button 
+                      onClick={() => this.props.deleteSegment(contribution)}
+                      className="btn btn-danger btn-xs"
+                    >
                     <i className="glyphicon glyphicon-remove" />
-                  </button>
+                  </button>*/}
                                           
                 </div>
 
@@ -169,6 +178,9 @@ var StoryContributuionListItem = React.createClass({
 
 });
 
+// ############################
+// Story Segments Container
+// ############################
 
 var StoryContributuionList = React.createClass({
   getInitialState: function(){
@@ -203,6 +215,9 @@ var StoryContributuionList = React.createClass({
   } 
 });
 
+// ########################################################
+// Side Container: Story owner and contributors
+// ########################################################
 
 var StoryAside = React.createClass({
   
@@ -281,6 +296,9 @@ var StoryAside = React.createClass({
   }
 });
 
+// ############################
+// Main Container
+// ############################
 
 var StoryReadContainer = React.createClass({
   
@@ -390,7 +408,11 @@ var StoryReadContainer = React.createClass({
               {// display delete/edit toolbar if current user is owner
                 (currentUserId === story.get('owner').objectId) ?
                 <div className="btn-toolbar">
-                  <NuModal deleteStory={this.deleteStory}/>
+                  <NuModal
+                    buttonText={'Delete Story'}
+                    action={this.deleteStory}
+                    context={'Story'}
+                  />
                   <button
                     className="btn btn-success btn-xs">Edit Title
                   </button>
@@ -410,6 +432,22 @@ var StoryReadContainer = React.createClass({
                     handleVote={this.handleVote}
                     currentUser={this.state.currentUser}
                   />
+
+                  <button onClick={this.toggleEditorVisibility} 
+                    className="btn btn-primary">
+                    {(isContributing) ? 'Nevermind' : 'Contribute'}
+                  </button>
+
+                  {// display editor component if contributing 
+                    isContributing ? 
+                    <StoryFormContainer 
+                      story={story}
+                      router={this.props.router}
+                      addContribution={this.addContribution}
+                      toggleEditorVisibility={this.toggleEditorVisibility}
+                    /> 
+                    : null}
+
                 </div>
                 <div className="col-sm-3"> 
                   <StoryAside 
@@ -420,20 +458,6 @@ var StoryReadContainer = React.createClass({
 
               </div>
 
-              <button onClick={this.toggleEditorVisibility} 
-                className="btn btn-primary">
-                {(isContributing) ? 'Nevermind' : 'Contribute'}
-              </button>
-
-              {// display editor component if contributing 
-                isContributing ? 
-                <StoryFormContainer 
-                  story={story}
-                  router={this.props.router}
-                  addContribution={this.addContribution}
-                  toggleEditorVisibility={this.toggleEditorVisibility}
-                /> 
-                : null}
             </div>
           </div>
         </ContainerRow>

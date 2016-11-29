@@ -78,6 +78,34 @@ var OthersStoryList = React.createClass({
 //   }
 // })
 
+var UserInfoStats = React.createClass({
+  render: function(){
+    var user = User.current();
+    return (
+      <div className="row">
+        <div className="col-xs-12">
+          <div className="panel panel-default">
+            <div className="panel-body">
+              
+              <div className="overview">
+
+                <div className="user-avatar user-avatar-md">
+                  <img src={user.get('avatar') ?
+                    user.get('avatar').url : null } 
+                    alt={user.get('alias')}
+                  />
+                </div>
+
+                <h2>Maybe Some Quick User Stats Here</h2>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+});
 
 
 var HomeContainer = React.createClass({
@@ -169,6 +197,7 @@ var HomeContainer = React.createClass({
           <div className="my-stories">
             <UserStoryList stories={this.state.userStoryCollection}/>
             <OthersStoryList stories={this.state.othersStoryCollection}/>
+            <UserInfoStats />
 
             {/* <Experiment stories={this.state.experimentStoryCollection}/> */}
 
@@ -184,7 +213,8 @@ module.exports = {
 }
 
 
-  // experimental ideas & stuff:
+  // experimental ideas scratch area:
+
   // .parseQuery('where', 'owner', user.get('objectId'))
 
   // .query('where', 'owner') // start the query
