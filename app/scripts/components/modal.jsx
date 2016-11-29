@@ -37,7 +37,8 @@ var NuModal = React.createClass({
     return (
       <div style={{'display': 'inline'}}>
         <Button
-          bsStyle="danger"
+          bsStyle="default"
+          className="btn-red"
           bsSize="xs"
           onClick={this.open}
         >

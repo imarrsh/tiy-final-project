@@ -42,6 +42,24 @@ p {
   padding-top: 0;
 }
 
+.btn-red {
+  color: tomato;
+  &:hover {
+    border-color: tomato;
+    background-color: tomato;
+    color: white;
+  }
+}
+
+.btn-green {
+  color: forestgreen;
+  &:hover {
+    border-color: forestgreen;
+    background-color: forestgreen;
+    color: white;
+  }
+}
+
 
 
 // ##################################

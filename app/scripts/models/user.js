@@ -51,16 +51,23 @@ var User = ParseUser.extend({
     });
   },
 
-  updateAvatar: function(file){
+  updateAvatar: function(file, callback){
     var img = new FileModel();
-
+  
+    // save to file endpoint
     img.prepare(file)
       .save().then(resp => {
+        console.log(resp);
+        var newPhotoUrl = resp.url
+        , newPhotoName = resp.name;
         // now that the image has been saved,
         // set the file pointer on the user profile
-        this.setFile('avatar', resp.name, resp.url)
-          .save().then(function(response){
-            // console.log('updateAvatar', response);
+        this.setFile('avatar', newPhotoName, newPhotoUrl)
+          .save().then(() => {
+
+            localStorage.setItem('user', JSON.stringify(this.toJSON()));
+
+            callback(this);
           });
       });
   }

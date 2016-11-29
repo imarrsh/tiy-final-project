@@ -178,7 +178,10 @@ var UserEditProfileContainer = React.createClass({
   handleImageAutoUpload: function(file){
     var user = this.state.user;
     // pass file to user model method
-    user.updateAvatar(file);
+    user.updateAvatar(file, user => {
+      // user.set('avatar.url', imgUrl)
+      this.setState({user: user});
+    });
   },
 
   render: function (){
@@ -190,6 +193,7 @@ var UserEditProfileContainer = React.createClass({
           <div className="col-sm-6 col-sm-offset-3">
 
             <div className="user-profile user-profile-edit">
+
               <UserProfileImageForm user={user} imageUpdate={this.handleImageAutoUpload}/>
               
               <form onSubmit={this.handleSubmit} >

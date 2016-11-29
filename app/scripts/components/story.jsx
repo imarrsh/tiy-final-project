@@ -143,7 +143,7 @@ var StoryContributuionListItem = React.createClass({
 
                   <button
                     onClick={this.editSegment}
-                    className="btn btn-success btn-xs"
+                    className="btn btn-default btn-xs btn-green"
                   >
                     <i className="glyphicon glyphicon-edit" /> Edit
                   </button>
@@ -151,7 +151,7 @@ var StoryContributuionListItem = React.createClass({
                   <NuModal
                     action={() => this.props.deleteSegment(contribution)}
                     context={'Contribution'}
-                    icon={<i className="glyphicon glyphicon-edit" />}
+                    icon={<i className="glyphicon glyphicon-remove" />}
                     buttonText={'Delete'}
                   />
                   {/*<button 
@@ -414,7 +414,7 @@ var StoryReadContainer = React.createClass({
                     context={'Story'}
                   />
                   <button
-                    className="btn btn-success btn-xs">Edit Title
+                    className="btn btn-default btn-xs btn-green">Edit Title
                   </button>
                 </div>
               : null }
