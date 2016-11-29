@@ -557,7 +557,8 @@ var NuModal = React.createClass({displayName: "NuModal",
     return (
       React.createElement("div", {style: {'display': 'inline'}}, 
         React.createElement(Button, {
-          bsStyle: "danger", 
+          bsStyle: "default", 
+          className: "btn-red", 
           bsSize: "xs", 
           onClick: this.open
         }, 
@@ -738,7 +739,7 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
 
                   React.createElement("button", {
                     onClick: this.editSegment, 
-                    className: "btn btn-success btn-xs"
+                    className: "btn btn-default btn-xs btn-green"
                   }, 
                     React.createElement("i", {className: "glyphicon glyphicon-edit"}), " Edit"
                   ), 
@@ -746,7 +747,7 @@ var StoryContributuionListItem = React.createClass({displayName: "StoryContribut
                   React.createElement(NuModal, {
                     action: () => this.props.deleteSegment(contribution), 
                     context: 'Contribution', 
-                    icon: React.createElement("i", {className: "glyphicon glyphicon-edit"}), 
+                    icon: React.createElement("i", {className: "glyphicon glyphicon-remove"}), 
                     buttonText: 'Delete'}
                   )
                   /*<button 
@@ -1009,7 +1010,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
                     context: 'Story'}
                   ), 
                   React.createElement("button", {
-                    className: "btn btn-success btn-xs"}, "Edit Title"
+                    className: "btn btn-default btn-xs btn-green"}, "Edit Title"
                   )
                 )
               : null, 
@@ -1461,7 +1462,7 @@ var UserDetailContainer = React.createClass({displayName: "UserDetailContainer",
 
             React.createElement("div", {className: "user-profile"}, 
   
-              React.createElement("p", null, "User Detail for ", user.get('firstName')), 
+              React.createElement("p", {contentEditable: "true"}, "User Detail for ", user.get('firstName')), 
               
               React.createElement("figure", {className: "user-profile-avatar"}, 
                 React.createElement("div", {className: "user-avatar"}, 
@@ -1694,7 +1695,10 @@ var UserEditProfileContainer = React.createClass({displayName: "UserEditProfileC
   handleImageAutoUpload: function(file){
     var user = this.state.user;
     // pass file to user model method
-    user.updateAvatar(file);
+    user.updateAvatar(file, user => {
+      // user.set('avatar.url', imgUrl)
+      this.setState({user: user});
+    });
   },
 
   render: function (){
@@ -1706,6 +1710,7 @@ var UserEditProfileContainer = React.createClass({displayName: "UserEditProfileC
           React.createElement("div", {className: "col-sm-6 col-sm-offset-3"}, 
 
             React.createElement("div", {className: "user-profile user-profile-edit"}, 
+
               React.createElement(UserProfileImageForm, {user: user, imageUpdate: this.handleImageAutoUpload}), 
               
               React.createElement("form", {onSubmit: this.handleSubmit}, 
@@ -2224,16 +2229,23 @@ var User = ParseUser.extend({
     });
   },
 
-  updateAvatar: function(file){
+  updateAvatar: function(file, callback){
     var img = new FileModel();
-
+  
+    // save to file endpoint
     img.prepare(file)
       .save().then(resp => {
+        console.log(resp);
+        var newPhotoUrl = resp.url
+        , newPhotoName = resp.name;
         // now that the image has been saved,
         // set the file pointer on the user profile
-        this.setFile('avatar', resp.name, resp.url)
-          .save().then(function(response){
-            // console.log('updateAvatar', response);
+        this.setFile('avatar', newPhotoName, newPhotoUrl)
+          .save().then(() => {
+
+            localStorage.setItem('user', JSON.stringify(this.toJSON()));
+
+            callback(this);
           });
       });
   }

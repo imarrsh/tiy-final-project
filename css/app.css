@@ -5816,6 +5816,20 @@ p {
   border: none;
   padding-top: 0; }
 
+.btn-red {
+  color: tomato; }
+  .btn-red:hover {
+    border-color: tomato;
+    background-color: tomato;
+    color: white; }
+
+.btn-green {
+  color: forestgreen; }
+  .btn-green:hover {
+    border-color: forestgreen;
+    background-color: forestgreen;
+    color: white; }
+
 .main-content {
   padding: 84px 0 32px;
   min-height: calc(100vh - 59px); }
