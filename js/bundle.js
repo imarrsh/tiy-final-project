@@ -902,7 +902,8 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     return {
       story: new Story(),
       isContributing: false,
-      currentUser: User.current()
+      currentUser: User.current(),
+      isEditingTitle: false
     }
   },
 
@@ -911,8 +912,28 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
   },
 
   componentWillReciveProps: function(nextProps){
-    console.log('componentWillReciveProps', nextProps);
+    // console.log('componentWillReciveProps', nextProps);
     this.getStory().getContributions();
+  },
+
+  componentWillUnmount: function(){
+    
+    var story = this.state.story
+    , contributions = story.get('contributions');
+    
+    // clear the collection
+    contributions.reset();
+
+    // clear the queries
+    delete contributions.clause;
+    delete contributions.extra;
+
+    // set it back to the story model
+    story.set('contributions', contributions);
+
+    // set the state
+    this.setState({story: story});
+    
   },
 
   getStory: function(){
@@ -940,6 +961,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     contributions
       .parseQuery('story', story.get('objectId'), 'Story')
       .also('include', 'contributor')
+      .also('order', 'createdAt')
       .fetch()
       .then((response) => {
         story.set('contributions', contributions);
@@ -972,7 +994,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
   },
 
   addContribution: function(contribution){
-    console.log('adding:', contribution);
+    // console.log('adding:', contribution);
     
     var story = this.state.story
     , contributions = story.get('contributions');
@@ -990,11 +1012,39 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
       .set('contributions')
   },
 
+  handleTitleChange: function(e){
+    var story = this.state.story;
+    story.set('title', e.target.value);
+
+    this.setState({story: story});
+  },
+
+  updateTitle: function(e){
+    e.preventDefault();
+    var story = this.state.story
+    , title = story.get('title');
+
+    // console.log(story.get('contributions'))
+
+    story.updateTitle(title, () => {
+      this.setState({
+        story: story
+      });
+      
+      this.setState({
+        isEditingTitle: !this.state.isEditingTitle
+      })
+    });
+  },
+
   render: function(){
     var story = this.state.story
     , contributions = story.get('contributions')
     , isContributing = this.state.isContributing
     , currentUserId = this.state.currentUser.get('objectId');
+
+    // console.log(story);
+    
     return(
       React.createElement(AppWrapper, null, 
         React.createElement(AppHeaderMain, null), 
@@ -1010,6 +1060,9 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
                     context: 'Story'}
                   ), 
                   React.createElement("button", {
+                    onClick: () => this.setState({
+                      isEditingTitle: !this.state.isEditingTitle
+                    }), 
                     className: "btn btn-default btn-xs btn-green"}, "Edit Title"
                   )
                 )
@@ -1018,8 +1071,47 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
               React.createElement("div", {className: "row"}, 
 
                 React.createElement("div", {className: "col-sm-9"}, 
-                  React.createElement("h1", null, story.get('title'), 
-                    React.createElement("small", null, " ", story.get('contributions').length, " contributions")
+                  (this.state.isEditingTitle) ?
+
+                    React.createElement("div", {className: "story-title-edit"}, 
+                      React.createElement("div", {className: "form-inline"}, 
+
+                        React.createElement("form", {onSubmit: this.updateTitle}, 
+                          React.createElement("input", {
+                            onChange: this.handleTitleChange, 
+                            className: "form-control", 
+                            type: "text", 
+                            value: story.get('title')}
+                          ), 
+                          React.createElement("input", {
+                            type: "submit", 
+                            value: "Save", 
+                            className: "btn btn-success"}
+                          ), 
+                          React.createElement("button", {
+                            onClick: (e) => {
+                              e.preventDefault();
+                              this.setState({
+                                isEditingTitle: !this.state.isEditingTitle
+                              });
+                            }, 
+                            className: "btn btn-default"
+                          }, 
+                            "Cancel"
+                          )
+
+                        )
+                      )
+                    )
+                      
+                    : React.createElement("h1", {className: "storyhead"}, 
+                        story.get('title')
+                      ), 
+                  
+
+                  React.createElement("h4", {className: "subhead"}, 
+                      story.get('contributions').length, 
+                    " contributions"
                   ), 
                   React.createElement(StoryContributuionList, {
                     story: story, 
@@ -1121,7 +1213,7 @@ var StoryBody = React.createClass({displayName: "StoryBody",
         });
 
         ed.onChange.add(function(ed, c){
-          console.log(c.content)
+          // console.log(c.content)
           self.props.onChange(c.content);
         });
       },
@@ -1199,7 +1291,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
       // console.log('mounted')
       this.setState({story: this.props.story});
     }
-
+    
     // if the editor gets called from a segment
     if (this.props.isAnEdit) {
       contribution.set('content', this.props.content);
@@ -1210,8 +1302,8 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
   handleGrammarCheck: function(e){
     e.preventDefault();
     this.state.contribution.checkGrammar();
-
   },
+
   handleTitleChange: function(e){
     this.setState({
       story: this.state.story
@@ -1240,10 +1332,10 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
 
     // check if if the story came from the server
     if (!story.isNew()) {
-      console.log('story is NOT new');
+      // console.log('story is NOT new');
 
       if (this.props.isAnEdit) {
-        console.log('this is an edit!');
+        // console.log('this is an edit!');
         // update the content only
         contribution.updateSegment();
       
@@ -1273,7 +1365,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
 
     } else {
 
-      console.log('story is NEW');
+      // console.log('story is NEW');
       // set the story owner & pointer instead
       story
         .setPointer('owner', '_User', user.get('objectId'))
@@ -1297,7 +1389,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
       .setPointer('contributor', '_User', user.get('objectId'))
       .setPointer('story', 'Story', storyId)
       .save().then(response => {
-        console.log(contribution);
+        // console.log(contribution);
         callback(response, contribution);
       });
 
@@ -1312,6 +1404,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
   render: function(){
     var title = this.state.story.get('title')
     , body = this.state.contribution.get('content');
+    // console.log(this.state.story);
 
     return(
       React.createElement("div", {className: "panel panel-default"}, 
@@ -1333,13 +1426,18 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
             
             React.createElement("div", {className: "btn-toolbar"}, 
               React.createElement("button", {onClick: this.handleCheck, 
-                className: "btn btn-warning", 
+                className: "btn btn-warning btn-sm", 
                 name: "_action_checkText"}, 
                 "Grammar Check"
               ), 
               React.createElement("input", {type: "submit", 
-                className: "btn btn-success", 
+                className: "btn btn-success btn-sm", 
                 value: "Submit"}
+              ), 
+              React.createElement("button", {onClick: this.handleCancel, 
+                className: "btn btn-default btn-sm", 
+                name: "_action_checkText"}, 
+                "Cancel"
               )
             )
             
@@ -1376,6 +1474,11 @@ var StoryCreateContainer = React.createClass({displayName: "StoryCreateContainer
       story: new Story()
     }
   },
+
+  // componentWillMount: function(){
+  //   delete this.state.story.attributes.contributions;
+  //   this.setState({story: this.state.story});
+  // },
 
   render: function(){
     // console.warn(this.state.story.get('contributions'))
@@ -1462,7 +1565,7 @@ var UserDetailContainer = React.createClass({displayName: "UserDetailContainer",
 
             React.createElement("div", {className: "user-profile"}, 
   
-              React.createElement("p", {contentEditable: "true"}, "User Detail for ", user.get('firstName')), 
+              React.createElement("p", null, "User Detail for ", user.get('firstName')), 
               
               React.createElement("figure", {className: "user-profile-avatar"}, 
                 React.createElement("div", {className: "user-avatar"}, 
@@ -1960,6 +2063,8 @@ var ParseModel = Backbone.Model.extend({
       data: JSON.stringify(data),
       contentType: 'application/json'
     });
+
+    return this;
   }
 
 });
@@ -2111,7 +2216,7 @@ var Backbone = require('backbone');
 var ParseModel = require('./parseSetup').ParseModel;
 var ParseCollection = require('./parseSetup').ParseCollection;
 
-// grab the contribution model
+// grab the contribution collection
 var ContributionCollection = require('./contribution').ContributionCollection;
 
 var Story = ParseModel.extend({
@@ -2132,9 +2237,8 @@ var Story = ParseModel.extend({
     // prevent from saving a lingering collection
     // there is likely some sort of leak to take care of
     // but this solves the problem for now.
-    delete this.attributes.contributions;
-
-    console.log(this, key, val, options);
+    // this didnt work out when updating the title of story
+    // delete this.attributes.contributions;
 
     return Backbone.Model.prototype.save.call(this, key, val, options);
   },
@@ -2153,6 +2257,15 @@ var Story = ParseModel.extend({
       callback();
     });
 
+  },
+
+  updateTitle: function(title, callback){
+    
+    var newTitle = {title: title};
+
+    this.fauxPatch(newTitle);
+    
+    callback();
   }
 
 });
