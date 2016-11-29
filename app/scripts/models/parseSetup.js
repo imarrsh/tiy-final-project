@@ -46,6 +46,15 @@ var ParseModel = Backbone.Model.extend({
         amount: amount
       }
     };
+  },
+
+  // parse server doesnt support patch by default
+  // so we can do this instead.
+  fauxPatch: function(data){
+    this.save({}, {
+      data: JSON.stringify(data),
+      contentType: 'application/json'
+    });
   }
 
 });

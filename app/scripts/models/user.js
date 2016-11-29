@@ -109,7 +109,6 @@ var User = ParseUser.extend({
     user.urlRoot = function(){
       return 'https://mt-parse-server.herokuapp.com/users';
     };
-    // call user auth
     user
       .setFile('avatar', defaultPic, defaultPicUrl)
       .save(userCredentials)

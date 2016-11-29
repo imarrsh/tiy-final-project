@@ -121,7 +121,7 @@ var StoryFormContainer = React.createClass({
     // models
     return {
       story: new Story(),
-      contribution: new Contribution()
+      contribution: this.props.contribution || new Contribution()
     }
   },
 
@@ -167,12 +167,26 @@ var StoryFormContainer = React.createClass({
     
     var user = User.current()
     , story = this.state.story
-    , contribution = this.state.contribution;
+    , contribution = this.state.contribution
+    , data;
 
-    // check if if the story is from the server
+    // check if if the story came from the server
     if (!story.isNew()) {
-      console.log('story is NOT new', this.props.isAnEdit);
-      // set just the contribition' contributor
+      console.log('story is NOT new');
+      
+      if (this.props.isAnEdit) {
+        console.log('this is an edit!');
+        // update the content only
+        contribution.updateSegment();
+      
+        this.setState({contribution: contribution});
+        
+        this.props.toggleEditorVisibility();
+
+      } else {
+        
+      // set the contribition' contributor
+      // if user is making a fresh contribution
       this.setContributor(user, story.get('objectId'), 
         (response, contribution) => {
           
@@ -187,6 +201,7 @@ var StoryFormContainer = React.createClass({
           // call the parent componets toggle
           this.props.toggleEditorVisibility();
         });
+      }
 
     } else {
 

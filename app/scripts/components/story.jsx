@@ -66,6 +66,10 @@ var StoryContributuionListItem = React.createClass({
     this.setState({isEditing: !this.state.isEditing});
   },
 
+  toggleEditorVisibility: function(){
+    this.setState({isEditing: !this.state.isEditing});
+  },
+
   render: function(){
     var contribution = this.state.contribution
     , contributor    = contribution.get('contributor')
@@ -85,6 +89,8 @@ var StoryContributuionListItem = React.createClass({
             updateContribution={this.updateContribution}
             content={contribution.get('content')}
             isAnEdit={this.state.isEditing}
+            contribution={contribution}
+            toggleEditorVisibility={this.toggleEditorVisibility}
           />
          : // hopefully the input has been sanitized at some point
           <div className="panel-body"
