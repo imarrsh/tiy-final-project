@@ -4,7 +4,7 @@ var Backbone = require('backbone');
 var ParseModel = require('./parseSetup').ParseModel;
 var ParseCollection = require('./parseSetup').ParseCollection;
 
-// grab the contribution model
+// grab the contribution collection
 var ContributionCollection = require('./contribution').ContributionCollection;
 
 var Story = ParseModel.extend({
@@ -25,9 +25,8 @@ var Story = ParseModel.extend({
     // prevent from saving a lingering collection
     // there is likely some sort of leak to take care of
     // but this solves the problem for now.
-    delete this.attributes.contributions;
-
-    console.log(this, key, val, options);
+    // this didnt work out when updating the title of story
+    // delete this.attributes.contributions;
 
     return Backbone.Model.prototype.save.call(this, key, val, options);
   },
@@ -46,6 +45,15 @@ var Story = ParseModel.extend({
       callback();
     });
 
+  },
+
+  updateTitle: function(title, callback){
+    
+    var newTitle = {title: title};
+
+    this.fauxPatch(newTitle);
+    
+    callback();
   }
 
 });

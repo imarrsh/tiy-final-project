@@ -50,7 +50,7 @@ var StoryBody = React.createClass({
         });
 
         ed.onChange.add(function(ed, c){
-          console.log(c.content)
+          // console.log(c.content)
           self.props.onChange(c.content);
         });
       },
@@ -128,7 +128,7 @@ var StoryFormContainer = React.createClass({
       // console.log('mounted')
       this.setState({story: this.props.story});
     }
-
+    
     // if the editor gets called from a segment
     if (this.props.isAnEdit) {
       contribution.set('content', this.props.content);
@@ -139,8 +139,8 @@ var StoryFormContainer = React.createClass({
   handleGrammarCheck: function(e){
     e.preventDefault();
     this.state.contribution.checkGrammar();
-
   },
+
   handleTitleChange: function(e){
     this.setState({
       story: this.state.story
@@ -169,10 +169,10 @@ var StoryFormContainer = React.createClass({
 
     // check if if the story came from the server
     if (!story.isNew()) {
-      console.log('story is NOT new');
+      // console.log('story is NOT new');
 
       if (this.props.isAnEdit) {
-        console.log('this is an edit!');
+        // console.log('this is an edit!');
         // update the content only
         contribution.updateSegment();
       
@@ -202,7 +202,7 @@ var StoryFormContainer = React.createClass({
 
     } else {
 
-      console.log('story is NEW');
+      // console.log('story is NEW');
       // set the story owner & pointer instead
       story
         .setPointer('owner', '_User', user.get('objectId'))
@@ -226,7 +226,7 @@ var StoryFormContainer = React.createClass({
       .setPointer('contributor', '_User', user.get('objectId'))
       .setPointer('story', 'Story', storyId)
       .save().then(response => {
-        console.log(contribution);
+        // console.log(contribution);
         callback(response, contribution);
       });
 
@@ -241,6 +241,7 @@ var StoryFormContainer = React.createClass({
   render: function(){
     var title = this.state.story.get('title')
     , body = this.state.contribution.get('content');
+    // console.log(this.state.story);
 
     return(
       <div className="panel panel-default">
@@ -262,14 +263,19 @@ var StoryFormContainer = React.createClass({
             
             <div className="btn-toolbar">
               <button onClick={this.handleCheck} 
-                className="btn btn-warning" 
+                className="btn btn-warning btn-sm" 
                 name="_action_checkText">
                 Grammar Check
               </button>
               <input type="submit" 
-                className="btn btn-success" 
+                className="btn btn-success btn-sm" 
                 value="Submit"
               />
+              <button onClick={this.handleCancel} 
+                className="btn btn-default btn-sm" 
+                name="_action_checkText">
+                Cancel
+              </button>
             </div>
             
           </form>

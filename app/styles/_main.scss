@@ -15,7 +15,11 @@ img {
 p {
   font-family: 'Enriqueta', 'Times', serif;
   font-weight: 400;
-  font-size: 22px;
+  font-size: 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Noticia Text', Times, serif;
 }
 
 // ##################################
@@ -269,6 +273,29 @@ p {
       }
     }
   }
+}
+
+.storyhead {
+  margin-bottom: 10px;
+}
+
+.story-title-edit {
+  input[type="text"]{
+    font-family: 'Noticia Text', Times, serif;
+    font-size: 36px;
+    border: none;
+    border-bottom: 2px solid #afafaf;
+    border-radius: 0px;
+    padding: 20px 0 30px;
+    box-shadow: none;
+    margin-top: 18px;
+  }
+}
+
+.subhead {
+  margin: 0;
+  font-weight: normal;
+  color: #8f8f8f;
 }
 
 

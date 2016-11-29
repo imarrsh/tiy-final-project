@@ -306,7 +306,8 @@ var StoryReadContainer = React.createClass({
     return {
       story: new Story(),
       isContributing: false,
-      currentUser: User.current()
+      currentUser: User.current(),
+      isEditingTitle: false
     }
   },
 
@@ -315,8 +316,28 @@ var StoryReadContainer = React.createClass({
   },
 
   componentWillReciveProps: function(nextProps){
-    console.log('componentWillReciveProps', nextProps);
+    // console.log('componentWillReciveProps', nextProps);
     this.getStory().getContributions();
+  },
+
+  componentWillUnmount: function(){
+    
+    var story = this.state.story
+    , contributions = story.get('contributions');
+    
+    // clear the collection
+    contributions.reset();
+
+    // clear the queries
+    delete contributions.clause;
+    delete contributions.extra;
+
+    // set it back to the story model
+    story.set('contributions', contributions);
+
+    // set the state
+    this.setState({story: story});
+    
   },
 
   getStory: function(){
@@ -344,6 +365,7 @@ var StoryReadContainer = React.createClass({
     contributions
       .parseQuery('story', story.get('objectId'), 'Story')
       .also('include', 'contributor')
+      .also('order', 'createdAt')
       .fetch()
       .then((response) => {
         story.set('contributions', contributions);
@@ -376,7 +398,7 @@ var StoryReadContainer = React.createClass({
   },
 
   addContribution: function(contribution){
-    console.log('adding:', contribution);
+    // console.log('adding:', contribution);
     
     var story = this.state.story
     , contributions = story.get('contributions');
@@ -394,11 +416,39 @@ var StoryReadContainer = React.createClass({
       .set('contributions')
   },
 
+  handleTitleChange: function(e){
+    var story = this.state.story;
+    story.set('title', e.target.value);
+
+    this.setState({story: story});
+  },
+
+  updateTitle: function(e){
+    e.preventDefault();
+    var story = this.state.story
+    , title = story.get('title');
+
+    // console.log(story.get('contributions'))
+
+    story.updateTitle(title, () => {
+      this.setState({
+        story: story
+      });
+      
+      this.setState({
+        isEditingTitle: !this.state.isEditingTitle
+      })
+    });
+  },
+
   render: function(){
     var story = this.state.story
     , contributions = story.get('contributions')
     , isContributing = this.state.isContributing
     , currentUserId = this.state.currentUser.get('objectId');
+
+    // console.log(story);
+    
     return(
       <AppWrapper>
         <AppHeaderMain />
@@ -414,6 +464,9 @@ var StoryReadContainer = React.createClass({
                     context={'Story'}
                   />
                   <button
+                    onClick={() => this.setState({
+                      isEditingTitle: !this.state.isEditingTitle
+                    })}
                     className="btn btn-default btn-xs btn-green">Edit Title
                   </button>
                 </div>
@@ -422,9 +475,48 @@ var StoryReadContainer = React.createClass({
               <div className="row">
 
                 <div className="col-sm-9">
-                  <h1>{story.get('title')} 
-                    <small> {story.get('contributions').length} contributions</small>
-                  </h1>
+                  {(this.state.isEditingTitle) ?
+
+                    <div className="story-title-edit">
+                      <div className="form-inline">
+
+                        <form onSubmit={this.updateTitle}>
+                          <input
+                            onChange={this.handleTitleChange}
+                            className="form-control" 
+                            type="text" 
+                            value={story.get('title')} 
+                          />
+                          <input
+                            type="submit"
+                            value="Save"
+                            className="btn btn-success"
+                          />
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              this.setState({
+                                isEditingTitle: !this.state.isEditingTitle
+                              });
+                            }}
+                            className="btn btn-default"
+                          >
+                            Cancel
+                          </button>
+
+                        </form>
+                      </div>
+                    </div>
+                      
+                    : <h1 className="storyhead">
+                        {story.get('title')}
+                      </h1>
+                  }
+
+                  <h4 className="subhead">{
+                      story.get('contributions').length
+                    } contributions
+                  </h4>
                   <StoryContributuionList 
                     story={story}
                     contributions={contributions} 

@@ -55,6 +55,8 @@ var ParseModel = Backbone.Model.extend({
       data: JSON.stringify(data),
       contentType: 'application/json'
     });
+
+    return this;
   }
 
 });

@@ -19,6 +19,11 @@ var StoryCreateContainer = React.createClass({
     }
   },
 
+  // componentWillMount: function(){
+  //   delete this.state.story.attributes.contributions;
+  //   this.setState({story: this.state.story});
+  // },
+
   render: function(){
     // console.warn(this.state.story.get('contributions'))
     return(
