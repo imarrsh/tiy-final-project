@@ -937,17 +937,20 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
       story: new Story(),
       isContributing: false,
       currentUser: User.current(),
-      isEditingTitle: false
+      isEditingTitle: false,
+      previousText: ''
     }
   },
 
   componentWillMount: function(){
-    this.getStory().getContributions();
+    this.getStory()
+    this.getContributions();
   },
 
   componentWillReciveProps: function(nextProps){
-    // console.log('componentWillReciveProps', nextProps);
-    this.getStory().getContributions();
+    console.log('componentWillReciveProps', nextProps);
+    this.getStory()
+    this.getContributions();
   },
 
   componentWillUnmount: function(){
@@ -1073,6 +1076,18 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     });
   },
 
+  handleTitleCancel: function(e){
+    e.preventDefault();
+    var story = this.state.story;
+
+    story.set('title', this.state.previousText);
+
+    this.setState({
+      story: story,
+      isEditingTitle: !this.state.isEditingTitle
+    });
+  },
+
   render: function(){
     var story = this.state.story
     , contributions = story.get('contributions')
@@ -1097,7 +1112,8 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
                   ), 
                   React.createElement("button", {
                     onClick: () => this.setState({
-                      isEditingTitle: !this.state.isEditingTitle
+                      isEditingTitle: !this.state.isEditingTitle,
+                      previousText: story.get('title')
                     }), 
                     className: "btn btn-default btn-xs btn-green"}, "Edit Title"
                   )
@@ -1125,12 +1141,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
                             className: "btn btn-success"}
                           ), 
                           React.createElement("button", {
-                            onClick: (e) => {
-                              e.preventDefault();
-                              this.setState({
-                                isEditingTitle: !this.state.isEditingTitle
-                              });
-                            }, 
+                            onClick: this.handleTitleCancel, 
                             className: "btn btn-default"
                           }, 
                             "Cancel"
@@ -1313,7 +1324,8 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
     // models
     return {
       story: new Story(),
-      contribution: this.props.contribution || new Contribution()
+      contribution: this.props.contribution || new Contribution(),
+      previousContent: ''
     }
   },
 
@@ -1327,7 +1339,10 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
     // if the editor gets called from a segment
     if (this.props.isAnEdit) {
       contribution.set('content', this.props.content);
-      this.setState({contribution: contribution});
+      this.setState({
+        contribution: contribution,
+        previousContent: contribution.get('content') 
+      });
     }
   },
 
@@ -1435,7 +1450,13 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
 
   handleCancel: function(e){
     e.preventDefault();
-    console.log('handle cancel');
+    var contribution = this.state.contribution;
+    contribution.set('content', this.state.previousContent);
+
+    this.setState({
+      contribution: contribution
+    });
+    
     this.props.toggleEditorVisibility();
   },
 
@@ -1523,7 +1544,7 @@ var StoryCreateContainer = React.createClass({displayName: "StoryCreateContainer
   // },
 
   render: function(){
-    // console.warn(this.state.story.get('contributions'))
+    console.warn(this.state.story)
     return(
       React.createElement(AppWrapper, null, 
         React.createElement(AppHeaderMain, null), 
@@ -2290,8 +2311,12 @@ var Story = ParseModel.extend({
     // prevent from saving a lingering collection
     // there is likely some sort of leak to take care of
     // but this solves the problem for now.
-    // this didnt work out when updating the title of story
-    // delete this.attributes.contributions;
+    // straight deleting didnt work out when updating 
+    // the title of story, but checking the length 
+    // is falsy seems to help!
+    if (!this.attributes.contributions.length){
+      delete this.attributes.contributions;
+    }
 
     return Backbone.Model.prototype.save.call(this, key, val, options);
   },
