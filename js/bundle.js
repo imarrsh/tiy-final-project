@@ -935,7 +935,7 @@ var StoryAside = React.createClass({displayName: "StoryAside",
         React.createElement("div", {className: "panel-body"}, 
 
           React.createElement("aside", {className: "story-aside"}, 
-            React.createElement("h4", null, "Story sparked by:"), 
+            React.createElement("h3", null, "Story sparked by:"), 
 
             React.createElement("div", {className: "owner-detail"}, 
               React.createElement("a", {href: '#user/' + owner.objectId + '/'}, 
@@ -1020,7 +1020,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     , contributions = story.get('contributions');
     
     // clear the collection
-    // debugger;
+    debugger;
     contributions.reset();
 
     // clear the queries
@@ -1106,9 +1106,6 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
 
   handleVote: function(vote, contribution){
     contribution.vote(vote)
-
-    this.state.story
-      .set('contributions')
   },
 
   handleTitleChange: function(e){
