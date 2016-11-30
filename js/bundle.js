@@ -5,6 +5,7 @@ var React = require('react');
 // models
 var User = require('../models/user').User;
 var StoryCollection = require('../models/story').StoryCollection;
+var ContributionCollection = require('../models/contribution').ContributionCollection;
 
 // layouts
 var AppWrapper = require('./layouts/general.jsx').AppWrapper;
@@ -82,7 +83,10 @@ var OthersStoryList = React.createClass({displayName: "OthersStoryList",
 
 var UserInfoStats = React.createClass({displayName: "UserInfoStats",
   render: function(){
-    var user = User.current();
+    var user = User.current()
+    , totStories = this.props.totStories
+    , totContributions = this.props.totContributions;
+
     return (
       React.createElement("div", {className: "row"}, 
         React.createElement("div", {className: "col-xs-12"}, 
@@ -97,8 +101,15 @@ var UserInfoStats = React.createClass({displayName: "UserInfoStats",
                     alt: user.get('alias')}
                   )
                 ), 
+                React.createElement("p", null, user.get('alias')), 
 
-                React.createElement("h2", null, "Maybe Some Quick User Stats Here")
+                React.createElement("h3", null, "Quick User Stats"), 
+                React.createElement("h4", null, "Total Stories"), 
+                React.createElement("p", null, totStories), 
+
+                React.createElement("h4", null, "Total Contributions"), 
+                React.createElement("p", null, totContributions)
+
               )
 
             )
@@ -116,14 +127,30 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
     return {
       // experimentStoryCollection: new StoryCollection(),
       userStoryCollection: new StoryCollection(),
-      othersStoryCollection: new StoryCollection()
+      othersStoryCollection: new StoryCollection(),
+      userContrubutions: new ContributionCollection()
     }
   },
 
   componentWillMount: function(){
     this.fetchUserStories();
     this.fetchOthersStories();
+    this.fetchUserContributions();
     // this.experimental();
+  },
+
+  fetchUserContributions: function(){
+    var userContrubutions = this.state.userContrubutions;
+    var user = User.current();
+    
+    userContrubutions
+      .parseQuery('contributor', user.get('objectId'), "_User")
+      .also('count', 1)
+      .fetch()
+      .then(response => {
+        console.log('user contribution fetch', response)
+        this.setState({userContrubutions: userContrubutions});
+      })
   },
 
   fetchUserStories: function(){
@@ -189,6 +216,9 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
     var currentUser = User.current();
     var email = currentUser.get('username');
     var userId = currentUser.get('objectId');
+    
+    // console.log(this.state.userContrubutions);
+
     return(
       React.createElement(AppWrapper, null, 
         React.createElement(AppHeaderMain, {userId: userId, active: this.props.active}), 
@@ -199,7 +229,11 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
           React.createElement("div", {className: "my-stories"}, 
             React.createElement(UserStoryList, {stories: this.state.userStoryCollection}), 
             React.createElement(OthersStoryList, {stories: this.state.othersStoryCollection}), 
-            React.createElement(UserInfoStats, null)
+            
+            React.createElement(UserInfoStats, {
+              totStories: this.state.userStoryCollection.length, 
+              totContributions: this.state.userContrubutions.length}
+            )
 
             /* <Experiment stories={this.state.experimentStoryCollection}/> */
 
@@ -240,7 +274,7 @@ module.exports = {
   //   }
   // }'
 
-},{"../models/story":14,"../models/user":15,"./layouts/general.jsx":2,"react":428}],2:[function(require,module,exports){
+},{"../models/contribution":11,"../models/story":14,"../models/user":15,"./layouts/general.jsx":2,"react":428}],2:[function(require,module,exports){
 "use strict";
 var React = require('react');
 
@@ -918,10 +952,12 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
 
   componentWillUnmount: function(){
     
+    // still has issues, somtimes...
     var story = this.state.story
     , contributions = story.get('contributions');
     
     // clear the collection
+    // debugger;
     contributions.reset();
 
     // clear the queries
@@ -1271,10 +1307,6 @@ var StoryBody = React.createClass({displayName: "StoryBody",
   }
 });
 
-// ############################
-// BUGS
-// 1. fix the position of the popup
-// ############################
 
 var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
   getInitialState: function () {
@@ -1291,7 +1323,7 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
       // console.log('mounted')
       this.setState({story: this.props.story});
     }
-    
+
     // if the editor gets called from a segment
     if (this.props.isAnEdit) {
       contribution.set('content', this.props.content);
@@ -1401,6 +1433,13 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
     return false;
   },
 
+  handleCancel: function(e){
+    e.preventDefault();
+    console.log('handle cancel');
+    this.props.toggleEditorVisibility();
+  },
+
+
   render: function(){
     var title = this.state.story.get('title')
     , body = this.state.contribution.get('content');
@@ -1434,11 +1473,14 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
                 className: "btn btn-success btn-sm", 
                 value: "Submit"}
               ), 
-              React.createElement("button", {onClick: this.handleCancel, 
-                className: "btn btn-default btn-sm", 
-                name: "_action_checkText"}, 
-                "Cancel"
-              )
+              !this.props.newStory ?
+                React.createElement("button", {onClick: this.handleCancel, 
+                  className: "btn btn-default btn-sm", 
+                  name: ""}, 
+                  "Cancel"
+                )
+                : null
+
             )
             
           )
@@ -1489,7 +1531,8 @@ var StoryCreateContainer = React.createClass({displayName: "StoryCreateContainer
 
           React.createElement(StoryFormContainer, {
             showTitle: true, 
-            router: this.props.router}
+            router: this.props.router, 
+            newStory: true}
           )
 
         )
@@ -2072,6 +2115,16 @@ var ParseModel = Backbone.Model.extend({
 var Query = Backbone.Model.extend({});
 
 var ParseCollection = Backbone.Collection.extend({
+
+  shallowQuery: function(field, objectId){
+    var query = {
+      [field]: objectId
+    };
+
+    this.clause = encodeURI('?where=' + JSON.stringify(query));
+
+    return this;
+  },
 
   deepQuery: function(param, field, options){
     var query = {
