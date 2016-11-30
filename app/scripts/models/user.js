@@ -90,7 +90,7 @@ var User = ParseUser.extend({
       error: function(response, xhr){
         var errorMsg = JSON.parse(xhr.responseText);
         console.log('msg', errorMsg.error);
-        callback(user,errorMsg);
+        callback(user, errorMsg);
       }
     }).then(function(response){
       user.set('sessionToken', response.sessionToken);
@@ -159,6 +159,7 @@ var User = ParseUser.extend({
       type: 'POST'
     }).then(response => {
       localStorage.setItem('user', JSON.stringify(response));
+      parseHeaders('mtparseserver', 'thompson1', null);
       callback(); // callback for a route
     });
 

@@ -49,18 +49,24 @@ var UserProfileImageForm = React.createClass({
 });
 
 var UserData = React.createClass({
+
+  componentDidMount: function(){
+    this.refs.aliasInput.focus();
+  },
+
   render: function(){
     var user = this.props.user;
     return(
       <div className="form-group">
         
         <input 
+          ref="aliasInput"
           onChange={this.props.onChange} 
           value={user.alias} 
           type="text" 
           name="alias" 
           className="form-control"  
-          placeholder="Set an alias" 
+          placeholder="Set an alias"
         />
 
         <div className="form-group">
@@ -194,7 +200,10 @@ var UserEditProfileContainer = React.createClass({
 
             <div className="user-profile user-profile-edit">
 
-              <UserProfileImageForm user={user} imageUpdate={this.handleImageAutoUpload}/>
+              <UserProfileImageForm 
+                user={user} 
+                imageUpdate={this.handleImageAutoUpload}
+              />
               
               <form onSubmit={this.handleSubmit} >
               

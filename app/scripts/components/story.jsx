@@ -330,7 +330,7 @@ var StoryReadContainer = React.createClass({
     , contributions = story.get('contributions');
     
     // clear the collection
-    debugger;
+    // debugger;
     contributions.reset();
 
     // clear the queries

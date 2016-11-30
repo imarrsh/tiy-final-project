@@ -75,13 +75,15 @@ var UserDetailContainer = React.createClass({
               
               <div className="user-profile-details">
                 <div className="full-name">
-                  {user.get('firstName') + ' ' + user.get('lastName')}
+                  {(user.get('firstName') || '') +
+                   ' ' +
+                  (user.get('lastName') || '')}
                 </div>
                 <div className="email">
-                  {user.get('email')}
+                  {user.get('email') || ''}
                 </div>
                 <div className="bio">
-                  {user.get('bio')}
+                  {user.get('bio') || ''}
                 </div>
               </div>
 
