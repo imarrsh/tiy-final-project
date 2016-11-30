@@ -245,7 +245,7 @@ var StoryAside = React.createClass({
         <div className="panel-body">
 
           <aside className="story-aside">
-            <h4>Story sparked by:</h4>
+            <h3>Story sparked by:</h3>
 
             <div className="owner-detail">
               <a href={'#user/' + owner.objectId + '/'}>
@@ -330,7 +330,7 @@ var StoryReadContainer = React.createClass({
     , contributions = story.get('contributions');
     
     // clear the collection
-    // debugger;
+    debugger;
     contributions.reset();
 
     // clear the queries
@@ -416,9 +416,6 @@ var StoryReadContainer = React.createClass({
 
   handleVote: function(vote, contribution){
     contribution.vote(vote)
-
-    this.state.story
-      .set('contributions')
   },
 
   handleTitleChange: function(e){
