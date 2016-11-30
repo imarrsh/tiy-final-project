@@ -3,6 +3,7 @@ var React = require('react');
 // models
 var User = require('../models/user').User;
 var StoryCollection = require('../models/story').StoryCollection;
+var ContributionCollection = require('../models/contribution').ContributionCollection;
 
 // layouts
 var AppWrapper = require('./layouts/general.jsx').AppWrapper;
@@ -80,7 +81,10 @@ var OthersStoryList = React.createClass({
 
 var UserInfoStats = React.createClass({
   render: function(){
-    var user = User.current();
+    var user = User.current()
+    , totStories = this.props.totStories
+    , totContributions = this.props.totContributions;
+
     return (
       <div className="row">
         <div className="col-xs-12">
@@ -95,8 +99,15 @@ var UserInfoStats = React.createClass({
                     alt={user.get('alias')}
                   />
                 </div>
+                <p>{user.get('alias')}</p>
 
-                <h2>Maybe Some Quick User Stats Here</h2>
+                <h3>Quick User Stats</h3>
+                <h4>Total Stories</h4>
+                <p>{totStories}</p>
+
+                <h4>Total Contributions</h4>
+                <p>{totContributions}</p>
+
               </div>
 
             </div>
@@ -114,14 +125,30 @@ var HomeContainer = React.createClass({
     return {
       // experimentStoryCollection: new StoryCollection(),
       userStoryCollection: new StoryCollection(),
-      othersStoryCollection: new StoryCollection()
+      othersStoryCollection: new StoryCollection(),
+      userContrubutions: new ContributionCollection()
     }
   },
 
   componentWillMount: function(){
     this.fetchUserStories();
     this.fetchOthersStories();
+    this.fetchUserContributions();
     // this.experimental();
+  },
+
+  fetchUserContributions: function(){
+    var userContrubutions = this.state.userContrubutions;
+    var user = User.current();
+    
+    userContrubutions
+      .parseQuery('contributor', user.get('objectId'), "_User")
+      .also('count', 1)
+      .fetch()
+      .then(response => {
+        console.log('user contribution fetch', response)
+        this.setState({userContrubutions: userContrubutions});
+      })
   },
 
   fetchUserStories: function(){
@@ -187,6 +214,9 @@ var HomeContainer = React.createClass({
     var currentUser = User.current();
     var email = currentUser.get('username');
     var userId = currentUser.get('objectId');
+    
+    // console.log(this.state.userContrubutions);
+
     return(
       <AppWrapper>
         <AppHeaderMain userId={userId} active={this.props.active} />
@@ -197,7 +227,11 @@ var HomeContainer = React.createClass({
           <div className="my-stories">
             <UserStoryList stories={this.state.userStoryCollection}/>
             <OthersStoryList stories={this.state.othersStoryCollection}/>
-            <UserInfoStats />
+            
+            <UserInfoStats 
+              totStories={this.state.userStoryCollection.length}
+              totContributions={this.state.userContrubutions.length}
+            />
 
             {/* <Experiment stories={this.state.experimentStoryCollection}/> */}
 

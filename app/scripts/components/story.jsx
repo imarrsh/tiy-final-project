@@ -322,10 +322,12 @@ var StoryReadContainer = React.createClass({
 
   componentWillUnmount: function(){
     
+    // still has issues, somtimes...
     var story = this.state.story
     , contributions = story.get('contributions');
     
     // clear the collection
+    // debugger;
     contributions.reset();
 
     // clear the queries

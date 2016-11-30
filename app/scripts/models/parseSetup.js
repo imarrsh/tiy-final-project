@@ -65,6 +65,16 @@ var Query = Backbone.Model.extend({});
 
 var ParseCollection = Backbone.Collection.extend({
 
+  shallowQuery: function(field, objectId){
+    var query = {
+      [field]: objectId
+    };
+
+    this.clause = encodeURI('?where=' + JSON.stringify(query));
+
+    return this;
+  },
+
   deepQuery: function(param, field, options){
     var query = {
       [field]: options

@@ -34,6 +34,7 @@ var StoryCreateContainer = React.createClass({
           <StoryFormContainer 
             showTitle={true} 
             router={this.props.router}
+            newStory={true}
           />
 
         </ContainerRow>

@@ -108,10 +108,6 @@ var StoryBody = React.createClass({
   }
 });
 
-// ############################
-// BUGS
-// 1. fix the position of the popup
-// ############################
 
 var StoryFormContainer = React.createClass({
   getInitialState: function () {
@@ -128,7 +124,7 @@ var StoryFormContainer = React.createClass({
       // console.log('mounted')
       this.setState({story: this.props.story});
     }
-    
+
     // if the editor gets called from a segment
     if (this.props.isAnEdit) {
       contribution.set('content', this.props.content);
@@ -238,6 +234,13 @@ var StoryFormContainer = React.createClass({
     return false;
   },
 
+  handleCancel: function(e){
+    e.preventDefault();
+    console.log('handle cancel');
+    this.props.toggleEditorVisibility();
+  },
+
+
   render: function(){
     var title = this.state.story.get('title')
     , body = this.state.contribution.get('content');
@@ -271,11 +274,14 @@ var StoryFormContainer = React.createClass({
                 className="btn btn-success btn-sm" 
                 value="Submit"
               />
-              <button onClick={this.handleCancel} 
-                className="btn btn-default btn-sm" 
-                name="_action_checkText">
-                Cancel
-              </button>
+              {!this.props.newStory ?
+                <button onClick={this.handleCancel} 
+                  className="btn btn-default btn-sm" 
+                  name="">
+                  Cancel
+                </button>
+                : null }
+
             </div>
             
           </form>
