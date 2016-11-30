@@ -468,6 +468,16 @@ var LoginFormWrapper = function(props){
   );
 }
 
+var ErrComponent = React.createClass({displayName: "ErrComponent",
+  render: function(){
+    return(
+      React.createElement("div", {className: "alert alert-danger"}, 
+        this.props.error
+      )      
+    );
+  }
+})
+
 var SignUpForm = React.createClass({displayName: "SignUpForm",
   render: function(){
     return(
@@ -484,6 +494,11 @@ var SignUpForm = React.createClass({displayName: "SignUpForm",
               name: "password", type: "password", 
               className: "form-control", placeholder: "Password"})
           ), 
+          
+          this.props.error ?
+            React.createElement(ErrComponent, {error: this.props.error})
+          : null, 
+
           React.createElement("input", {type: "submit", 
             className: "form-control btn btn-primary", 
             value: "Sign Up"})
@@ -509,6 +524,11 @@ var LoginForm = React.createClass({displayName: "LoginForm",
               name: "password", type: "password", 
               className: "form-control", placeholder: "Password"})
           ), 
+
+          this.props.error ?
+            React.createElement(ErrComponent, {error: this.props.error})
+          : null, 
+
           React.createElement("input", {type: "submit", 
             className: "form-control btn btn-primary", 
             value: "Log In"})
@@ -525,7 +545,8 @@ var LoginContainer = React.createClass({displayName: "LoginContainer",
     return {
       username: '',
       password: '',
-      isLoggingIn: true
+      isLoggingIn: true,
+      error:''
     }
   },
   
@@ -535,21 +556,40 @@ var LoginContainer = React.createClass({displayName: "LoginContainer",
 
   handleLogIn: function (e) {
     e.preventDefault();
-    var creds = this.state;
+    
+    var creds = {
+      username: this.state.username,
+      password: this.state.password
+    };
 
-    User.logIn(creds, function(){
-      this.props.router.navigate('', {trigger: true});
-    }.bind(this));
+    User.logIn(creds, (user, err) => {
+      if (!err){
+        this.props.router.navigate('', {trigger: true});
+      } else {
+        console.log(err)
+        this.setState({error: err});
+      }
+    });
 
   },
 
   handleSignUp: function (e) {
     e.preventDefault();
-    User.signUp(this.state, user => {
-      
-      this.props.router
-        .navigate('user/' + user.get('objectId') + '/edit/' , {trigger: true});
-    })
+
+    var creds = {
+      username: this.state.username,
+      password: this.state.password
+    };
+    
+    User.signUp(creds, (user, err) => {
+      if (!err){
+        this.props.router
+          .navigate('user/' + user.get('objectId') + '/edit/' , {trigger: true});
+      } else {
+        // console.log(err)
+        this.setState({error: err});
+      }
+    })  
   },
 
   render: function(){
@@ -591,12 +631,14 @@ var LoginContainer = React.createClass({displayName: "LoginContainer",
             this.state.isLoggingIn ?
               React.createElement(LoginForm, {
                 onSubmit: this.handleLogIn, 
-                onChange: this.handleChange}
+                onChange: this.handleChange, 
+                error: this.state.error}
               )
               :
               React.createElement(SignUpForm, {
                 onSubmit: this.handleSignUp, 
-                onChange: this.handleChange}
+                onChange: this.handleChange, 
+                error: this.state.error}
               )
             
           )
@@ -2526,8 +2568,8 @@ var User = ParseUser.extend({
     user.fetch({
       error: function(response, xhr){
         var errorMsg = JSON.parse(xhr.responseText);
-        console.log('msg', errorMsg.error);
-        callback(user, errorMsg);
+        // console.log('msg', errorMsg.error);
+        callback(user, errorMsg.error);
       }
     }).then(function(response){
       user.set('sessionToken', response.sessionToken);
@@ -2557,14 +2599,20 @@ var User = ParseUser.extend({
 
     if (user.attributes.sessionToken){
 
-      console.log('left over token...');
+      // console.log('left over token...');
       delete user.attributes.sessionToken;
 
     }
 
     user
       .setFile('avatar', defaultPic, defaultPicUrl)
-      .save(userCredentials)
+      .save(userCredentials, {
+        error: function(response, xhr){
+          var errorMsg = JSON.parse(xhr.responseText);
+          // console.log('msg', errorMsg.error);
+          callback(user, errorMsg.error);
+        }
+      })
       .then(function(response){
         
         user.auth();
