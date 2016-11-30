@@ -1507,8 +1507,8 @@ pre {
 .container {
   margin-right: auto;
   margin-left: auto;
-  padding-left: 15px;
-  padding-right: 15px; }
+  padding-left: 8px;
+  padding-right: 8px; }
   .container:before, .container:after {
     content: " ";
     display: table; }
@@ -1516,19 +1516,19 @@ pre {
     clear: both; }
   @media (min-width: 768px) {
     .container {
-      width: 750px; } }
+      width: 736px; } }
   @media (min-width: 992px) {
     .container {
-      width: 970px; } }
+      width: 956px; } }
   @media (min-width: 1200px) {
     .container {
-      width: 1170px; } }
+      width: 1156px; } }
 
 .container-fluid {
   margin-right: auto;
   margin-left: auto;
-  padding-left: 15px;
-  padding-right: 15px; }
+  padding-left: 8px;
+  padding-right: 8px; }
   .container-fluid:before, .container-fluid:after {
     content: " ";
     display: table; }
@@ -1536,8 +1536,8 @@ pre {
     clear: both; }
 
 .row {
-  margin-left: -15px;
-  margin-right: -15px; }
+  margin-left: -8px;
+  margin-right: -8px; }
   .row:before, .row:after {
     content: " ";
     display: table; }
@@ -1547,8 +1547,8 @@ pre {
 .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
   position: relative;
   min-height: 1px;
-  padding-left: 15px;
-  padding-right: 15px; }
+  padding-left: 8px;
+  padding-right: 8px; }
 
 .col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {
   float: left; }
@@ -2830,8 +2830,8 @@ select[multiple].input-lg,
 .form-horizontal .checkbox {
   min-height: 27px; }
 .form-horizontal .form-group {
-  margin-left: -15px;
-  margin-right: -15px; }
+  margin-left: -8px;
+  margin-right: -8px; }
   .form-horizontal .form-group:before, .form-horizontal .form-group:after {
     content: " ";
     display: table; }
@@ -2843,7 +2843,7 @@ select[multiple].input-lg,
     margin-bottom: 0;
     padding-top: 7px; } }
 .form-horizontal .has-feedback .form-control-feedback {
-  right: 15px; }
+  right: 8px; }
 @media (min-width: 768px) {
   .form-horizontal .form-group-lg .control-label {
     padding-top: 11px;
@@ -3679,8 +3679,8 @@ tbody.collapse.in {
 
 .navbar-collapse {
   overflow-x: visible;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: 8px;
+  padding-left: 8px;
   border-top: 1px solid transparent;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   -webkit-overflow-scrolling: touch; }
@@ -3719,8 +3719,8 @@ tbody.collapse.in {
 .container > .navbar-collapse,
 .container-fluid > .navbar-header,
 .container-fluid > .navbar-collapse {
-  margin-right: -15px;
-  margin-left: -15px; }
+  margin-right: -8px;
+  margin-left: -8px; }
   @media (min-width: 768px) {
     .container > .navbar-header,
     .container > .navbar-collapse,
@@ -3758,7 +3758,7 @@ tbody.collapse.in {
 
 .navbar-brand {
   float: left;
-  padding: 15px 15px;
+  padding: 15px 8px;
   font-size: 18px;
   line-height: 20px;
   height: 50px; }
@@ -3768,12 +3768,12 @@ tbody.collapse.in {
     display: block; }
   @media (min-width: 768px) {
     .navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand {
-      margin-left: -15px; } }
+      margin-left: -8px; } }
 
 .navbar-toggle {
   position: relative;
   float: right;
-  margin-right: 15px;
+  margin-right: 8px;
   padding: 9px 10px;
   margin-top: 8px;
   margin-bottom: 8px;
@@ -3795,7 +3795,7 @@ tbody.collapse.in {
       display: none; } }
 
 .navbar-nav {
-  margin: 7.5px -15px; }
+  margin: 7.5px -8px; }
   .navbar-nav > li > a {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -3827,9 +3827,9 @@ tbody.collapse.in {
           padding-bottom: 15px; } }
 
 .navbar-form {
-  margin-left: -15px;
-  margin-right: -15px;
-  padding: 10px 15px;
+  margin-left: -8px;
+  margin-right: -8px;
+  padding: 10px 8px;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -3916,8 +3916,8 @@ tbody.collapse.in {
   @media (min-width: 768px) {
     .navbar-text {
       float: left;
-      margin-left: 15px;
-      margin-right: 15px; } }
+      margin-left: 8px;
+      margin-right: 8px; } }
 
 @media (min-width: 768px) {
   .navbar-left {
@@ -3925,7 +3925,7 @@ tbody.collapse.in {
 
   .navbar-right {
     float: right !important;
-    margin-right: -15px; }
+    margin-right: -8px; }
     .navbar-right ~ .navbar-right {
       margin-right: 0; } }
 .navbar-default {
@@ -4283,8 +4283,8 @@ a.badge:hover, a.badge:focus {
     border-top-color: #d5d5d5; }
   .container .jumbotron, .container-fluid .jumbotron {
     border-radius: 6px;
-    padding-left: 15px;
-    padding-right: 15px; }
+    padding-left: 8px;
+    padding-right: 8px; }
   .jumbotron .container {
     max-width: 100%; }
   @media screen and (min-width: 768px) {
@@ -5864,6 +5864,9 @@ h1, h2, h3, h4, h5, h6 {
   .login-panel .choose-signup {
     color: blue; }
 
+.my-stories h3:first-of-type {
+  margin-top: 0; }
+
 .title-field {
   font-family: 'Noticia Text', Times, serif;
   font-weight: bold;
@@ -5996,7 +5999,8 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-block;
   margin-left: 16px; }
 
-.story-aside h4 {
+.story-aside h3 {
+  margin: 0 0 16px;
   text-align: center; }
 .story-aside .user-avatar {
   margin: 0 auto; }
@@ -6004,8 +6008,16 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center; }
   .story-aside .owner-detail a {
     display: block; }
-    .story-aside .owner-detail a .owner-alias {
-      margin: 0 auto; }
+.story-aside .stats-group {
+  margin-bottom: 20px; }
+  .story-aside .stats-group h4 {
+    margin-bottom: 0; }
+
+.owner-alias {
+  text-align: center;
+  margin: 0 auto; }
+  .owner-alias p {
+    text-align: center; }
 
 .storyhead {
   margin-bottom: 10px; }

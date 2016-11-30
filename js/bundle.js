@@ -93,22 +93,31 @@ var UserInfoStats = React.createClass({displayName: "UserInfoStats",
           React.createElement("div", {className: "panel panel-default"}, 
             React.createElement("div", {className: "panel-body"}, 
               
-              React.createElement("div", {className: "overview"}, 
+              React.createElement("aside", {className: "story-aside"}, 
+                React.createElement("h3", {className: ""}, "Hi ", user.get('firstName'), "!"), 
+                React.createElement("a", {href: '#user/'+ user.get('objectId') +'/'}, 
+                  React.createElement("div", {className: "user-avatar user-avatar-md"}, 
+                    React.createElement("img", {src: user.get('avatar') ?
+                      user.get('avatar').url : null, 
+                      alt: user.get('alias')}
+                    )
+                  ), 
 
-                React.createElement("div", {className: "user-avatar user-avatar-md"}, 
-                  React.createElement("img", {src: user.get('avatar') ?
-                    user.get('avatar').url : null, 
-                    alt: user.get('alias')}
+                  React.createElement("div", {className: "owner-alias"}, 
+                    React.createElement("p", null, user.get('alias'))
                   )
                 ), 
-                React.createElement("p", null, user.get('alias')), 
+                React.createElement("hr", null), 
 
-                React.createElement("h3", null, "Quick User Stats"), 
-                React.createElement("h4", null, "Total Stories"), 
-                React.createElement("p", null, totStories), 
+                React.createElement("div", {className: "stats-group"}, 
+                  React.createElement("h4", null, "Total Stories"), 
+                  React.createElement("h4", null, totStories)
+                ), 
 
-                React.createElement("h4", null, "Total Contributions"), 
-                React.createElement("p", null, totContributions)
+                React.createElement("div", {className: "stats-group"}, 
+                  React.createElement("h4", null, "Total Contributions"), 
+                  React.createElement("h4", null, totContributions)
+                )
 
               )
 
@@ -223,21 +232,32 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
       React.createElement(AppWrapper, null, 
         React.createElement(AppHeaderMain, {userId: userId, active: this.props.active}), 
         React.createElement(ContainerRow, null, 
-          React.createElement("div", null, 
-            React.createElement("h2", null, "Hi ", currentUser.get('firstName'), "!")
-          ), 
-          React.createElement("div", {className: "my-stories"}, 
-            React.createElement(UserStoryList, {stories: this.state.userStoryCollection}), 
-            React.createElement(OthersStoryList, {stories: this.state.othersStoryCollection}), 
-            
+
+          React.createElement("div", {className: "col-sm-3"}, 
             React.createElement(UserInfoStats, {
               totStories: this.state.userStoryCollection.length, 
               totContributions: this.state.userContrubutions.length}
             )
+          ), 
 
-            /* <Experiment stories={this.state.experimentStoryCollection}/> */
+          React.createElement("div", {className: "col-sm-9"}, 
+
+            React.createElement("div", {className: "panel panel-default"}, 
+              React.createElement("div", {className: "panel-body"}, 
+
+                React.createElement("div", {className: "my-stories"}, 
+                  React.createElement(UserStoryList, {stories: this.state.userStoryCollection}), 
+                  React.createElement(OthersStoryList, {stories: this.state.othersStoryCollection})
+              
+                  /* <Experiment stories={this.state.experimentStoryCollection}/> */
+              
+                )
+
+              )
+            )
 
           )
+
         )
       )
     );
