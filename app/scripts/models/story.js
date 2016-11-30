@@ -25,8 +25,12 @@ var Story = ParseModel.extend({
     // prevent from saving a lingering collection
     // there is likely some sort of leak to take care of
     // but this solves the problem for now.
-    // this didnt work out when updating the title of story
-    // delete this.attributes.contributions;
+    // straight deleting didnt work out when updating 
+    // the title of story, but checking the length 
+    // is falsy seems to help!
+    if (!this.attributes.contributions.length){
+      delete this.attributes.contributions;
+    }
 
     return Backbone.Model.prototype.save.call(this, key, val, options);
   },

@@ -25,7 +25,7 @@ var StoryCreateContainer = React.createClass({
   // },
 
   render: function(){
-    // console.warn(this.state.story.get('contributions'))
+    console.warn(this.state.story)
     return(
       <AppWrapper>
         <AppHeaderMain />

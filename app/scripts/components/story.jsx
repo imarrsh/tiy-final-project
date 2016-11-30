@@ -312,12 +312,14 @@ var StoryReadContainer = React.createClass({
   },
 
   componentWillMount: function(){
-    this.getStory().getContributions();
+    this.getStory()
+    this.getContributions();
   },
 
   componentWillReciveProps: function(nextProps){
-    // console.log('componentWillReciveProps', nextProps);
-    this.getStory().getContributions();
+    console.log('componentWillReciveProps', nextProps);
+    this.getStory()
+    this.getContributions();
   },
 
   componentWillUnmount: function(){
@@ -449,7 +451,7 @@ var StoryReadContainer = React.createClass({
     , isContributing = this.state.isContributing
     , currentUserId = this.state.currentUser.get('objectId');
 
-    // console.log(story);
+    console.log(story);
     
     return(
       <AppWrapper>
