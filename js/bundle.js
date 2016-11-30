@@ -337,7 +337,7 @@ var AppHeaderMain = function(props){
       ), 
       React.createElement("ul", {className: "nav nav-pills navbar-right"}, 
 
-        React.createElement(NavDropdown, {title: user.get('alias'), id: "nav-dropdown"}, 
+        React.createElement(NavDropdown, {title: user.get('alias') || 'Actions', id: "nav-dropdown"}, 
           React.createElement(MenuItem, {
             href: '#user/' + user.get('objectId') + '/'
           }, 
@@ -436,7 +436,17 @@ var User = require('../models/user').User;
 var AppWrapper = require('./layouts/general.jsx').AppWrapper;
 var ContainerRow = require('./layouts/general.jsx').ContainerRow;
 var AppHeaderLogin = require('./layouts/general.jsx').AppHeaderLogin;
+var Row = require('./layouts/general.jsx').Row;
 
+var LoginFormWrapper = function(props){
+  return(
+    React.createElement("div", {className: "col-sm-6 col-sm-offset-3"}, 
+      React.createElement("div", {className: "login-panel"}, 
+        props.children
+      )
+    )
+  );
+}
 
 var SignUpForm = React.createClass({displayName: "SignUpForm",
   render: function(){
@@ -488,20 +498,14 @@ var LoginForm = React.createClass({displayName: "LoginForm",
   }
 });
 
-var LoginFormWrapper = function(props){
-  return(
-    React.createElement("div", {className: "col-sm-6 col-sm-offset-3"}, 
-      props.children
-    )
-  );
-}
 
 var LoginContainer = React.createClass({displayName: "LoginContainer",
   
   getInitialState: function(){
     return {
       username: '',
-      password: ''
+      password: '',
+      isLoggingIn: true
     }
   },
   
@@ -535,10 +539,46 @@ var LoginContainer = React.createClass({displayName: "LoginContainer",
         React.createElement(ContainerRow, null, 
           React.createElement(LoginFormWrapper, null, 
 
-            React.createElement(LoginForm, {onSubmit: this.handleLogIn, onChange: this.handleChange}), 
+            React.createElement("div", null, 
 
-            React.createElement(SignUpForm, {onSubmit: this.handleSignUp, onChange: this.handleChange})
+              React.createElement(Row, null, 
+                React.createElement("div", {className: "col-xs-6"}, 
+                  React.createElement("div", {onClick: () => {
+                      this.setState({
+                        isLoggingIn: true
+                      });
+                    }, 
+                    className: "login-panel-body choose-login"
+                  }, 
+                    "Login"
+                  )
+                ), 
+                React.createElement("div", {className: "col-xs-6"}, 
+                  React.createElement("div", {onClick: () => {
+                      this.setState({
+                        isLoggingIn: false
+                      });
+                    }, 
+                    className: "login-panel-body choose-signup"
+                  }, 
+                    "Sign Up"
+                  )
+                )
+              )
 
+            ), 
+
+            this.state.isLoggingIn ?
+              React.createElement(LoginForm, {
+                onSubmit: this.handleLogIn, 
+                onChange: this.handleChange}
+              )
+              :
+              React.createElement(SignUpForm, {
+                onSubmit: this.handleSignUp, 
+                onChange: this.handleChange}
+              )
+            
           )
         )
       )
