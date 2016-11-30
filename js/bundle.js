@@ -1020,7 +1020,7 @@ var StoryReadContainer = React.createClass({displayName: "StoryReadContainer",
     , contributions = story.get('contributions');
     
     // clear the collection
-    debugger;
+    // debugger;
     contributions.reset();
 
     // clear the queries
@@ -1703,13 +1703,15 @@ var UserDetailContainer = React.createClass({displayName: "UserDetailContainer",
               
               React.createElement("div", {className: "user-profile-details"}, 
                 React.createElement("div", {className: "full-name"}, 
-                  user.get('firstName') + ' ' + user.get('lastName')
+                  (user.get('firstName') || '') +
+                   ' ' +
+                  (user.get('lastName') || '')
                 ), 
                 React.createElement("div", {className: "email"}, 
-                  user.get('email')
+                  user.get('email') || ''
                 ), 
                 React.createElement("div", {className: "bio"}, 
-                  user.get('bio')
+                  user.get('bio') || ''
                 )
               ), 
 
@@ -1790,12 +1792,18 @@ var UserProfileImageForm = React.createClass({displayName: "UserProfileImageForm
 });
 
 var UserData = React.createClass({displayName: "UserData",
+
+  componentDidMount: function(){
+    this.refs.aliasInput.focus();
+  },
+
   render: function(){
     var user = this.props.user;
     return(
       React.createElement("div", {className: "form-group"}, 
         
         React.createElement("input", {
+          ref: "aliasInput", 
           onChange: this.props.onChange, 
           value: user.alias, 
           type: "text", 
@@ -1935,7 +1943,10 @@ var UserEditProfileContainer = React.createClass({displayName: "UserEditProfileC
 
             React.createElement("div", {className: "user-profile user-profile-edit"}, 
 
-              React.createElement(UserProfileImageForm, {user: user, imageUpdate: this.handleImageAutoUpload}), 
+              React.createElement(UserProfileImageForm, {
+                user: user, 
+                imageUpdate: this.handleImageAutoUpload}
+              ), 
               
               React.createElement("form", {onSubmit: this.handleSubmit}, 
               
@@ -2516,7 +2527,7 @@ var User = ParseUser.extend({
       error: function(response, xhr){
         var errorMsg = JSON.parse(xhr.responseText);
         console.log('msg', errorMsg.error);
-        callback(user,errorMsg);
+        callback(user, errorMsg);
       }
     }).then(function(response){
       user.set('sessionToken', response.sessionToken);
@@ -2585,6 +2596,7 @@ var User = ParseUser.extend({
       type: 'POST'
     }).then(response => {
       localStorage.setItem('user', JSON.stringify(response));
+      parseHeaders('mtparseserver', 'thompson1', null);
       callback(); // callback for a route
     });
 

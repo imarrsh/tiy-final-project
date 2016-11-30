@@ -5910,7 +5910,7 @@ h1, h2, h3, h4, h5, h6 {
     .user-profile-edit input[type="text"]:focus,
     .user-profile-edit textarea:focus {
       border-color: #8f8f8f;
-      box-shadow: none; }
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); }
   .user-profile-edit textarea {
     padding: 10px 0; }
   .user-profile-edit input[name="alias"] {
