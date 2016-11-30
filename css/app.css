@@ -5845,6 +5845,12 @@ h1, h2, h3, h4, h5, h6 {
   top: 0;
   width: 100%;
   z-index: 2; }
+  .app-header .logo {
+    width: 150px; }
+  .app-header .navbar-logo {
+    padding: 0;
+    height: auto;
+    margin-top: 5px; }
 
 .footer {
   background: #252525;

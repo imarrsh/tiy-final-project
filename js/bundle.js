@@ -157,7 +157,7 @@ var HomeContainer = React.createClass({displayName: "HomeContainer",
       .also('count', 1)
       .fetch()
       .then(response => {
-        console.log('user contribution fetch', response)
+        // console.log('user contribution fetch', response)
         this.setState({userContrubutions: userContrubutions});
       })
   },
@@ -337,6 +337,9 @@ var AppHeaderWrap = function(props){
     React.createElement("header", {className: "app-header"}, 
       React.createElement(ContainerRow, null, 
         React.createElement("nav", null, 
+          React.createElement("a", {className: "navbar-brand navbar-logo", href: ""}, 
+            React.createElement("img", {src: "images/spark-a-story.svg", className: "logo", alt: "Spark-a-Story"})
+          ), 
             props.children
         )
       )
@@ -349,14 +352,11 @@ var AppHeaderMain = function(props){
   var user = User.current();
   return(
     React.createElement(AppHeaderWrap, null, 
-      React.createElement("ul", {className: "nav nav-pills pull-left"}, 
 
-        React.createElement("li", null, React.createElement("a", {href: "#"}, "Home")), 
-        React.createElement("li", null, React.createElement("a", {href: "#stories/new/"}, "New Story"))
-
-      ), 
       React.createElement("ul", {className: "nav nav-pills navbar-right"}, 
 
+        React.createElement("li", null, React.createElement("a", {href: "#"}, "Home")), 
+        React.createElement("li", null, React.createElement("a", {href: "#stories/new/"}, "New Story")), 
         React.createElement(NavDropdown, {title: user.get('alias') || 'Actions', id: "nav-dropdown"}, 
           React.createElement(MenuItem, {
             href: '#user/' + user.get('objectId') + '/'
@@ -366,8 +366,6 @@ var AppHeaderMain = function(props){
           React.createElement(MenuItem, {divider: true}), 
           React.createElement(MenuItem, {href: "#logout/"}, "Log out")
         ), 
-
-
         React.createElement("li", null, 
           React.createElement("div", {className: "user-avatar user-avatar-sm"}, 
             React.createElement("a", {href: '#user/' + user.get('objectId') + '/'}, 
@@ -389,7 +387,7 @@ var AppHeaderMain = function(props){
 var AppHeaderLogin = function(props){
   return(
     React.createElement(AppHeaderWrap, null, 
-      React.createElement("ul", {className: "nav nav-pills pull-left"}, 
+      React.createElement("ul", {className: "nav nav-pills pull-right"}, 
         React.createElement("li", null, React.createElement("a", {href: ""}, "Login")), 
         React.createElement("li", null, React.createElement("a", {href: ""}, "Sign Up"))
       )
