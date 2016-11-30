@@ -7,7 +7,17 @@ var User = require('../models/user').User;
 var AppWrapper = require('./layouts/general.jsx').AppWrapper;
 var ContainerRow = require('./layouts/general.jsx').ContainerRow;
 var AppHeaderLogin = require('./layouts/general.jsx').AppHeaderLogin;
+var Row = require('./layouts/general.jsx').Row;
 
+var LoginFormWrapper = function(props){
+  return(
+    <div className="col-sm-6 col-sm-offset-3">
+      <div className="login-panel">
+        {props.children}
+      </div>
+    </div>
+  );
+}
 
 var SignUpForm = React.createClass({
   render: function(){
@@ -59,20 +69,14 @@ var LoginForm = React.createClass({
   }
 });
 
-var LoginFormWrapper = function(props){
-  return(
-    <div className="col-sm-6 col-sm-offset-3">
-      {props.children}
-    </div>
-  );
-}
 
 var LoginContainer = React.createClass({
   
   getInitialState: function(){
     return {
       username: '',
-      password: ''
+      password: '',
+      isLoggingIn: true
     }
   },
   
@@ -106,10 +110,46 @@ var LoginContainer = React.createClass({
         <ContainerRow>
           <LoginFormWrapper>
 
-            <LoginForm onSubmit={this.handleLogIn} onChange={this.handleChange} />
+            <div>
 
-            <SignUpForm onSubmit={this.handleSignUp} onChange={this.handleChange} />
+              <Row>
+                <div className="col-xs-6">
+                  <div onClick={() => {
+                      this.setState({
+                        isLoggingIn: true
+                      });
+                    }}
+                    className="login-panel-body choose-login"
+                  >
+                    Login
+                  </div>
+                </div>
+                <div className="col-xs-6">
+                  <div onClick={() => {
+                      this.setState({
+                        isLoggingIn: false
+                      });
+                    }} 
+                    className="login-panel-body choose-signup"
+                  >
+                    Sign Up
+                  </div>
+                </div>
+              </Row>
 
+            </div>
+
+            {this.state.isLoggingIn ?
+              <LoginForm 
+                onSubmit={this.handleLogIn} 
+                onChange={this.handleChange} 
+              />
+              :
+              <SignUpForm 
+                onSubmit={this.handleSignUp} 
+                onChange={this.handleChange} 
+              />
+            } 
           </LoginFormWrapper>
         </ContainerRow>
       </AppWrapper>

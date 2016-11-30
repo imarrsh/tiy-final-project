@@ -59,7 +59,7 @@ var AppHeaderMain = function(props){
       </ul>
       <ul className="nav nav-pills navbar-right">
 
-        <NavDropdown title={user.get('alias')} id="nav-dropdown">
+        <NavDropdown title={user.get('alias') || 'Actions'} id="nav-dropdown">
           <MenuItem 
             href={'#user/' + user.get('objectId') + '/'}
           >
