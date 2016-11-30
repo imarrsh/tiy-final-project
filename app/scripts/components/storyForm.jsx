@@ -114,7 +114,8 @@ var StoryFormContainer = React.createClass({
     // models
     return {
       story: new Story(),
-      contribution: this.props.contribution || new Contribution()
+      contribution: this.props.contribution || new Contribution(),
+      previousContent: ''
     }
   },
 
@@ -128,7 +129,10 @@ var StoryFormContainer = React.createClass({
     // if the editor gets called from a segment
     if (this.props.isAnEdit) {
       contribution.set('content', this.props.content);
-      this.setState({contribution: contribution});
+      this.setState({
+        contribution: contribution,
+        previousContent: contribution.get('content') 
+      });
     }
   },
 
@@ -236,7 +240,13 @@ var StoryFormContainer = React.createClass({
 
   handleCancel: function(e){
     e.preventDefault();
-    console.log('handle cancel');
+    var contribution = this.state.contribution;
+    contribution.set('content', this.state.previousContent);
+
+    this.setState({
+      contribution: contribution
+    });
+    
     this.props.toggleEditorVisibility();
   },
 

@@ -307,7 +307,8 @@ var StoryReadContainer = React.createClass({
       story: new Story(),
       isContributing: false,
       currentUser: User.current(),
-      isEditingTitle: false
+      isEditingTitle: false,
+      previousText: ''
     }
   },
 
@@ -445,13 +446,25 @@ var StoryReadContainer = React.createClass({
     });
   },
 
+  handleTitleCancel: function(e){
+    e.preventDefault();
+    var story = this.state.story;
+
+    story.set('title', this.state.previousText);
+
+    this.setState({
+      story: story,
+      isEditingTitle: !this.state.isEditingTitle
+    });
+  },
+
   render: function(){
     var story = this.state.story
     , contributions = story.get('contributions')
     , isContributing = this.state.isContributing
     , currentUserId = this.state.currentUser.get('objectId');
 
-    console.log(story);
+    // console.log(story);
     
     return(
       <AppWrapper>
@@ -469,7 +482,8 @@ var StoryReadContainer = React.createClass({
                   />
                   <button
                     onClick={() => this.setState({
-                      isEditingTitle: !this.state.isEditingTitle
+                      isEditingTitle: !this.state.isEditingTitle,
+                      previousText: story.get('title')
                     })}
                     className="btn btn-default btn-xs btn-green">Edit Title
                   </button>
@@ -497,12 +511,7 @@ var StoryReadContainer = React.createClass({
                             className="btn btn-success"
                           />
                           <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              this.setState({
-                                isEditingTitle: !this.state.isEditingTitle
-                              });
-                            }}
+                            onClick={this.handleTitleCancel}
                             className="btn btn-default"
                           >
                             Cancel
