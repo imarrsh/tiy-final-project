@@ -116,6 +116,15 @@ h1, h2, h3, h4, h5, h6 {
 
 }
 
+// #################
+// Home View
+// #################
+
+.my-stories {
+  h3:first-of-type {
+    margin-top: 0;
+  }
+}
 
 // ##################################
 // Adding a story view
@@ -285,7 +294,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .story-aside {
-  h4 {
+  h3 {
+    margin: 0 0 16px;
     text-align: center;
   }
   .user-avatar { 
@@ -295,11 +305,23 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     a {
       display: block;
-      .owner-alias {
-        margin: 0 auto;
-      }
     }
   }
+  .stats-group {
+    margin-bottom: 20px;
+    h4 {
+      margin-bottom: 0;
+    }
+  }
+}
+
+
+.owner-alias {
+  p {
+    text-align: center;
+  }
+  text-align: center;
+  margin: 0 auto;
 }
 
 .storyhead {

@@ -91,24 +91,33 @@ var UserInfoStats = React.createClass({
           <div className="panel panel-default">
             <div className="panel-body">
               
-              <div className="overview">
+              <aside className="story-aside">
+                <h3 className="">Hi {user.get('firstName')}!</h3>
+                <a href={'#user/'+ user.get('objectId') +'/'}>
+                  <div className="user-avatar user-avatar-md">
+                    <img src={user.get('avatar') ?
+                      user.get('avatar').url : null } 
+                      alt={user.get('alias')}
+                    />
+                  </div>
 
-                <div className="user-avatar user-avatar-md">
-                  <img src={user.get('avatar') ?
-                    user.get('avatar').url : null } 
-                    alt={user.get('alias')}
-                  />
+                  <div className="owner-alias">
+                    <p>{user.get('alias')}</p>
+                  </div>
+                </a>
+                <hr/>
+
+                <div className="stats-group">
+                  <h4>Total Stories</h4>
+                  <h4>{totStories}</h4>
                 </div>
-                <p>{user.get('alias')}</p>
 
-                <h3>Quick User Stats</h3>
-                <h4>Total Stories</h4>
-                <p>{totStories}</p>
+                <div className="stats-group">
+                  <h4>Total Contributions</h4>
+                  <h4>{totContributions}</h4>
+                </div>
 
-                <h4>Total Contributions</h4>
-                <p>{totContributions}</p>
-
-              </div>
+              </aside>
 
             </div>
           </div>
@@ -221,21 +230,32 @@ var HomeContainer = React.createClass({
       <AppWrapper>
         <AppHeaderMain userId={userId} active={this.props.active} />
         <ContainerRow>
-          <div>
-            <h2>Hi {currentUser.get('firstName')}!</h2>
-          </div>
-          <div className="my-stories">
-            <UserStoryList stories={this.state.userStoryCollection}/>
-            <OthersStoryList stories={this.state.othersStoryCollection}/>
-            
+
+          <div className="col-sm-3">
             <UserInfoStats 
               totStories={this.state.userStoryCollection.length}
               totContributions={this.state.userContrubutions.length}
             />
+          </div>
 
-            {/* <Experiment stories={this.state.experimentStoryCollection}/> */}
+          <div className="col-sm-9">
+
+            <div className="panel panel-default">
+              <div className="panel-body">
+
+                <div className="my-stories">
+                  <UserStoryList stories={this.state.userStoryCollection}/>
+                  <OthersStoryList stories={this.state.othersStoryCollection}/>
+              
+                  {/* <Experiment stories={this.state.experimentStoryCollection}/> */}
+              
+                </div>
+
+              </div>
+            </div>
 
           </div>
+
         </ContainerRow>
       </AppWrapper>
     );
