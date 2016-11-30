@@ -19,6 +19,16 @@ var LoginFormWrapper = function(props){
   );
 }
 
+var ErrComponent = React.createClass({
+  render: function(){
+    return(
+      <div className="alert alert-danger">
+        {this.props.error}
+      </div>      
+    );
+  }
+})
+
 var SignUpForm = React.createClass({
   render: function(){
     return(
@@ -35,6 +45,11 @@ var SignUpForm = React.createClass({
               name="password" type="password" 
               className="form-control" placeholder="Password" />
           </div>
+          
+          {this.props.error ?
+            <ErrComponent error={this.props.error} />
+          : null}
+
           <input type="submit" 
             className="form-control btn btn-primary" 
             value="Sign Up" />
@@ -60,6 +75,11 @@ var LoginForm = React.createClass({
               name="password" type="password" 
               className="form-control" placeholder="Password" />
           </div>
+
+          {this.props.error ?
+            <ErrComponent error={this.props.error} />
+          : null}
+
           <input type="submit" 
             className="form-control btn btn-primary" 
             value="Log In" />
@@ -76,7 +96,8 @@ var LoginContainer = React.createClass({
     return {
       username: '',
       password: '',
-      isLoggingIn: true
+      isLoggingIn: true,
+      error:''
     }
   },
   
@@ -86,21 +107,40 @@ var LoginContainer = React.createClass({
 
   handleLogIn: function (e) {
     e.preventDefault();
-    var creds = this.state;
+    
+    var creds = {
+      username: this.state.username,
+      password: this.state.password
+    };
 
-    User.logIn(creds, function(){
-      this.props.router.navigate('', {trigger: true});
-    }.bind(this));
+    User.logIn(creds, (user, err) => {
+      if (!err){
+        this.props.router.navigate('', {trigger: true});
+      } else {
+        console.log(err)
+        this.setState({error: err});
+      }
+    });
 
   },
 
   handleSignUp: function (e) {
     e.preventDefault();
-    User.signUp(this.state, user => {
-      
-      this.props.router
-        .navigate('user/' + user.get('objectId') + '/edit/' , {trigger: true});
-    })
+
+    var creds = {
+      username: this.state.username,
+      password: this.state.password
+    };
+    
+    User.signUp(creds, (user, err) => {
+      if (!err){
+        this.props.router
+          .navigate('user/' + user.get('objectId') + '/edit/' , {trigger: true});
+      } else {
+        // console.log(err)
+        this.setState({error: err});
+      }
+    })  
   },
 
   render: function(){
@@ -142,12 +182,14 @@ var LoginContainer = React.createClass({
             {this.state.isLoggingIn ?
               <LoginForm 
                 onSubmit={this.handleLogIn} 
-                onChange={this.handleChange} 
+                onChange={this.handleChange}
+                error={this.state.error} 
               />
               :
               <SignUpForm 
                 onSubmit={this.handleSignUp} 
-                onChange={this.handleChange} 
+                onChange={this.handleChange}
+                error={this.state.error} 
               />
             } 
           </LoginFormWrapper>

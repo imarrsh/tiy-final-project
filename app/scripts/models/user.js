@@ -89,8 +89,8 @@ var User = ParseUser.extend({
     user.fetch({
       error: function(response, xhr){
         var errorMsg = JSON.parse(xhr.responseText);
-        console.log('msg', errorMsg.error);
-        callback(user, errorMsg);
+        // console.log('msg', errorMsg.error);
+        callback(user, errorMsg.error);
       }
     }).then(function(response){
       user.set('sessionToken', response.sessionToken);
@@ -120,14 +120,20 @@ var User = ParseUser.extend({
 
     if (user.attributes.sessionToken){
 
-      console.log('left over token...');
+      // console.log('left over token...');
       delete user.attributes.sessionToken;
 
     }
 
     user
       .setFile('avatar', defaultPic, defaultPicUrl)
-      .save(userCredentials)
+      .save(userCredentials, {
+        error: function(response, xhr){
+          var errorMsg = JSON.parse(xhr.responseText);
+          // console.log('msg', errorMsg.error);
+          callback(user, errorMsg.error);
+        }
+      })
       .then(function(response){
         
         user.auth();
