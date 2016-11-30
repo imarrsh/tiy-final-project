@@ -155,7 +155,7 @@ var HomeContainer = React.createClass({
       .also('count', 1)
       .fetch()
       .then(response => {
-        console.log('user contribution fetch', response)
+        // console.log('user contribution fetch', response)
         this.setState({userContrubutions: userContrubutions});
       })
   },

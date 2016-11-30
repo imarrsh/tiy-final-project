@@ -39,6 +39,9 @@ var AppHeaderWrap = function(props){
     <header className="app-header">
       <ContainerRow>
         <nav>
+          <a className="navbar-brand navbar-logo" href="">
+            <img src="images/spark-a-story.svg" className="logo" alt="Spark-a-Story" />
+          </a>
             {props.children}
         </nav>
       </ContainerRow>
@@ -51,14 +54,11 @@ var AppHeaderMain = function(props){
   var user = User.current();
   return(
     <AppHeaderWrap>
-      <ul className="nav nav-pills pull-left">
+
+      <ul className="nav nav-pills navbar-right">
 
         <li><a href="#">Home</a></li>
         <li><a href="#stories/new/">New Story</a></li>
-
-      </ul>
-      <ul className="nav nav-pills navbar-right">
-
         <NavDropdown title={user.get('alias') || 'Actions'} id="nav-dropdown">
           <MenuItem 
             href={'#user/' + user.get('objectId') + '/'}
@@ -68,8 +68,6 @@ var AppHeaderMain = function(props){
           <MenuItem divider />
           <MenuItem href="#logout/">Log out</MenuItem>
         </NavDropdown>
-
-
         <li>
           <div className="user-avatar user-avatar-sm">
             <a href={'#user/' + user.get('objectId') + '/'}>
@@ -91,7 +89,7 @@ var AppHeaderMain = function(props){
 var AppHeaderLogin = function(props){
   return(
     <AppHeaderWrap>
-      <ul className="nav nav-pills pull-left">
+      <ul className="nav nav-pills pull-right">
         <li><a href="">Login</a></li>
         <li><a href="">Sign Up</a></li>
       </ul>
