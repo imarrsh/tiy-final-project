@@ -90,6 +90,7 @@ var User = ParseUser.extend({
       error: function(response, xhr){
         var errorMsg = JSON.parse(xhr.responseText);
         console.log('msg', errorMsg.error);
+        callback(user,errorMsg);
       }
     }).then(function(response){
       user.set('sessionToken', response.sessionToken);
@@ -116,6 +117,14 @@ var User = ParseUser.extend({
     user.urlRoot = function(){
       return 'https://mt-parse-server.herokuapp.com/users';
     };
+
+    if (user.attributes.sessionToken){
+
+      console.log('left over token...');
+      delete user.attributes.sessionToken;
+
+    }
+
     user
       .setFile('avatar', defaultPic, defaultPicUrl)
       .save(userCredentials)
