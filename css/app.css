@@ -5802,11 +5802,17 @@ img {
 p {
   font-family: 'Enriqueta', 'Times', serif;
   font-weight: 400;
-  font-size: 20px; }
+  font-size: 20px;
+  color: #414141; }
 
 h1, h2, h3, h4, h5, h6 {
   color: #414141;
   font-family: 'Noticia Text', Times, serif; }
+
+a {
+  color: #7CBEFF; }
+  a:hover {
+    color: #168bff; }
 
 .btn-toolbar-inline {
   display: inline-block;
@@ -5833,6 +5839,31 @@ h1, h2, h3, h4, h5, h6 {
     border-color: forestgreen;
     background-color: forestgreen;
     color: white; }
+
+@media (max-width: 768px) {
+  .header-nav {
+    padding-left: 12px;
+    padding-right: 12px; } }
+
+@media screen and (min-width: 500px) {
+  li.nav-mobile {
+    display: none; } }
+
+@media screen and (max-width: 500px) {
+  li.nav-desktop {
+    display: none; } }
+
+@media screen and (max-width: 768px) {
+  .nav .user-avatar {
+    display: none; } }
+
+.dropdown-menu {
+  left: auto;
+  right: 0 !important; }
+
+.footer-nav .info {
+  color: white;
+  padding: 10px 0; }
 
 .main-content {
   padding: 84px 0 32px;
@@ -5888,11 +5919,6 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #7CBEFF;
     color: white; }
 
-.my-stories h3:first-of-type {
-  margin-top: 0; }
-.my-stories h4 {
-  color: #414141; }
-
 .title-field {
   font-family: 'Noticia Text', Times, serif;
   font-weight: bold;
@@ -5903,7 +5929,8 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: none;
   outline: none;
   padding: 24px 0;
-  letter-spacing: 0.02em; }
+  letter-spacing: 0.02em;
+  margin-bottom: 20px; }
   .title-field:focus {
     box-shadow: none;
     border-color: #252525; }
@@ -6006,6 +6033,16 @@ h1, h2, h3, h4, h5, h6 {
     width: 72px;
     height: 72px; }
 
+.title-form {
+  display: table; }
+  .title-form input[type="text"] {
+    width: 100%; }
+
+.title-form-input {
+  display: table-cell;
+  width: 100%;
+  white-space: nowrap; }
+
 .story-segment {
   font-family: 'Enriqueta', 'Times', serif;
   font-weight: 400;
@@ -6035,9 +6072,11 @@ h1, h2, h3, h4, h5, h6 {
   .story-aside .owner-detail a {
     display: block; }
 .story-aside .stats-group {
-  margin-bottom: 20px; }
+  margin-bottom: 16px; }
   .story-aside .stats-group h4 {
     margin-bottom: 0; }
+    .story-aside .stats-group h4:first-child {
+      color: #8E2702; }
 
 .owner-alias {
   text-align: center;
@@ -6063,7 +6102,19 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: normal;
   color: #8f8f8f; }
 
+.my-stories h3 {
+  margin-top: 0;
+  color: #8E2702; }
+.my-stories h4 {
+  color: #414141; }
+
+.story-item em {
+  color: #8e8e8e; }
+
 /* edit these rules to customize how LanguageTool shows errors: */
+.story-editor {
+  margin-top: 20px; }
+
 .hiddenSpellError {
   background-color: rgba(255, 0, 0, 0.2);
   cursor: pointer; }
@@ -6078,4 +6129,76 @@ h1, h2, h3, h4, h5, h6 {
 
 #menu_checktext_spellcheckermenu_co {
   left: 0 !important; }
+
+.hero {
+  position: relative;
+  margin-top: -24px;
+  background-size: cover;
+  background-position: center 20%;
+  background-image: url("../images/hero.jpg");
+  background-color: #414141;
+  height: 75vh; }
+  .hero .heading-tagline {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); }
+  .hero h1, .hero h2 {
+    color: white;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+    text-align: center; }
+  .hero h1 {
+    margin: 0;
+    font-size: 72px; }
+    @media (max-width: 1170px) {
+      .hero h1 {
+        font-size: 48px; } }
+  .hero h2 {
+    font-size: 28px; }
+
+.feature-section {
+  padding: 36px 0; }
+  .feature-section h1 {
+    margin-bottom: 18px;
+    color: #D34F1F; }
+  .feature-section:nth-child(even) {
+    background-color: #fafafa; }
+
+#get-started {
+  position: relative;
+  padding: 140px 0;
+  margin-bottom: -32px;
+  background-image: url("../images/getstarted.jpg");
+  background-size: cover;
+  background-position: center 42%; }
+  #get-started:before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: '';
+    background-color: rgba(65, 65, 65, 0.5); }
+  #get-started a {
+    position: relative;
+    font-family: 'Noticia Text', Times, serif;
+    z-index: 10;
+    border: 2px solid;
+    border-radius: 50px;
+    display: inline-block;
+    margin: 0 auto;
+    padding: 16px 42px;
+    font-size: 40px;
+    color: white;
+    -webkit-transition: all 150ms ease-in-out;
+    transition: all 150ms ease-in-out; }
+    #get-started a:hover {
+      border-color: #D34F1F;
+      background-color: #D34F1F;
+      text-decoration: none;
+      box-shadow: 0px 5px 20px -5px rgba(0, 0, 0, 0.5); }
+
+.center-content {
+  text-align: center; }
 /*# sourceMappingURL=app.css.map */
