@@ -257,44 +257,46 @@ var StoryFormContainer = React.createClass({
     // console.log(this.state.story);
 
     return(
-      <div className="panel panel-default">
-        <div className="panel-body">
-
-          <form onSubmit={this.handleSubmit} name="checkform">
-            
-            { this.props.showTitle ?
-                <StoryTitle 
-                  onChange={this.handleTitleChange}
-                  title={title}
-                />
-              : null }
-          
-            <StoryBody 
-              onChange={this.handleTextChange}
-              body={body}
-            />
-            
-            <div className="btn-toolbar">
-              <button onClick={this.handleCheck} 
-                className="btn btn-warning btn-sm" 
-                name="_action_checkText">
-                Grammar Check
-              </button>
-              <input type="submit" 
-                className="btn btn-success btn-sm" 
-                value="Submit"
-              />
-              {!this.props.newStory ?
-                <button onClick={this.handleCancel} 
-                  className="btn btn-default btn-sm" 
-                  name="">
-                  Cancel
-                </button>
+      <div className="story-editor">
+        <div className="panel panel-default">
+          <div className="panel-body">
+        
+            <form onSubmit={this.handleSubmit} name="checkform">
+              
+              { this.props.showTitle ?
+                  <StoryTitle 
+                    onChange={this.handleTitleChange}
+                    title={title}
+                  />
                 : null }
-
-            </div>
             
-          </form>
+              <StoryBody 
+                onChange={this.handleTextChange}
+                body={body}
+              />
+              
+              <div className="btn-toolbar">
+                <button onClick={this.handleCheck} 
+                  className="btn btn-warning btn-sm" 
+                  name="_action_checkText">
+                  Grammar Check
+                </button>
+                <input type="submit" 
+                  className="btn btn-success btn-sm" 
+                  value="Submit"
+                />
+                {!this.props.newStory ?
+                  <button onClick={this.handleCancel} 
+                    className="btn btn-default btn-sm" 
+                    name="">
+                    Cancel
+                  </button>
+                  : null }
+        
+              </div>
+              
+            </form>
+          </div>
         </div>
       </div>
     );

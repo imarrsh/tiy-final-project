@@ -12,6 +12,7 @@ var StoryCreateContainer = require('./components/storyNewEdit.jsx').StoryCreateC
 var StoryReadContainer = require('./components/story.jsx').StoryReadContainer;
 var UserDetailContainer = require('./components/userDetail.jsx').UserDetailContainer;
 var UserEditProfileContainer = require('./components/userNewEdit.jsx').UserEditProfileContainer;
+var AppOverview = require('./components/appOverview.jsx').AppOverview;
 
 var AppRouter = Backbone.Router.extend({
   routes: {
@@ -25,10 +26,11 @@ var AppRouter = Backbone.Router.extend({
     'stories/new/': 'storyNewEdit', // adding a new story
     'stories/:id/': 'storyView', // viewing/reading one storyView
     'stories/:id/edit/': 'storyNewEdit', // editing a story - if not concrete yet.
-    'stories/:id/contribute/': 'storyContribute', // contributing to stories
-    'stories/:id/contribute/:id/': 'storyContribute', // contributing to stories
+    // 'stories/:id/contribute/': 'storyContribute', // contributing to stories
+    // 'stories/:id/contribute/:id/': 'storyContribute', // contributing to stories
     'logout/': 'logout', // logout - redirect to login
     'login/': 'login', // login/signup view - user sees this screen if not logged in
+    'overview/': 'overview' // about the app 
   },
 
   // checkUser: function(){
@@ -53,8 +55,9 @@ var AppRouter = Backbone.Router.extend({
     var user = User.current();
     var token = user.get('sessionToken');
 
-    if (!token){
-      console.log('token is', token);
+
+    if (!token && name !== 'overview'){
+      // console.log('token is', token);
       this.gotoLogin();
       return false;
     }
@@ -128,6 +131,13 @@ var AppRouter = Backbone.Router.extend({
 
     ReactDOM.render(
       React.createElement(StoryReadContainer, { router: this, storyId: storyId }),
+      document.getElementById('app')
+    );
+  },
+
+  overview: function(){
+    ReactDOM.render(
+      React.createElement(AppOverview, { router: this }),
       document.getElementById('app')
     );
   }

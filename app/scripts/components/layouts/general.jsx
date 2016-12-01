@@ -27,7 +27,7 @@ var ContainerRow = function(props){
 // generic section tag 
 var Section = function(props){
   return(
-    <section id={this.props.id}>
+    <section className={this.props.className} id={this.props.id || null}>
       {props.children}
     </section>
   );
@@ -38,7 +38,7 @@ var AppHeaderWrap = function(props){
   return(
     <header className="app-header">
       <ContainerRow>
-        <nav>
+        <nav className="header-nav">
           <a className="navbar-brand navbar-logo" href="">
             <img src="images/spark-a-story.svg" className="logo" alt="Spark-a-Story" />
           </a>
@@ -55,11 +55,26 @@ var AppHeaderMain = function(props){
   return(
     <AppHeaderWrap>
 
-      <ul className="nav nav-pills navbar-right">
+      <ul className="nav nav-pills pull-right">
 
-        <li><a href="#">Home</a></li>
-        <li><a href="#stories/new/">New Story</a></li>
-        <NavDropdown title={user.get('alias') || 'Actions'} id="nav-dropdown">
+        <li className="nav-desktop"><a href="#">Home</a></li>
+        <li className="nav-desktop"><a href="#stories/new/">New Story</a></li>
+        <NavDropdown 
+          title={user.get('alias') || 'Actions'} 
+          id="nav-dropdown"
+        >
+          <MenuItem 
+            className="nav-mobile" 
+            href="#"
+          >
+            Home
+          </MenuItem>
+          <MenuItem 
+            className="nav-mobile" 
+            href="#stories/new/"
+          >
+            New Story
+          </MenuItem>
           <MenuItem 
             href={'#user/' + user.get('objectId') + '/'}
           >
@@ -110,11 +125,10 @@ var AppFooterMain =  function(props){
   return(
     <AppFooterWrap>
       <ContainerRow>
-        <nav>
+        <nav className="footer-nav">
           <ul className="nav nav-pills">
-            <li><a href="#">Home</a></li>
-            <li><a href="#stories/new/">New</a></li>
-            <li><a href={'#user/' + user.get('objectId') + '/'}>Profile</a></li>
+            <li className="info">Spark-a-Story, an app built by Marshall Thompson</li>
+            <li className="pull-right"><a href="#overview/">Overview</a></li>
           </ul>
         </nav>
       </ContainerRow>

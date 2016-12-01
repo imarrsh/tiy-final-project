@@ -16,11 +16,19 @@ p {
   font-family: 'Enriqueta', 'Times', serif;
   font-weight: 400;
   font-size: 20px;
+  color: $spark-gray;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: $spark-gray;
   font-family: 'Noticia Text', Times, serif;
+}
+
+a {
+  color: $spark-light-blue;
+  &:hover {
+    color: darken($spark-light-blue, 20%);
+  }
 }
 
 // ##################################
@@ -62,6 +70,46 @@ h1, h2, h3, h4, h5, h6 {
     border-color: forestgreen;
     background-color: forestgreen;
     color: white;
+  }
+}
+
+.header-nav {
+  @media (max-width: 768px){
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+li.nav-mobile {
+  @media screen and (min-width: 500px) {
+    display: none;
+  }
+}
+
+li.nav-desktop {
+  @media screen and (max-width: 500px) {
+    display: none;
+  }
+}
+
+.nav .user-avatar {
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+}
+
+.dropdown-menu {
+  left: auto;
+  right: 0 !important;
+}
+
+.footer-nav {
+  .info {
+    color: white;
+    padding: 10px 0;
+  }
+  @media (max-width: 768px){
+
   }
 }
 

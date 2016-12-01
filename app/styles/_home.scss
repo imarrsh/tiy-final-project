@@ -3,10 +3,17 @@
 // #################
 
 .my-stories {
-  h3:first-of-type {
+  h3 {
     margin-top: 0;
+    color: $spark-dark-red;
   }
   h4{
     color: $spark-gray;
+  }
+}
+
+.story-item {
+  em {
+    color: lighten($spark-gray, 30%);
   }
 }

@@ -15,7 +15,7 @@ var StoryListItem = React.createClass({
     var story = this.props.story;
     return(
       <a href={'#stories/' + story.get('objectId') + '/'} 
-        className="list-group-item">
+        className="list-group-item story-item">
         <h4>{story.get('title')}</h4> 
         <em>by {story.get('owner').alias}</em>
       </a>
@@ -249,6 +249,7 @@ var HomeContainer = React.createClass({
 
                 <div className="my-stories">
                   <UserStoryList stories={this.state.userStoryCollection}/>
+                  <hr />
                   <OthersStoryList stories={this.state.othersStoryCollection}/>
               
                   {/* <Experiment stories={this.state.experimentStoryCollection}/> */}

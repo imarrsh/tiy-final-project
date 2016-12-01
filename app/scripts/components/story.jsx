@@ -131,7 +131,7 @@ var StoryContributuionListItem = React.createClass({
                     src={contributor.avatar ? contributor.avatar.url : null} 
                     alt={contributor.alias}
                   />
-                <span className="alias">{contributor.alias}</span>
+                <span className="alias"> {contributor.alias}</span>
               </a>
             </div>
 
@@ -496,23 +496,29 @@ var StoryReadContainer = React.createClass({
                       <div className="form-inline">
 
                         <form onSubmit={this.updateTitle}>
-                          <input
-                            onChange={this.handleTitleChange}
-                            className="form-control" 
-                            type="text" 
-                            value={story.get('title')} 
-                          />
-                          <input
-                            type="submit"
-                            value="Save"
-                            className="btn btn-success"
-                          />
-                          <button
-                            onClick={this.handleTitleCancel}
-                            className="btn btn-default"
-                          >
-                            Cancel
-                          </button>
+                          <div className="title-form">
+                            <div className="title-form-input">
+                              <input
+                                onChange={this.handleTitleChange}
+                                className="form-control" 
+                                type="text" 
+                                value={story.get('title')} 
+                              />
+                            </div>
+                            <div className="title-form-input">
+                              <input
+                                type="submit"
+                                value="Save"
+                                className="btn btn-success"
+                              />
+                              <button
+                                onClick={this.handleTitleCancel}
+                                className="btn btn-default"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
 
                         </form>
                       </div>
