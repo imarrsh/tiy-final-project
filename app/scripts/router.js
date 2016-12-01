@@ -55,7 +55,7 @@ var AppRouter = Backbone.Router.extend({
     var user = User.current();
     var token = user.get('sessionToken');
 
-
+    // check for a token and a valid route name
     if (!token && name !== 'overview'){
       // console.log('token is', token);
       this.gotoLogin();

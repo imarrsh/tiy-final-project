@@ -49,7 +49,7 @@ var AppOverview = React.createClass({
 
             <div className="col-md-7">
               <h1>Collaborate With Others</h1>
-              <p>Sparking your own story or contributing to an existing story is easy&mdash;click or tap into a story and hit the Contribute button.</p>
+              <p>Contributing to an existing story is easy&mdash;click or tap on an existing story and click Contribute. Whether you are starting a new story or adding a segment conribution, you can easily add or edit segments with story editor with a click of a button.</p>
             </div>
 
           </ContainerRow>
