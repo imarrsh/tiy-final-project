@@ -16,7 +16,8 @@ var StoryListItem = React.createClass({
     return(
       <a href={'#stories/' + story.get('objectId') + '/'} 
         className="list-group-item">
-        {story.get('title')} <em>by {story.get('owner').alias}</em>
+        <h4>{story.get('title')}</h4> 
+        <em>by {story.get('owner').alias}</em>
       </a>
     );
   }
@@ -32,7 +33,10 @@ var UserStoryList = React.createClass({
         {stories.length ? 
           stories.map(function(story){
             return(
-              <StoryListItem story={story} key={story.get('objectId')}/>
+              <StoryListItem 
+                story={story} 
+                key={story.get('objectId')}
+              />
             );
           }) : 
           <h5>

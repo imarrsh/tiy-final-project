@@ -5,5 +5,12 @@
 @import '../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap';
 // fonts
 @import 'fonts';
+
 // import stlyes
 @import 'main';
+@import 'login';
+@import 'home';
+@import 'addstory';
+@import 'userprofile';
+@import 'storyview';
+@import 'storyeditor';

@@ -1,0 +1,23 @@
+// #################
+// story editor
+// #################
+/* edit these rules to customize how LanguageTool shows errors: */
+.hiddenSpellError {
+    background-color: rgba(255,0,0, 0.2);
+    cursor: pointer;
+}
+
+.hiddenGrammarError {
+    background-color: #fee481;
+    cursor: pointer;
+}
+
+.hiddenSuggestion {
+    background-color: rgb(201,205,255);
+    cursor: pointer;
+}
+
+// tinymce styles
+#menu_checktext_spellcheckermenu_co {
+  left: 0 !important; // knock the menu back in place
+}

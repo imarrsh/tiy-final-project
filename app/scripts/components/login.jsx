@@ -51,7 +51,7 @@ var SignUpForm = React.createClass({
           : null}
 
           <input type="submit" 
-            className="form-control btn btn-primary" 
+            className="form-control btn btn-signup" 
             value="Sign Up" />
         </form>
       </div>
@@ -81,7 +81,7 @@ var LoginForm = React.createClass({
           : null}
 
           <input type="submit" 
-            className="form-control btn btn-primary" 
+            className="form-control btn btn-login" 
             value="Log In" />
         </form>
       </div>
@@ -97,7 +97,8 @@ var LoginContainer = React.createClass({
       username: '',
       password: '',
       isLoggingIn: true,
-      error:''
+      error:'',
+      selected: 'login'
     }
   },
   
@@ -135,12 +136,17 @@ var LoginContainer = React.createClass({
     User.signUp(creds, (user, err) => {
       if (!err){
         this.props.router
-          .navigate('user/' + user.get('objectId') + '/edit/' , {trigger: true});
+          .navigate('user/' + user.get('objectId') + 
+            '/edit/' , {trigger: true});
       } else {
         // console.log(err)
         this.setState({error: err});
       }
     })  
+  },
+
+  isActive:function(className, value){
+    return className + ((value===this.state.selected) ? ' active' : '');
   },
 
   render: function(){
@@ -153,26 +159,36 @@ var LoginContainer = React.createClass({
             <div>
 
               <Row>
-                <div className="col-xs-6">
-                  <div onClick={() => {
-                      this.setState({
-                        isLoggingIn: true
-                      });
-                    }}
-                    className="login-panel-body choose-login"
-                  >
-                    Login
+                <div className="login-select">
+                  <div className="col-xs-6">
+                    <div onClick={() => {
+                        this.setState({
+                          selected: 'login',
+                          isLoggingIn: true
+                        });
+                      }}
+                      className={this.isActive(
+                        'login-panel-body choose-login', 
+                        'login'
+                      )}
+                    >
+                      Login
+                    </div>
                   </div>
-                </div>
-                <div className="col-xs-6">
-                  <div onClick={() => {
-                      this.setState({
-                        isLoggingIn: false
-                      });
-                    }} 
-                    className="login-panel-body choose-signup"
-                  >
-                    Sign Up
+                  <div className="col-xs-6">
+                    <div onClick={() => {
+                        this.setState({
+                          selected: 'signup',
+                          isLoggingIn: false
+                        });
+                      }} 
+                      className={this.isActive(
+                        'login-panel-body choose-signup', 
+                        'signup'
+                      )}
+                    >
+                      Sign Up
+                    </div>
                   </div>
                 </div>
               </Row>

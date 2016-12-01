@@ -1,0 +1,114 @@
+// ##################################
+// user profile
+// ##################################
+
+.user-profile {
+  font-family: 'Enriqueta', Times, serif;
+  background: #ffffff;
+  border-radius: 5px;
+  padding: 22px;
+  box-shadow: 0px 0px 15px -4px rgba(0,0,0,0.3);
+  &-avatar { // avatar box
+    text-align: center;
+  }
+  .user-avatar {
+    margin: 0 auto;
+    border: 5px solid #ffffff;
+    box-shadow: 2px 2px 12px -4px rgba(0,0,0,0.7)
+  }
+  &-details {
+    font-size: 20px;
+    line-height: 36px;
+    padding-bottom: 22px;
+  }
+  &-edit{
+    input[type="text"],
+    textarea {
+      font-family: 'Enriqueta', Times, serif;
+      font-size: 20px;
+      border: none;
+      padding: 20px 0;
+      box-shadow: none;
+      border-radius: 0px;
+      border-bottom: 2px solid #EBEBEB;
+      &:focus {
+        border-color: #8f8f8f;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      }
+    }
+    textarea {
+      padding: 10px 0;
+    }
+    input[name="alias"]{
+      border-bottom: 0;
+      padding: 24px 0;
+      margin: 20px auto;
+      text-align: center;
+      font-size: 34px;
+    }
+    label {
+      margin-bottom: -10px;
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #afafaf;
+    }
+
+  }
+
+}
+
+#user-profile-img-form {
+  display: none;
+}
+
+
+// user avatar
+.user-avatar {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 1;
+  .edit {
+    cursor: pointer;
+    img {
+      transition: filter 200ms ease-in-out 300ms;
+    }
+    &:after {
+      font-family: "Glyphicons Halflings";
+      content: "\e046"; // camera icon
+      color: rgba(255,255,255,0.95);
+      font-size: 54px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-48%, 120%);
+      transition: transform 300ms cubic-bezier(0.57, -0.15, 0.13, 0) 50ms;
+    }
+  }
+  &:hover {
+    .edit {
+      &:after {
+        transition: transform 200ms cubic-bezier(0.57,-0.01, 0.13, 1.25) 200ms;
+        transform: translate(-48%, -53%);
+      }
+      img {
+        filter: saturate(120%) blur(5px) brightness(0.5);
+        transition: filter 200ms ease-in-out;
+      }
+    }
+  }
+  &.user-avatar-xs {
+    width: 24px;
+    height: 24px;
+  }
+  &.user-avatar-sm {
+    width: 40px;
+    height: 40px;
+  }
+  &.user-avatar-md {
+    width: 72px;
+    height: 72px;
+  }
+}

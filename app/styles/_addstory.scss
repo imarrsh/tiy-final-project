@@ -1,0 +1,20 @@
+// ##################################
+// Adding a story view
+// ##################################
+
+.title-field {
+  font-family: 'Noticia Text', Times, serif;
+  font-weight: bold;
+  border: none;
+  border-radius: 0px;
+  border-bottom: 2px solid #cfcfaf;
+  font-size: 26px;
+  box-shadow: none;
+  outline: none;
+  padding: 24px 0;
+  letter-spacing: 0.02em;
+  &:focus {
+    box-shadow: none;
+    border-color: #252525;
+  }
+}

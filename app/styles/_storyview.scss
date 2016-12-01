@@ -1,0 +1,84 @@
+// #################
+// story view
+// #################
+.story-segment{
+  font: {
+    family: 'Enriqueta', 'Times', serif;
+    weight: 400;
+    size: 22px;
+  }
+  color: rgb(50, 50, 50);
+  .avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+  }
+  .alias {
+    font-size: 13px;
+  }
+}
+
+.segment-content {
+  p:last-child {
+    margin-bottom: 0px;
+  }
+}
+
+.contributor-profile {
+  display: inline-block;
+  margin-left: 16px;
+}
+
+.story-aside {
+  h3 {
+    margin: 0 0 16px;
+    text-align: center;
+  }
+  .user-avatar { 
+    margin: 0 auto;
+  }
+  .owner-detail {
+    text-align: center;
+    a {
+      display: block;
+    }
+  }
+  .stats-group {
+    margin-bottom: 20px;
+    h4 {
+      margin-bottom: 0;
+    }
+  }
+}
+
+
+.owner-alias {
+  p {
+    text-align: center;
+  }
+  text-align: center;
+  margin: 0 auto;
+}
+
+.storyhead {
+  margin-bottom: 10px;
+}
+
+.story-title-edit {
+  input[type="text"]{
+    font-family: 'Noticia Text', Times, serif;
+    font-size: 36px;
+    border: none;
+    border-bottom: 2px solid #afafaf;
+    border-radius: 0px;
+    padding: 20px 0 30px;
+    box-shadow: none;
+    margin-top: 18px;
+  }
+}
+
+.subhead {
+  margin: 0;
+  font-weight: normal;
+  color: #8f8f8f;
+}
