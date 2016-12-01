@@ -51,7 +51,7 @@ var AppOverview = React.createClass({displayName: "AppOverview",
 
             React.createElement("div", {className: "col-md-7"}, 
               React.createElement("h1", null, "Collaborate With Others"), 
-              React.createElement("p", null, "Sparking your own story or contributing to an existing story is easy—click or tap into a story and hit the Contribute button.")
+              React.createElement("p", null, "Contributing to an existing story is easy—click or tap on an existing story and click Contribute. Whether you are starting a new story or adding a segment conribution, you can easily add or edit segments with story editor with a click of a button.")
             )
 
           )
@@ -2882,7 +2882,7 @@ var AppRouter = Backbone.Router.extend({
     var user = User.current();
     var token = user.get('sessionToken');
 
-
+    // check for a token and a valid route name
     if (!token && name !== 'overview'){
       // console.log('token is', token);
       this.gotoLogin();
