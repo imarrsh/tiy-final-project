@@ -5805,6 +5805,7 @@ p {
   font-size: 20px; }
 
 h1, h2, h3, h4, h5, h6 {
+  color: #414141;
   font-family: 'Noticia Text', Times, serif; }
 
 .btn-toolbar-inline {
@@ -5820,10 +5821,10 @@ h1, h2, h3, h4, h5, h6 {
   padding-top: 0; }
 
 .btn-red {
-  color: tomato; }
+  color: #D34F1F; }
   .btn-red:hover {
-    border-color: tomato;
-    background-color: tomato;
+    border-color: #D34F1F;
+    background-color: #D34F1F;
     color: white; }
 
 .btn-green {
@@ -5853,25 +5854,44 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 5px; }
 
 .footer {
-  background: #252525;
+  background: #414141;
   padding: 10px 0; }
 
 .login-panel {
   background-color: #ffffff;
+  font-family: 'Noticia Text', Times, serif;
   padding: 16px;
   box-shadow: 0px 3px 8px -2px rgba(0, 0, 0, 0.3); }
+  .login-panel h2 {
+    text-align: center; }
+  .login-panel .login-select {
+    font-size: 20px; }
   .login-panel .login-panel-body {
     cursor: pointer;
     border-bottom: 3px solid;
     text-align: center;
     padding: 28px 0; }
   .login-panel .choose-login {
-    color: red; }
+    border-top-left-radius: 5px;
+    color: #D34F1F; }
+    .login-panel .choose-login.active {
+      background-color: #f7d4c7; }
   .login-panel .choose-signup {
-    color: blue; }
+    border-top-right-radius: 5px;
+    color: #7CBEFF; }
+    .login-panel .choose-signup.active {
+      background-color: #e2f1ff; }
+  .login-panel .btn-login {
+    background-color: #D34F1F;
+    color: white; }
+  .login-panel .btn-signup {
+    background-color: #7CBEFF;
+    color: white; }
 
 .my-stories h3:first-of-type {
   margin-top: 0; }
+.my-stories h4 {
+  color: #414141; }
 
 .title-field {
   font-family: 'Noticia Text', Times, serif;

@@ -18,7 +18,8 @@ var StoryListItem = React.createClass({displayName: "StoryListItem",
     return(
       React.createElement("a", {href: '#stories/' + story.get('objectId') + '/', 
         className: "list-group-item"}, 
-        story.get('title'), " ", React.createElement("em", null, "by ", story.get('owner').alias)
+        React.createElement("h4", null, story.get('title')), 
+        React.createElement("em", null, "by ", story.get('owner').alias)
       )
     );
   }
@@ -34,7 +35,10 @@ var UserStoryList = React.createClass({displayName: "UserStoryList",
         stories.length ? 
           stories.map(function(story){
             return(
-              React.createElement(StoryListItem, {story: story, key: story.get('objectId')})
+              React.createElement(StoryListItem, {
+                story: story, 
+                key: story.get('objectId')}
+              )
             );
           }) : 
           React.createElement("h5", null, 
@@ -498,7 +502,7 @@ var SignUpForm = React.createClass({displayName: "SignUpForm",
           : null, 
 
           React.createElement("input", {type: "submit", 
-            className: "form-control btn btn-primary", 
+            className: "form-control btn btn-signup", 
             value: "Sign Up"})
         )
       )
@@ -528,7 +532,7 @@ var LoginForm = React.createClass({displayName: "LoginForm",
           : null, 
 
           React.createElement("input", {type: "submit", 
-            className: "form-control btn btn-primary", 
+            className: "form-control btn btn-login", 
             value: "Log In"})
         )
       )
@@ -544,7 +548,8 @@ var LoginContainer = React.createClass({displayName: "LoginContainer",
       username: '',
       password: '',
       isLoggingIn: true,
-      error:''
+      error:'',
+      selected: 'login'
     }
   },
   
@@ -582,12 +587,17 @@ var LoginContainer = React.createClass({displayName: "LoginContainer",
     User.signUp(creds, (user, err) => {
       if (!err){
         this.props.router
-          .navigate('user/' + user.get('objectId') + '/edit/' , {trigger: true});
+          .navigate('user/' + user.get('objectId') + 
+            '/edit/' , {trigger: true});
       } else {
         // console.log(err)
         this.setState({error: err});
       }
     })  
+  },
+
+  isActive:function(className, value){
+    return className + ((value===this.state.selected) ? ' active' : '');
   },
 
   render: function(){
@@ -600,26 +610,36 @@ var LoginContainer = React.createClass({displayName: "LoginContainer",
             React.createElement("div", null, 
 
               React.createElement(Row, null, 
-                React.createElement("div", {className: "col-xs-6"}, 
-                  React.createElement("div", {onClick: () => {
-                      this.setState({
-                        isLoggingIn: true
-                      });
+                React.createElement("div", {className: "login-select"}, 
+                  React.createElement("div", {className: "col-xs-6"}, 
+                    React.createElement("div", {onClick: () => {
+                        this.setState({
+                          selected: 'login',
+                          isLoggingIn: true
+                        });
+                      }, 
+                      className: this.isActive(
+                        'login-panel-body choose-login', 
+                        'login'
+                      )
                     }, 
-                    className: "login-panel-body choose-login"
-                  }, 
-                    "Login"
-                  )
-                ), 
-                React.createElement("div", {className: "col-xs-6"}, 
-                  React.createElement("div", {onClick: () => {
-                      this.setState({
-                        isLoggingIn: false
-                      });
+                      "Login"
+                    )
+                  ), 
+                  React.createElement("div", {className: "col-xs-6"}, 
+                    React.createElement("div", {onClick: () => {
+                        this.setState({
+                          selected: 'signup',
+                          isLoggingIn: false
+                        });
+                      }, 
+                      className: this.isActive(
+                        'login-panel-body choose-signup', 
+                        'signup'
+                      )
                     }, 
-                    className: "login-panel-body choose-signup"
-                  }, 
-                    "Sign Up"
+                      "Sign Up"
+                    )
                   )
                 )
               )
