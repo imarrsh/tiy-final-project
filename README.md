@@ -46,6 +46,7 @@ Users can indicate their fondness of a story sefment by clicking on the down/up 
 * [React.js](https://facebook.github.io/react/)
 * [LanguageTool.org](https://languagetool.org) (3rd Party API)
 * [TinyMCE](https://www.tinymce.com) (LanguageTool Flavored)
+* [jQuery](http://jquery.com)
 * [Parse Server](https://parseplatform.github.io) (REST API)
 * [Heroku](http://heroku.com) (DB Hosting)
 * [GitHub Pages](https://pages.github.com)
