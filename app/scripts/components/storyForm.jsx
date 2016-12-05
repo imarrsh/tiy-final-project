@@ -231,7 +231,6 @@ var StoryFormContainer = React.createClass({
       .setPointer('contributor', '_User', user.get('objectId'))
       .setPointer('story', 'Story', storyId)
       .save().then(response => {
-        // console.log(contribution);
         callback(response, contribution);
       });
 
