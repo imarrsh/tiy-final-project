@@ -1487,13 +1487,18 @@ var StoryBody = React.createClass({displayName: "StoryBody",
         });
 
         ed.onKeyUp.add(function(ed, e, c, d) {
-          // console.log(ed.getContent());
+          console.log('onkeyup', ed.getContent());
           self.props.onChange(ed.getContent()); 
         });
 
         ed.onChange.add(function(ed, c){
-          // console.log(c.content)
+          console.log('onChange', ed, c.content)
           self.props.onChange(c.content);
+        });
+
+        ed.onSetContent.add(function(ed, c){
+          console.log('onSetContent')
+          // self.props.onChange(c.content);
         });
       },
       
@@ -1668,7 +1673,6 @@ var StoryFormContainer = React.createClass({displayName: "StoryFormContainer",
       .setPointer('contributor', '_User', user.get('objectId'))
       .setPointer('story', 'Story', storyId)
       .save().then(response => {
-        // console.log(contribution);
         callback(response, contribution);
       });
 
