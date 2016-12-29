@@ -35,7 +35,7 @@
     "fonts": "cp -r app/fonts/ dist/fonts/",
     "scss": "sass --style compressed --update app/styles:dist/css",
     "autoprefixer": "postcss -u autoprefixer -r dist/css/*.css",
-    "lint": "eslint app/scripts",
+    "lint": "eslint app/scripts --quiet",
     "browserify": "browserify app/scripts/index.js -o dist/js/bundle.js",
     "imagemin": "imagemin app/images dist/images -p",
     "favicon": "cp app/favicon.ico dist/",
@@ -50,7 +50,8 @@
     "watch:images": "onchange 'app/images/*' -- npm run build:images",
     "watch:fonts": "onchange 'app/fonts/*' -- npm run fonts",
     "server": "live-server --open='dist'",
-    "watch": "parallelshell 'npm run watch:html' 'npm run watch:scss' 'npm run watch:images' 'npm run watch:fonts' 'npm run watch:js' 'npm run server'"
+    "watch": "parallelshell 'npm run watch:html' 'npm run watch:scss' 'npm run watch:images' 'npm run watch:fonts' 'npm run watch:js' 'npm run server'",
+    "prebuild" : "mkdir -p dist/ && mkdir -p dist/css/ && mkdir -p dist/fonts/ && mkdir -p dist/images/ && mkdir -p dist/js/"
   },
   "browserify": {
     "transform": [

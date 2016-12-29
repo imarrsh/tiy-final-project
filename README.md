@@ -32,6 +32,36 @@ Users can indicate their fondness of a story sefment by clicking on the down/up 
 * Manage stories and contributions by creating, editing and removing them
 * Upvote/Downvote story segments
 
+## Demo
+To demo this project, you can sign in with the following credentials. The initial response time from the server may be a few seconds due to utilizing the free hosting tier at Heroku.
+
+Username: demo@demo.com <br />
+Password: demo
+
+## Clone and Run Locally
+Assuming you have a node environment already set up, if you are interested in checking out and running this project locally, you can clone, set up, this project to your machine by running the following in the command line:
+
+##### Clone it
+``` bash
+git clone https://github.com/imarrsh/tiy-final-project.git
+```
+
+##### Install Dependencies
+``` bash
+npm install
+```
+
+##### Build it 
+``` bash
+npm run build
+```
+
+##### Run it using the `server` command
+``` bash
+npm run server
+```
+
+
 ##Technologies and libraries used to power this app:
 
 ##### HTML5
@@ -51,7 +81,7 @@ Users can indicate their fondness of a story sefment by clicking on the down/up 
 * [GitHub Pages](https://pages.github.com)
 
 ##### Dependencies
-* npm
+* [npm](https://npmjs.com)
 * [LanguageTool.org](https://languagetool.org) (3rd Party API)
 * [TinyMCE](https://www.tinymce.com) (LanguageTool Flavored)
 
