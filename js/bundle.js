@@ -627,11 +627,13 @@ var LoginForm = React.createClass({displayName: "LoginForm",
         React.createElement("form", {onSubmit: this.props.onSubmit}, 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("input", {onChange: this.props.onChange, 
+              value: this.props.user, 
               name: "username", type: "email", 
               className: "form-control", placeholder: "Email"})
           ), 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("input", {onChange: this.props.onChange, 
+              value: this.props.pass, 
               name: "password", type: "password", 
               className: "form-control", placeholder: "Password"})
           ), 
@@ -640,9 +642,19 @@ var LoginForm = React.createClass({displayName: "LoginForm",
             React.createElement(ErrComponent, {error: this.props.error})
           : null, 
 
-          React.createElement("input", {type: "submit", 
-            className: "form-control btn btn-login", 
-            value: "Log In"})
+          React.createElement("div", {className: "row"}, 
+            React.createElement("div", {className: "col-sm-9"}, 
+              React.createElement("input", {type: "submit", 
+                className: "form-control btn btn-login", 
+                value: "Log In"})
+            ), 
+            React.createElement("div", {className: "col-sm-3"}, 
+              React.createElement("input", {onClick: this.props.demo, 
+                type: "button", 
+                className: "form-control btn btn-primary", 
+                value: "Demo"})
+            )
+          )
         )
       )
     );
@@ -709,6 +721,13 @@ var LoginContainer = React.createClass({displayName: "LoginContainer",
     return className + ((value===this.state.selected) ? ' active' : '');
   },
 
+  handleDemo: function(){
+    this.setState({
+      username: 'demo@demo.com',
+      password: 'demo'
+    });
+  },
+
   render: function(){
     return(
       React.createElement(AppWrapper, null, 
@@ -759,7 +778,10 @@ var LoginContainer = React.createClass({displayName: "LoginContainer",
               React.createElement(LoginForm, {
                 onSubmit: this.handleLogIn, 
                 onChange: this.handleChange, 
-                error: this.state.error}
+                error: this.state.error, 
+                demo: this.handleDemo, 
+                user: this.state.username, 
+                pass: this.state.password}
               )
               :
               React.createElement(SignUpForm, {
@@ -1980,6 +2002,7 @@ var UserData = React.createClass({displayName: "UserData",
 
   render: function(){
     var user = this.props.user;
+    console.log(user)
     return(
       React.createElement("div", {className: "form-group"}, 
         
@@ -2035,7 +2058,7 @@ var UserData = React.createClass({displayName: "UserData",
             onChange: this.props.onChange, 
             value: user.email, 
             type: "text", 
-            id: "emailx", name: "email", 
+            id: "email", name: "email", 
             className: "form-control", 
             placeholder: "Email"}
           )
