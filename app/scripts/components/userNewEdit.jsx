@@ -56,6 +56,7 @@ var UserData = React.createClass({
 
   render: function(){
     var user = this.props.user;
+    console.log(user)
     return(
       <div className="form-group">
         
@@ -111,7 +112,7 @@ var UserData = React.createClass({
             onChange={this.props.onChange}
             value={user.email}
             type="text"
-            id="emailx" name="email" 
+            id="email" name="email" 
             className="form-control" 
             placeholder="Email" 
           />

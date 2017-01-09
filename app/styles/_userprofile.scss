@@ -27,7 +27,8 @@
       font-family: 'Enriqueta', Times, serif;
       font-size: 20px;
       border: none;
-      padding: 20px 0;
+      height: auto;
+      padding: 8px 0;
       box-shadow: none;
       border-radius: 0px;
       border-bottom: 2px solid #EBEBEB;
@@ -41,7 +42,7 @@
     }
     input[name="alias"]{
       border-bottom: 0;
-      padding: 24px 0;
+      padding: 16px 0;
       margin: 20px auto;
       text-align: center;
       font-size: 34px;
